@@ -1,0 +1,6 @@
+NOODLE {
+    Program = Statement+
+
+    Statement = "out" "<" Statement ">"     --print
+     
+}

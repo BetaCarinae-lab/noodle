@@ -1,0 +1,25 @@
+{
+  "name": "noodle",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BetaCarinae-lab/noodle.git"
+  },
+  "keywords": [],
+  "author": "Betacarinae",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BetaCarinae-lab/noodle/issues"
+  },
+  "homepage": "https://github.com/BetaCarinae-lab/noodle#readme",
+  "description": "Language i built in JS",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "ohm-js": "^17.3.0"
+  }
+}
