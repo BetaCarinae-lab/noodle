@@ -1,4 +1,5 @@
 import { get_error_from_code } from "./error.js";
+import { ReturnSignal } from "./etc.js";
 
 export const actionDictionary = {
     Program(statements) {
@@ -58,5 +59,67 @@ export const actionDictionary = {
     },
     string(_open, chars, _close) {
         return chars.sourceString;
-    }
+    },
+    Fn(typeList, _fn, name, ParameterList, body) {
+        ParameterList = ParameterList.eval(this.args.env);
+        var functionEnv = this.args.env
+        this.args.env[name.sourceString] = {
+            properties: typeList.asIteration().children.map(c => c.sourceString),
+            body: (parameters) => {
+                parameters.forEach((param, index) => {
+                
+                    functionEnv[ParameterList[index]] = {
+                        type: typeof param,
+                        mutable: ParameterList[index].mutable,
+                        value: param,
+                    }
+                })
+
+                try {
+                    body.eval(functionEnv)
+                } catch(error) {
+                    if(error instanceof ReturnSignal) {
+                        return error.value
+                    } else {
+                        console.error(error.stack)
+                    }
+                }
+            }
+        }
+    },
+    Parameter(mut, ident) {
+        return {
+            mutable: mut.sourceString ? true : false,
+            name: ident.sourceString, 
+        }
+    },
+    FnCall(_os, name, parameterList, _cs) {
+        if(this.args.env[name.sourceString]) {
+            return this.args.env[name.sourceString].body(parameterList.eval(this.args.env))
+        } else {
+            throw new Error(get_error_from_code("NO_VALUE_FOUND"))
+        }
+    },
+    Return(_out, _op, value, _cp) {
+        throw new ReturnSignal(value.eval(this.args.env))
+    },
+    FuncBody(_ob, body, _cb) {
+        return body.eval(this.args.env)
+    },
+    /**
+     * 
+     * @param {import("ohm-js").Node} _op 
+     * @param {import("ohm-js").Node} listOfParams 
+     * @param {import("ohm-js").Node} _cp 
+     * @returns {Array[string]}
+     */
+    ParameterList(_op, listOfParams, _cp) {
+        return listOfParams.asIteration().children.map(c => c.sourceString)
+    },
+    StatementParameterList(_op, listOfParams, _cp) {
+        return listOfParams.asIteration().children.map(c => c.eval(this.args.env))
+    },
+    _iter(...children) {
+        return children.map(c => c.eval(this.args.env))
+    },
 }
