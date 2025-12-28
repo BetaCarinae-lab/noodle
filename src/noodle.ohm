@@ -14,9 +14,15 @@ NOODLE {
        | Expr "*" Expr	        --times
        | Expr "/" Expr	   	    --divide	
 
-  Fn = FnType* "fn" ident "(" (~")" ident ",")* ")" "->"? Type? FuncBody
+  Fn = FnType* "fn" ident ParameterList FuncBody
+  
+  ParameterList = "(" ListOf<Parameter, ","> ")"
+  
+  Parameter = "mut"? ident
+  
+  StatementParameterList = "(" ListOf<Statement, ","> ")"
 
-  FnCall = ident "(" ")" 
+  FnCall = "<" ident StatementParameterList ">"
 
   VarCreate = Type "mut"? ident "is" Statement
 

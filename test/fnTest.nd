@@ -1,0 +1,6 @@
+fn add(a, b) {
+    writeLn(<a> + <b>)
+    output(<a> + <b>)
+}
+
+writeLn(<add(10, 10)>)
