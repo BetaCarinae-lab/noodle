@@ -1,6 +1,5 @@
-fn add(a, b) {
-    writeLn(<a> + <b>)
+fn add(mut a, b) {
     output(<a> + <b>)
 }
 
-writeLn(<add(10, 10)>)
+writeLn(<add(20, 10)>)

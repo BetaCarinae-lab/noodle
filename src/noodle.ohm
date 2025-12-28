@@ -1,9 +1,16 @@
 NOODLE {
-  Program     = Statement+
+  Program     = (Statement ";"?)+
   Statement   = Print 
   			  | Math
               | VarCreate
+              | VarAssign
+              | Array
+              | ArrayAccess
+              | Template
               | Fn
+              | MethodCall
+              | ObjectPropertyAccess
+              | TemplateConstruction
 			  | Return
               | Expr
 
@@ -13,6 +20,8 @@ NOODLE {
   	   | Expr "-" Expr			--minus
        | Expr "*" Expr	        --times
        | Expr "/" Expr	   	    --divide	
+       | ident "++"					--increment
+       | ident "--"					--decrement
 
   Fn = FnType* "fn" ident ParameterList FuncBody
   
@@ -20,17 +29,37 @@ NOODLE {
   
   Parameter = "mut"? ident
   
+  Array = "[" listOf<Statement, ","> "]"
+  
+  ArrayAccess = "<" ident "at" Statement ">"
+  
   StatementParameterList = "(" ListOf<Statement, ","> ")"
 
   FnCall = "<" ident StatementParameterList ">"
 
-  VarCreate = Type "mut"? ident "is" Statement
+  VarCreate = "mut"? Type ident "is" Statement
 
   VarAssign = ident "is" Statement
+  
+  Property = "prop" ident "is" Type ","
+  
+  TemplateBody = "{"  (~"}" Property | Method)* "}"
+  
+  Template = "template" ident TemplateBody
+   
+  TemplateConstruction = ident ObjectBody
+  
+  ObjectBody = "{" (Statement ",")* "}"
+  
+  Method = "method" ident "is" ParameterList FuncBody
+  
+  MethodCall = "<" ident "." ident StatementParameterList ">"
+  
+  ObjectPropertyAccess = "<" ident ("." ident)* ">"
 
   VarGet = "<" ident ">"
 
-  Type = "number" | "string" | "fn"
+  Type = "number" | "string" | "fn" | "array" | "object"
 
   FuncBody = "{" Statement+ "}"
 

@@ -1,0 +1,14 @@
+template MyStruct {
+    prop property is number,
+    method increment is () {
+        property++
+    }
+}
+
+object a is MyStruct {
+    10,
+}
+
+<a.increment()>
+
+writeLn(<a.property>)
