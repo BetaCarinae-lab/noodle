@@ -1,8 +1,12 @@
 # NOODLE
 
 Noodle is a project in the works. 
-It is a language that i am designing to be quick, yet low level.
+It is a language that i am designing to be quick, yet low level.  
 Its syntax will be similar to both rust and js
+
+### Warning 
+Do not use this language for any serious project.  
+It is a *hobby* project
 
 ## Roadmap
 Creation  
