@@ -1,0 +1,20 @@
+writeLn("PRINT WORKS")
+
+
+writeLn(5 + 5)
+
+writeLn("IF 10: MATH WORKS")
+
+
+number testcreate is 10
+
+writeLn(<testcreate>)
+
+writeLn("IF 10: VarCreate WORKS")
+
+number a is 10
+number b is 10
+
+writeLn(<a> + <b>)
+
+writeLn("IF 20: VarAdd & VarGet works")

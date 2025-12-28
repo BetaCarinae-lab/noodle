@@ -1,6 +1,42 @@
 NOODLE {
-    Program = Statement+
+  Program     = Statement+
+  Statement   = Print 
+  			  | Math
+              | VarCreate
+              | Fn
+              | Expr
 
-    Statement = "out" "<" Statement ">"     --print
-     
+  Print       = "writeLn" "(" Statement ")"
+
+  Math = Expr "+" Expr			--add
+  	   | Expr "-" Expr			--minus
+       | Expr "*" Expr	        --times
+       | Expr "/" Expr	   	    --divide	
+
+  Fn = FnType* "fn" ident "(" ")" "->"? Type? FuncBody
+
+  FnCall = ident "(" ")" 
+
+  VarCreate = Type "mut"? ident "is" Statement
+
+  VarAssign = ident "is" Statement
+
+  VarGet = "<" ident ">"
+
+  Type = "number" | "string" | "fn"
+
+  FuncBody = "{" Statement+ "}"
+
+  FnType = "async" | "pub" | "local"
+
+  Expr = number | string | VarGet | FnCall
+
+  number = digit+
+
+  string = "\"" (~"\"" any)* "\""
+
+  ident = letter idchar*
+
+  idchar = "_" | letter | number
+
 }
