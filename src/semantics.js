@@ -1,4 +1,3 @@
-import { get_error_from_code } from "./error.js";
 import { ReturnSignal } from "./etc.js";
 
 export const actionDictionary = {
@@ -148,12 +147,8 @@ export const actionDictionary = {
     Template(_temp, name, body) {
         let contructorArgs = body.eval(this.args.env)
         if(!this.args.env[name.sourceString]) {
-            this.args.env[name.sourceString] = class {
-                constructor(params) {
-                    params.forEach(param => {
-                        if(typeof param) {}
-                    })
-                }
+            this.args.env[name.sourceString] = (parameters) => {
+                let returnedObject = {}
             }
         }
     },
