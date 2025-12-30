@@ -41,7 +41,7 @@ NOODLE {
 
   VarAssign = ident "is" Statement
   
-  Property = "prop" ident "is" Type ","
+  Property = "mut"? "prop" ident "is" Type ","
   
   TemplateBody = "{"  (~"}" Property | Method)* "}"
   
