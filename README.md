@@ -11,9 +11,9 @@ It is a *hobby* project
 ## Roadmap
 Creation  
    |  
-Prototype Semantics in JS  <= (WE ARE HERE)  
+Prototype Semantics in JS
    |  
-Build up basic functions  
+Build up basic functions <= (WE ARE HERE)   
    |  
 Add Rust for low level support like references  
    |  
