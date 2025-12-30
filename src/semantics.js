@@ -165,14 +165,18 @@ export const actionDictionary = {
         if(!this.args.env[name.sourceString]) {
             this.args.env[name.sourceString] = (parameters) => {
                 let returnedObject = contructorArgs
-
+                parameters.forEach((param, index) => {
+                    
+                })
 
             }
         }
     },
 
     TemplateConstruction(id, objectBody) {
-        
+        if(this.args.env[id.sourceString]) {
+            
+        }
     },
 
     TemplateBody(_ob, properties, _cb) {
