@@ -13,6 +13,7 @@ NOODLE {
               | TemplateConstruction
 			  | Return
               | Expr
+              
 
   Print       = "writeLn" "(" Statement ")"
 
@@ -65,7 +66,7 @@ NOODLE {
 
   FnType = "async" | "pub" | "local"
 
-  Expr = number | string | VarGet | FnCall
+  Expr = number | string | VarGet | FnCall | Self | MethodCall
   
   number = digit+
   
@@ -76,5 +77,7 @@ NOODLE {
   ident = letter idchar*
 
   idchar = "_" | letter | number
+  
+  Self = "self" ("." ident)*
 
 }

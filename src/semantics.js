@@ -161,13 +161,25 @@ export const actionDictionary = {
     },
 
     Template(_temp, name, body) {
-        let contructorArgs = body.eval(this.args.env)
+        let constructorArgs = body.eval(this.args.env)
         if(!this.args.env[name.sourceString]) {
             this.args.env[name.sourceString] = (parameters) => {
-                let returnedObject = contructorArgs
+                let returnedObject = {}
                 parameters.forEach((param, index) => {
+                    let copyProperty = constructorArgs.properties[index]
+                    console.log(`Creating Property: ${copyProperty.name} with value ${param} and type ${typeof param}`)
+                    if(copyProperty.type == 'any' || copyProperty.type == typeof param) {
+                        console.log('Type check succeeded')
+                        returnedObject[copyProperty.name] = param
+                    } else {
+                        throw new Error(`Expected type ${copyProperty.type}, got ${typeof param}`)
+                    }
                     
                 })
+
+                console.log(returnedObject)
+
+                return returnedObject
 
             }
         }
@@ -175,23 +187,27 @@ export const actionDictionary = {
 
     TemplateConstruction(id, objectBody) {
         if(this.args.env[id.sourceString]) {
-            
+            return this.args.env[id.sourceString](objectBody.eval(this.args.env))
         }
+    },
+
+    ObjectBody(_ob, statement, _, _cb) {
+        return statement.eval(this.args.env)
     },
 
     TemplateBody(_ob, properties, _cb) {
         let returnedObject = {
-            properties: {},
-            methods: {},
+            properties: [],
+            methods: [],
         }
-        properties.children.forEach((property) => {
+        properties.children.forEach((property, index) => {
             property = property.eval(this.args.env)
             if(property.property) {
                 console.log('Adding Property ' + property.name + ' to returnedObject')
-                returnedObject.properties[property.name] = property
+                returnedObject.properties[index] = property
             } else {
                 console.log('Adding Method ' + property.name + ' to returnedObject')
-                returnedObject.methods[property.name] = property
+                returnedObject.methods[index] = property
             }
         })
 
