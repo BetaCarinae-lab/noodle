@@ -8,6 +8,7 @@ NOODLE {
               | ArrayAccess
               | Template
               | Fn
+              | Ref
               | MethodCall
               | ObjectPropertyAccess
               | TemplateConstruction
@@ -21,14 +22,16 @@ NOODLE {
   	   | Expr "-" Expr			--minus
        | Expr "*" Expr	        --times
        | Expr "/" Expr	   	    --divide	
-       | ident "++"					--increment
-       | ident "--"					--decrement
+       | References "++"					--increment
+       | References "--"					--decrement
 
   Fn = FnType* "fn" ident ParameterList FuncBody
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
   Parameter = "mut"? ident
+  
+  References = Ref | ObjectProperty
   
   Array = "[" listOf<Statement, ","> "]"
   
@@ -50,17 +53,21 @@ NOODLE {
    
   TemplateConstruction = ident ObjectBody
   
-  ObjectBody = "{" (Statement ",")* "}"
+  ObjectBody = "{" (ident ":" Statement ",")* "}"
   
   Method = "method" ident "is" ParameterList FuncBody
   
-  MethodCall = "<" ident "." ident StatementParameterList ">"
+  MethodCall = "<" ObjectProperty StatementParameterList ">"
   
-  ObjectPropertyAccess = "<" ident ("." ident)* ">"
+  ObjectProperty = ident ("." ident)*  
+  
+  ObjectPropertyAccess = "<" ObjectProperty ">"
 
   VarGet = "<" ident ">"
+  
+  Ref = "&" ident
 
-  Type = "number" | "string" | "fn" | "array" | "object"
+  Type = "number" | "string" | "fn" | "array" | "object" | "reference"
 
   FuncBody = "{" Statement+ "}"
 
