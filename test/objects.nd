@@ -1,7 +1,7 @@
 template MyStruct {
     prop property is number,
     method increment is () {
-        property++
+        self.property++
     }
 }
 
