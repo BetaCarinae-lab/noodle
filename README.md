@@ -1,23 +1,20 @@
 # NOODLE
 
-Noodle is a project in the works. 
-It is a language that i am designing to be quick, yet low level.  
-Its syntax will be similar to both rust and js
+**Noodle** is an experimental programming language currently under development. The goal of the project is to explore a language design that is both performant and low-level, while maintaining a concise and expressive syntax. Its syntax is inspired by elements of **Rust** and **JavaScript**. Which it is written in
 
-### Warning 
-Do not use this language for any serious project.  
-It is a *hobby* project
+## Warning
+
+This language is **not** intended for production use.  
+Noodle is a *hobby and experimental project*, and its features, behavior, and stability are subject to change at any time.
 
 ## Roadmap
-Creation  
-   |  
-Prototype Semantics in JS  
-   |  
-Build up basic functions <= (WE ARE HERE)  
-   |  
-Add Rust for low level support like references  
-   |  
-Continue updating and adding new things  
 
-## Contribution
-Right now, I am solo on this project and do not need anyone to contribute (as this is a hobby project)
+- Define core language concepts  
+- Prototype language semantics in JavaScript  
+- Implement basic language features *(current stage)*  
+- Integrate Rust for low-level capabilities (e.g., references and memory control)  
+- Continue iterative development and feature expansion  
+
+## Contributing
+
+At this time, the project is maintained solely by the author. Contributions are not currently being accepted, as this project is intended for personal experimentation and learning.

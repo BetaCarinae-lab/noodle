@@ -11,7 +11,11 @@ export const actionDictionary = {
 
     Print(_print, _lp, expr, _rp) {
         const value = expr.eval(this.args.env);
-        console.log('OUT: ' + value);
+        if(typeof value == 'object') {
+            console.log('OUT: ' + JSON.stringify(value));
+        } else {
+            console.log('OUT: ' + value);
+        }
     },
 
     Math_add(expr1, _plus, expr2) {
@@ -160,28 +164,52 @@ export const actionDictionary = {
         return children.map(c => c.eval(this.args.env))
     },
 
+    ObjectPropertyAccess(_ob, objectProperty,_cb) {
+        return objectProperty.eval(this.args.env)
+    },
+
+    ObjectProperty(Mid, _d, ids) {
+        if(this.args.env[Mid.sourceString].value && typeof this.args.env[Mid.sourceString].value == 'object') {
+            let value = this.args.env[Mid.sourceString].value
+            ids.asIteration().children.forEach((id) => {
+                console.log('id: ' + id.sourceString)
+                console.log('Val: ' + JSON.stringify(value))
+                value = value[id.sourceString]
+            })
+            return value
+        }
+    },
+
+    MethodCall(_1, objProp, ParamList, _2) {
+        let fn = objProp.eval(this.args.env)
+
+        try {
+            fn(ParamList.eval(this.args.env))
+        } catch(error) {
+            if(error instanceof ReturnSignal) {
+                return error.value
+            } else {
+                throw new Error(error.stack)
+            }
+        }
+    },
+
     Template(_temp, name, body) {
         let constructorArgs = body.eval(this.args.env)
         if(!this.args.env[name.sourceString]) {
             this.args.env[name.sourceString] = (parameters) => {
                 let returnedObject = {}
-                parameters.forEach((param, index) => {
-                    let copyProperty = constructorArgs.properties[index]
-                    console.log(`Creating Property: ${copyProperty.name} with value ${param} and type ${typeof param}`)
-                    if(copyProperty.type == 'any' || copyProperty.type == typeof param) {
-                        console.log('Type check succeeded')
-                        returnedObject[copyProperty.name] = param
-                    } else {
-                        throw new Error(`Expected type ${copyProperty.type}, got ${typeof param}`)
-                    }
-                    
+                parameters.values.forEach((value, index) => {
+                    console.log(parameters.refers[index])
+                    returnedObject[parameters.refers[index]] = value
                 })
 
                 console.log(returnedObject)
 
                 return returnedObject
-
             }
+        } else {
+            throw new Error(`${name} already exists!`)
         }
     },
 
@@ -191,27 +219,31 @@ export const actionDictionary = {
         }
     },
 
-    ObjectBody(_ob, statement, _, _cb) {
-        return statement.eval(this.args.env)
+    ObjectBody(_ob, name, _dingdong, statement, _, _cb) {
+        console.log(JSON.stringify({
+            values: statement.eval(this.args.env),
+            refers: name.asIteration().children.map(c => c.sourceString)
+        }, null, 2))
+        return {
+            values: statement.eval(this.args.env),
+            refers: name.asIteration().children.map(c => c.sourceString)
+        }
     },
 
     TemplateBody(_ob, properties, _cb) {
-        let returnedObject = {
-            properties: [],
-            methods: [],
-        }
+        let returnedObject = {}
         properties.children.forEach((property, index) => {
             property = property.eval(this.args.env)
             if(property.property) {
                 console.log('Adding Property ' + property.name + ' to returnedObject')
-                returnedObject.properties[index] = property
+                returnedObject[property.name] = property
             } else {
                 console.log('Adding Method ' + property.name + ' to returnedObject')
-                returnedObject.methods[index] = property
+                returnedObject[property.name] = property
             }
         })
 
-        console.log(returnedObject)
+        console.log('TEMPLATEBODY: ' + JSON.stringify(returnedObject, null, 2))
 
         return returnedObject
     },

@@ -1,12 +1,14 @@
 template MyStruct {
     prop property is number,
+    prop property2 is number,
     method increment is () {
         self.property++
     }
 }
 
 object a is MyStruct {
-    10,
+    property: 10,
+    property2: 20,
 }
 
 <a.increment()>
