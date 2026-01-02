@@ -1,0 +1,4 @@
+NoodleBowl {
+	Main = Entry+
+    Entry = "run" (~".nd" ~".bowl" any)* (".nd" | ".bowl")
+}

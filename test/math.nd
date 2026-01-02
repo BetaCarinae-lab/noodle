@@ -3,7 +3,7 @@ writeLn(5 - 5)
 writeLn(5 * 5)
 writeLn(5 / 5)
 mut number a is 0
-a++
+&a++
 writeLn(<a>)
-a--
+&a--
 writeLn(<a>)

@@ -1,0 +1,5 @@
+writeLn(<a>)
+
+writeLn("p2 ran")
+
+end
