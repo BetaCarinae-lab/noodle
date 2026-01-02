@@ -13,6 +13,7 @@ NOODLE {
               | ObjectPropertyAccess
               | TemplateConstruction
 			  | Return
+              | Exists
               | Expr
               
 
@@ -72,8 +73,10 @@ NOODLE {
   FuncBody = "{" Statement+ "}"
 
   FnType = "async" | "pub" | "local"
+  
+  Exists = References "exists"
 
-  Expr = number | string | VarGet | FnCall | Self | MethodCall
+  Expr = number | string | VarGet | FnCall | Self | MethodCall | ObjectPropertyAccess
   
   number = digit+
   

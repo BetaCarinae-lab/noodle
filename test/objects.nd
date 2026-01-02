@@ -13,4 +13,4 @@ object a is MyStruct {
 
 <a.increment()>
 
-writeLn(<a.property>)
+writeLn(<a.property> + <a.property2>)

@@ -1,4 +1,5 @@
 import { ReturnSignal } from "./etc.js";
+import { inspect } from "util";
 
 export const actionDictionary = {
     Program(statements, _semi) {
@@ -170,18 +171,24 @@ export const actionDictionary = {
 
     ObjectProperty(Mid, _d, ids) {
         if(this.args.env[Mid.sourceString].value && typeof this.args.env[Mid.sourceString].value == 'object') {
+            console.log('Succeeded check')
             let value = this.args.env[Mid.sourceString].value
+            console.log(this.args.env[Mid.sourceString])
             ids.asIteration().children.forEach((id) => {
                 console.log('id: ' + id.sourceString)
                 console.log('Val: ' + JSON.stringify(value))
                 value = value[id.sourceString]
             })
             return value
+        } else {
+            throw new Error('Either can\'t find value, or value is not an object')
         }
     },
 
     MethodCall(_1, objProp, ParamList, _2) {
-        let fn = objProp.eval(this.args.env)
+        let fn = objProp.eval(this.args.env).body
+        
+        console.log('fn: ' + fn)
 
         try {
             fn(ParamList.eval(this.args.env))
@@ -196,6 +203,7 @@ export const actionDictionary = {
 
     Template(_temp, name, body) {
         let constructorArgs = body.eval(this.args.env)
+        console.log('CA: ' + inspect(constructorArgs, null, 2))
         if(!this.args.env[name.sourceString]) {
             this.args.env[name.sourceString] = (parameters) => {
                 let returnedObject = {}
@@ -203,8 +211,14 @@ export const actionDictionary = {
                     console.log(parameters.refers[index])
                     returnedObject[parameters.refers[index]] = value
                 })
+                Object.keys(constructorArgs).forEach(key => {
+                    // include methods in the object
+                    if(!constructorArgs[key].property) {
+                        returnedObject[key] = constructorArgs[key]
+                    }
+                })
 
-                console.log(returnedObject)
+                console.log('RO: ' + inspect(returnedObject, null, 2))
 
                 return returnedObject
             }
@@ -220,10 +234,6 @@ export const actionDictionary = {
     },
 
     ObjectBody(_ob, name, _dingdong, statement, _, _cb) {
-        console.log(JSON.stringify({
-            values: statement.eval(this.args.env),
-            refers: name.asIteration().children.map(c => c.sourceString)
-        }, null, 2))
         return {
             values: statement.eval(this.args.env),
             refers: name.asIteration().children.map(c => c.sourceString)
@@ -240,6 +250,7 @@ export const actionDictionary = {
             } else {
                 console.log('Adding Method ' + property.name + ' to returnedObject')
                 returnedObject[property.name] = property
+                console.log('THING: ' + JSON.stringify(returnedObject[property.name], null, 2) + ', THING2: ' + JSON.stringify(property, null, 2))
             }
         })
 
@@ -260,7 +271,7 @@ export const actionDictionary = {
     Method(_method, id, _is, paramList, funcBody) {
         paramList = paramList.eval(this.args.env);
         var methodEnv = this.args.env
-        return {
+        let returned = {
             property: false,
             name: id.sourceString,
             body: (parameters) => {
@@ -273,7 +284,7 @@ export const actionDictionary = {
                 })
 
                 try {
-                    body.eval(methodEnv)
+                    funcBody.eval(methodEnv)
                 } catch(error) {
                     if(error instanceof ReturnSignal) {
                         return error.value
@@ -283,5 +294,7 @@ export const actionDictionary = {
                 }
             }
         }
-    },
+        //console.log(returned.body.toString())
+        return returned
+    },                                    
 }
