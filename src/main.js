@@ -1,22 +1,21 @@
-import * as ohm from 'ohm-js';
 import { readFileSync } from 'fs'
-import { actionDictionary } from './semantics.js';
-
-const grammar = ohm.grammar(readFileSync("src/noodle.ohm", "utf-8"));
+import path from 'path';
+import { runBowl, runND } from './exec.js';
 
 const inputCode = readFileSync(process.argv[2], 'utf-8');
-const semantics = grammar.createSemantics().addOperation('eval(env)', actionDictionary);
+const usingBowl = path.extname(process.argv[2]) == ".bowl" ? true : false
 
-/**
- * @type {import('ohm-js').MatchResult}
- */
-let matchResult = grammar.match(inputCode);
+console.log(`
+RunInfo:
+UsingBowl: ${usingBowl}
+Reading: ${process.argv[2]}
+NodeV: ${process.version}
+`)
 
-let env = {};
+let env = {}
 
-if(matchResult.succeeded()) {
-    console.log("Match Succeeded, Applying Semantics");
-    semantics(matchResult).eval(env);
+if(usingBowl) {
+    runBowl(inputCode)
 } else {
-    console.log(matchResult.message);
+    runND(inputCode, env)
 }

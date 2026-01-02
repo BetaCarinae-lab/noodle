@@ -14,6 +14,7 @@ NOODLE {
               | TemplateConstruction
 			        | Return
               | Exists
+              | End
               | Expr
               
 
@@ -35,6 +36,8 @@ NOODLE {
   References = Ref | ObjectProperty
   
   Array = "[" listOf<Statement, ","> "]"
+
+  End = "end"
   
   ArrayAccess = "<" ident "at" Statement ">"
   
@@ -42,7 +45,7 @@ NOODLE {
 
   FnCall = "<" ident StatementParameterList ">"
 
-  VarCreate = "mut"? Type ident "is" Statement
+  VarCreate = "mut"? "persistant"? Type ident "is" Statement
 
   VarAssign = ident "is" Statement
   
@@ -60,7 +63,7 @@ NOODLE {
   
   MethodCall = "<" ObjectProperty StatementParameterList ">"
   
-  ObjectProperty = ident ("." ident)*  
+  ObjectProperty = ident ("." ident)+
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
 

@@ -1,0 +1,5 @@
+run ./test/math.nd
+run ./test/fnTest.nd
+run ./test/objects.nd
+run ./test/array.nd
+run ./test/bowl_test/test.bowl

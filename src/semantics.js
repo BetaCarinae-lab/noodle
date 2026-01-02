@@ -35,12 +35,13 @@ export const actionDictionary = {
         return expr1.eval(this.args.env) / expr2.eval(this.args.env)
     },
 
-    VarCreate(mut, type, name, _eq, value) {
+    VarCreate(mut, pers, type, name, _eq, value) {
         if(typeof value.eval(this.args.env) == type.sourceString || (type.sourceString == 'array' && Array.isArray(value.eval(this.args.env)))) {
             this.args.env[name.sourceString] = {
                 type: type.sourceString,
                 value: value.eval(this.args.env),
                 mutable: mut.sourceString ? true : false,
+                persistant: pers.sourceString ? true : false,
             }
         } else {
             throw new Error(`Mismatched Types, Expected ${type.sourceString}, Got ${typeof value.eval(this.args.env)}`)
@@ -121,11 +122,26 @@ export const actionDictionary = {
         }
     },
 
+    End(_end) {
+        // clean up
+        console.log('Cleaning up!')
+        Object.keys(this.args.env).forEach(key => {
+            if(this.args.env[key].persistant) {
+                console.log('Variable is persistant, ignoring')
+            } else {
+                console.log(`Deleting ${key}`)
+                this.args.env[key] = null;
+            }
+        })
+    },
+
+    //                     hehe
     Math_increment(ident, _pp) {
+        ident = ident.eval(this.args.env)
         if(this.args.env[ident.sourceString] && this.args.env[ident.sourceString].mutable) {
             this.args.env[ident.sourceString].value++
         } else {
-            throw new Error(this.args.env[ident.sourceString].mutable ? `No value found with name: ${ident.sourceString}` : 'Value is not mutable!')
+            throw new Error(this.args.env[ident.sourceString] ? 'Value is not mutable!': `No value found with name: ${ident.sourceString}`)
         }
     },
 
@@ -143,6 +159,10 @@ export const actionDictionary = {
         } else {
             throw new Error(`Cannot find function with name: ${name.sourceString}`)
         }
+    },
+
+    Ref(_curly, ident) {
+        return ident.sourceString
     },
 
     Return(_out, _op, value, _cp) {
@@ -177,7 +197,7 @@ export const actionDictionary = {
             })
             return value
         } else {
-            throw new Error('Either can\'t find value, or value is not an object')
+            throw new Error(`Either can\'t find value ${Mid.sourceString}, or value is not an object`)
         }
     },
 
