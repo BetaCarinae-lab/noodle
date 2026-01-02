@@ -12,7 +12,7 @@ NOODLE {
               | MethodCall
               | ObjectPropertyAccess
               | TemplateConstruction
-			  | Return
+			        | Return
               | Exists
               | Expr
               
@@ -76,7 +76,7 @@ NOODLE {
   
   Exists = References "exists"
 
-  Expr = number | string | VarGet | FnCall | Self | MethodCall | ObjectPropertyAccess
+  Expr = number | string | VarGet | FnCall | MethodCall | ObjectPropertyAccess
   
   number = digit+
   
@@ -87,7 +87,5 @@ NOODLE {
   ident = letter idchar*
 
   idchar = "_" | letter | number
-  
-  Self = "self" ("." ident)*
 
 }

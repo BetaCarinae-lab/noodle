@@ -171,12 +171,8 @@ export const actionDictionary = {
 
     ObjectProperty(Mid, _d, ids) {
         if(this.args.env[Mid.sourceString].value && typeof this.args.env[Mid.sourceString].value == 'object') {
-            console.log('Succeeded check')
             let value = this.args.env[Mid.sourceString].value
-            console.log(this.args.env[Mid.sourceString])
             ids.asIteration().children.forEach((id) => {
-                console.log('id: ' + id.sourceString)
-                console.log('Val: ' + JSON.stringify(value))
                 value = value[id.sourceString]
             })
             return value
@@ -186,12 +182,9 @@ export const actionDictionary = {
     },
 
     MethodCall(_1, objProp, ParamList, _2) {
-        let fn = objProp.eval(this.args.env).body
-        
-        console.log('fn: ' + fn)
-
+        let fn = objProp.eval(this.args.env)
         try {
-            fn(ParamList.eval(this.args.env))
+            fn.body(ParamList.eval(this.args.env))
         } catch(error) {
             if(error instanceof ReturnSignal) {
                 return error.value
@@ -203,12 +196,10 @@ export const actionDictionary = {
 
     Template(_temp, name, body) {
         let constructorArgs = body.eval(this.args.env)
-        console.log('CA: ' + inspect(constructorArgs, null, 2))
         if(!this.args.env[name.sourceString]) {
             this.args.env[name.sourceString] = (parameters) => {
                 let returnedObject = {}
                 parameters.values.forEach((value, index) => {
-                    console.log(parameters.refers[index])
                     returnedObject[parameters.refers[index]] = value
                 })
                 Object.keys(constructorArgs).forEach(key => {
@@ -217,8 +208,6 @@ export const actionDictionary = {
                         returnedObject[key] = constructorArgs[key]
                     }
                 })
-
-                console.log('RO: ' + inspect(returnedObject, null, 2))
 
                 return returnedObject
             }
@@ -245,16 +234,11 @@ export const actionDictionary = {
         properties.children.forEach((property, index) => {
             property = property.eval(this.args.env)
             if(property.property) {
-                console.log('Adding Property ' + property.name + ' to returnedObject')
                 returnedObject[property.name] = property
             } else {
-                console.log('Adding Method ' + property.name + ' to returnedObject')
                 returnedObject[property.name] = property
-                console.log('THING: ' + JSON.stringify(returnedObject[property.name], null, 2) + ', THING2: ' + JSON.stringify(property, null, 2))
             }
         })
-
-        console.log('TEMPLATEBODY: ' + JSON.stringify(returnedObject, null, 2))
 
         return returnedObject
     },
@@ -294,7 +278,6 @@ export const actionDictionary = {
                 }
             }
         }
-        //console.log(returned.body.toString())
         return returned
     },                                    
 }

@@ -15,7 +15,7 @@ let matchResult = grammar.match(inputCode);
 let env = {};
 
 if(matchResult.succeeded()) {
-    console.log("Succeeded, Applying Semantics");
+    console.log("Match Succeeded, Applying Semantics");
     semantics(matchResult).eval(env);
 } else {
     console.log(matchResult.message);
