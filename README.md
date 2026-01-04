@@ -1,6 +1,6 @@
 # NOODLE
 
-**Noodle** is an experimental programming language currently under development. The goal of the project is to explore a language design that is both performant and low-level, while maintaining a concise and expressive syntax. Its syntax is inspired by elements of **Rust** and **JavaScript**. Which it is written in
+**Noodle** is an experimental programming language currently under development. The goal of the project is to explore a language design that is performant and easy to set up anywhere, while maintaining a concise and expressive syntax. Its syntax is inspired by elements of **Rust** and **JavaScript**. Which it is written in
 
 ## Warning
 
