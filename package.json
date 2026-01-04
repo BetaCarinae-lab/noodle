@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/BetaCarinae-lab/noodle.git"
   },
+  "bin": {
+    "noodle": "./src/main.js"
+  },
   "keywords": [],
   "author": "Betacarinae",
   "license": "ISC",
