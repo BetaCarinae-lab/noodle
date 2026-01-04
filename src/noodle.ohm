@@ -2,23 +2,40 @@ NOODLE {
   Program     = (Statement ";"?)+
   Statement   = Print 
   			  | Math
-              | VarCreate
-              | VarAssign
-              | Array
-              | ArrayAccess
-              | Template
-              | Fn
-              | Ref
-              | MethodCall
-              | ObjectPropertyAccess
-              | TemplateConstruction
-			        | Return
-              | Exists
-              | End
-              | Expr
+          | VarCreate
+          | VarAssign
+          | Array
+          | ArrayAccess
+          | Template
+          | Fn
+          | Ref
+          | If
+          | Else
+          | MethodCall
+          | ObjectPropertyAccess
+          | TemplateConstruction
+          | Return
+          | Exists
+          | BooleanOperators
+          | True
+          | False
+          | End
+          | Expr
               
+              
+  BooleanOperators = Statement "==" Statement --eq
+  								 | Statement "===" Statement --deepEq
+                   | Statement "&&" Statement --and
+                   | Statement "||" Statement --or
+                   | Statement "::" Statement --xor
+                   | Statement ">" Statement --greater
+                   | Statement "<" Statement --less
+                   | Statement ">=" Statement --greatereq
+                   | Statement "<=" Statement --lesseq
+                   |"!" Statement --not
+                   | Statement
 
-  Print       = "writeLn" "(" Statement ")"
+  Print = "writeLn" "(" Statement ")"
 
   Math = Expr "+" Expr			--add
   	   | Expr "-" Expr			--minus
@@ -38,6 +55,9 @@ NOODLE {
   Array = "[" listOf<Statement, ","> "]"
 
   End = "end"
+  
+  True = "true" | "yes" | "yeah"
+  False = "false" | "no" | "nah"
   
   ArrayAccess = "<" ident "at" Statement ">"
   
@@ -66,6 +86,10 @@ NOODLE {
   ObjectProperty = ident ("." ident)+
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
+  
+  If = "if" "(" BooleanOperators ")" FuncBody If?
+  
+  Else = If "else" FuncBody
 
   VarGet = "<" ident ">"
   
