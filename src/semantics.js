@@ -1,9 +1,21 @@
 import { ReturnSignal } from "./etc.js";
 import { inspect } from "util";
 
+
+
 export const actionDictionary = {
     Program(statements, _semi) {
-        return statements.children.map(s => s.eval(this.args.env));
+        statements.children.map(s => s.eval(this.args.env));
+        // clean up
+        console.log('Cleaning up!')
+        Object.keys(this.args.env).forEach(key => {
+            if(this.args.env[key].persistant) {
+                console.log('Variable is persistant, ignoring')
+            } else {
+                console.log(`Deleting ${key}`)
+                this.args.env[key] = null;
+            }
+        })
     },
 
     Statement(stmt) {
@@ -126,17 +138,16 @@ export const actionDictionary = {
         }
     },
 
-    End(_end) {
-        // clean up
-        console.log('Cleaning up!')
-        Object.keys(this.args.env).forEach(key => {
-            if(this.args.env[key].persistant) {
-                console.log('Variable is persistant, ignoring')
-            } else {
-                console.log(`Deleting ${key}`)
-                this.args.env[key] = null;
-            }
-        })
+    Delete(_delete, id) {
+        if(this.args.env[id.sourceString] && this.args.env[id.sourceString].mutable) {
+            this.args.env[id.sourceString] = "deleted by program"
+        } else {
+            throw new Error(`Can't delete if variable ${id.sourceString} doesn't exist!`)
+        }
+    },
+
+    Exit(_ex, uhoh) {
+        throw new Error(uhoh.eval(this.args.env))
     },
 
     True(_val) {

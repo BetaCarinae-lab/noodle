@@ -1,2 +1,2 @@
-run ./test/module_test/add.nd
+register ./test/module_test/add.nd as module (override)
 run ./test/module_test/file.nd
