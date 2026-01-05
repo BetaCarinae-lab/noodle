@@ -7,6 +7,10 @@ import readline from "readline";
 
 let env = {}
 
+env.secure = {
+    debug: process.argv[3] == '--debug'
+}
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -14,8 +18,9 @@ const rl = readline.createInterface({
 
 if(!process.argv[2]) {
     function repl() {
-        rl.question("noodle: \n", (code) => {
-            console.log('out: ')
+        console.log('Noodle REPL: ')
+        rl.question(">>> ", (code) => {
+            console.log('output: \n')
             runND(code, env)
             repl()
         })
@@ -30,6 +35,7 @@ console.log(`
 RunInfo:
 UsingBowl: ${usingBowl}
 Reading: ${process.argv[2]}
+Debug: ${env.secure.debug}
 NodeV: ${process.version}
 `)
 
