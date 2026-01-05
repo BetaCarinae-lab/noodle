@@ -1,13 +1,20 @@
 import { readFileSync } from "fs"
 import { actionDictionary } from './semantics.js';
 import * as ohm from "ohm-js"
+import { MWD } from "./info.js";
+import * as path_module from "path";
+
+const grammars = {
+    noodle: ohm.grammar(readFileSync(MWD + "/" + "noodle.ohm", "utf-8")),
+    bowl: ohm.grammar(readFileSync(MWD + "/" + "bowls.ohm", "utf-8")),
+}
 
 async function registerJS(path) {
     let { exported } = await import(path)
     return exported
 }
 
-export function runBowl(code) {
+export function runBowl(code, path) {
     let env = {}
     const bowlDict = {
         Main(entries) {
@@ -15,12 +22,20 @@ export function runBowl(code) {
         },
 
         Entry(_run, path, fileExt) {
+
             if(fileExt.sourceString == '.nd') {
-                env = runND(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'), env, true)
+                //console.log(`go from: ${MWD} to: ${path_module.resolve(path.sourceString + fileExt.sourceString)}`)
+                //console.log(path_module.resolve(path.sourceString + fileExt.sourceString))
+                env = runND(readFileSync(path_module.resolve(path.sourceString + fileExt.sourceString), 'utf-8'), env, true)
+
             } else if (fileExt.sourceString == '.bowl') {
+
                 runBowl(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'))
+
             } else {
+
                 throw new Error(`Unknown file extension: ${fileExt.sourceString}`)
+
             }
         },
 
@@ -40,12 +55,10 @@ export function runBowl(code) {
                 
             }
         },
-    }
+    } 
+    const semantics = grammars.bowl.createSemantics().addOperation('eval()', bowlDict)
 
-    let grammar = ohm.grammar(readFileSync('./src/bowls.ohm', 'utf-8'))
-    const semantics = grammar.createSemantics().addOperation('eval()', bowlDict)
-
-    const matchResult = grammar.match(code)
+    const matchResult = grammars.bowl.match(code)
 
     if(matchResult.succeeded()) {
         console.log('Match Succeded, Running Bowl List')
@@ -57,14 +70,13 @@ export function runBowl(code) {
 
 export function runND(inputCode, env_, _fromBowl) {
     let env = env_
-    const grammar = ohm.grammar(readFileSync("src/noodle.ohm", "utf-8"));
     
-    const semantics = grammar.createSemantics().addOperation('eval(env)', actionDictionary);
+    const semantics = grammars.noodle.createSemantics().addOperation('eval(env)', actionDictionary);
 
     /**
     * @type {import('ohm-js').MatchResult}
     */
-    let matchResult = grammar.match(inputCode);
+    let matchResult = grammars.noodle.match(inputCode);
 
     if(matchResult.succeeded()) {
         console.log("Match Succeeded, Applying Semantics");

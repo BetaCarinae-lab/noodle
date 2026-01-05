@@ -9,6 +9,7 @@ NOODLE {
           | Template
           | Fn
           | Ref
+          | Import
           | If
           | MethodCall
           | ObjectPropertyAccess
@@ -63,7 +64,11 @@ NOODLE {
   
   ArrayAccess = "<" ident "at" Statement ">"
 
+  Import = "import" "(" Path ")"
+
   Delete = "delete" ident
+
+Path = "." ("/" ident)* "." ident
 
   Exit = "exit" Statement
   

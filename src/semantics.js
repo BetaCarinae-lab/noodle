@@ -22,6 +22,10 @@ export const actionDictionary = {
         return stmt.eval(this.args.env);
     },
 
+    Import(_imp, _op, path, _cp) {
+        
+    },
+
     Print(_print, _lp, expr, _rp) {
         const value = expr.eval(this.args.env);
         if(typeof value == 'object') {
