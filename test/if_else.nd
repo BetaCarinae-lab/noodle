@@ -1,0 +1,8 @@
+if(10 == 10) {
+    writeLn("Correct!")
+} 
+boolean a is 10 == 10
+
+if(!<a>) {
+    writeLn("what the fuck")
+}

@@ -10,7 +10,6 @@ NOODLE {
           | Fn
           | Ref
           | If
-          | Else
           | MethodCall
           | ObjectPropertyAccess
           | TemplateConstruction
@@ -87,15 +86,13 @@ NOODLE {
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
-  If = "if" "(" BooleanOperators ")" FuncBody If?
-  
-  Else = If "else" FuncBody
+  If = "if" "(" BooleanOperators ")" FuncBody
 
   VarGet = "<" ident ">"
   
   Ref = "&" ident
 
-  Type = "number" | "string" | "fn" | "array" | "object" | "reference"
+  Type = "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
 
   FuncBody = "{" Statement+ "}"
 

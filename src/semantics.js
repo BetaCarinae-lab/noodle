@@ -135,6 +135,60 @@ export const actionDictionary = {
         })
     },
 
+    True(_val) {
+        return true
+    },
+
+    False(_val) {
+        return false
+    },
+
+    BooleanOperators_eq(s1, _eq, s2) {
+        return s1.eval(this.args.env) == s2.eval(this.args.env)
+    },
+
+    BooleanOperators_deepEq(s1, _eq, s2) {
+        return s1.eval(this.args.env) === s2.eval(this.args.env)
+    },
+
+    BooleanOperators_and(s1, _and, s2) {
+        return s1.eval(this.args.env) && s2.eval(this.args.env)
+    },
+
+    BooleanOperators_or(s1, _or, s2) {
+        return s1.eval(this.args.env) || s2.eval(this.args.env)
+    },
+    
+    BooleanOperators_xor(s1, _cc, s2) {
+        return !(s1.eval(this.args.env) === s2.eval(this.args.env))
+    },
+
+    BooleanOperators_greater(s1, _arrow, s2) {
+        return s1.eval(this.args.env) > s2.eval(this.args.env)
+    },
+
+    BooleanOperators_less(s1, _eq, s2) {
+        return s1.eval(this.args.env) < s2.eval(this.args.env)
+    },
+
+    BooleanOperators_greatereq(s1, _eq, s2) {
+        return s1.eval(this.args.env) >= s2.eval(this.args.env)
+    },
+
+    BooleanOperators_lesseq(s1, _eq, s2) {
+        return s1.eval(this.args.env) <= s2.eval(this.args.env)
+    },
+
+    BooleanOperators_not(_, s) {
+        return !s.eval(this.args.env)
+    },
+
+    If(_if, _op, condition, _cp, body) {
+        if(condition.eval(this.args.env)) {
+            body.eval(this.args.env)
+        }
+    },
+
     //                     hehe
     Math_increment(ident_untrimmed, _pp) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
