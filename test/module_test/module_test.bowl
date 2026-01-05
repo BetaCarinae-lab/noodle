@@ -1,0 +1,2 @@
+run ./test/module_test/add.nd
+run ./test/module_test/file.nd
