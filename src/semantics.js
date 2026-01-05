@@ -206,9 +206,17 @@ export const actionDictionary = {
         return !s.eval(this.args.env)
     },
 
-    If(_if, _op, condition, _cp, body) {
-        if(condition.eval(this.args.env)) {
-            body.eval(this.args.env)
+    If(_if, _op, condition, _cp, body, _else, elseBody) {
+        if(_else.sourceString) {
+            if(condition.eval(this.args.env)) {
+                body.eval(this.args.env)
+            } else {
+                elseBody.eval(this.args.env)
+            }
+        } else {
+            if(condition.eval(this.args.env)) {
+                body.eval(this.args.env)
+            }
         }
     },
 

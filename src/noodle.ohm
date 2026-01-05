@@ -100,7 +100,7 @@ Path = "." ("/" ident)* "." ident
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
-  If = "if" "(" BooleanOperators ")" FuncBody?
+  If = "if" "(" BooleanOperators ")" FuncBody "else"? FuncBody?
 
   VarGet = "<" ident ">"
   
