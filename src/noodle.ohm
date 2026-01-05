@@ -107,7 +107,7 @@ NOODLE {
 
   FnType = "async" | "pub" | "local"
   
-  Exists = References "exists"
+  Exists = ident "exists"
 
   Expr = number | string | VarGet | FnCall | MethodCall | ObjectPropertyAccess
   

@@ -150,6 +150,10 @@ export const actionDictionary = {
         throw new Error(uhoh.eval(this.args.env))
     },
 
+    Exists(id, _exists) {
+        return this.args.env[id.sourceString] ? true : false
+    },
+
     True(_val) {
         return true
     },
