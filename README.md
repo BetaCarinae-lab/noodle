@@ -7,6 +7,14 @@
 This language is **not** intended for production use.  
 Noodle is a *hobby and experimental project*, and its features, behavior, and stability are subject to change at any time.
 
+## INSTALLATION
+To install this language, download any release with these prerequisites:
+Node v18 or higher,
+Then unzip into any directory and run these commands:
+```bash
+npm install
+sudo npm link
+
 ## Roadmap
 
 - Define core language concepts  

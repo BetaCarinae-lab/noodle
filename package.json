@@ -23,6 +23,7 @@
   "description": "Language i built in JS",
   "dependencies": {
     "fs": "^0.0.1-security",
+    "fs-extra": "^11.3.3",
     "ohm-js": "^17.3.0"
   }
 }
