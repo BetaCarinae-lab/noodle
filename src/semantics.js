@@ -9,7 +9,7 @@ export const actionDictionary = {
         // clean up
         console.log('Cleaning up!')
         Object.keys(this.args.env).forEach(key => {
-            if(this.args.env[key].persistant) {
+            if(this.args.env[key] && this.args.env[key].persistant) {
                 console.log('Variable is persistant, ignoring')
             } else {
                 console.log(`Deleting ${key}`)
