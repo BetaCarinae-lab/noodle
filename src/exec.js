@@ -11,7 +11,7 @@ export function runBowl(code) {
 
         Entry(_run, path, fileExt) {
             if(fileExt.sourceString == '.nd') {
-                env = runND(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'), env)
+                env = runND(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'), env, true)
             } else if (fileExt.sourceString == '.bowl') {
                 runBowl(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'), env)
             } else {
@@ -34,7 +34,7 @@ export function runBowl(code) {
     }
 }
 
-export function runND(inputCode, env_) {
+export function runND(inputCode, env_, _fromBowl) {
     let env = env_
     const grammar = ohm.grammar(readFileSync("src/noodle.ohm", "utf-8"));
     

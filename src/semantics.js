@@ -136,20 +136,21 @@ export const actionDictionary = {
     },
 
     //                     hehe
-    Math_increment(ident, _pp) {
-        ident = ident.eval(this.args.env)
-        if(this.args.env[ident.sourceString] && this.args.env[ident.sourceString].mutable) {
-            this.args.env[ident.sourceString].value++
+    Math_increment(ident_untrimmed, _pp) {
+        let ident = ident_untrimmed.sourceString.replace('&', '')
+        if(this.args.env[ident] && this.args.env[ident].mutable) {
+            this.args.env[ident].value++
         } else {
-            throw new Error(this.args.env[ident.sourceString] ? 'Value is not mutable!': `No value found with name: ${ident.sourceString}`)
+            throw new Error(this.args.env[ident] ? 'Value is not mutable!': `No value found with name: ${ident}`)
         }
     },
 
-    Math_decrement(ident, _pp) {
-        if(this.args.env[ident.sourceString] && this.args.env[ident.sourceString].mutable) {
-            this.args.env[ident.sourceString].value--
+    Math_decrement(ident_untrimmed, _pp) {
+        let ident = ident_untrimmed.sourceString.replace('&', '')
+        if(this.args.env[ident] && this.args.env[ident].mutable) {
+            this.args.env[ident].value--
         } else {
-            throw new Error(this.args.env[ident.sourceString].mutable ? `No value found with name: ${ident.sourceString}` : 'Value is not mutable!')
+            throw new Error(this.args.env[ident].mutable ? `No value found with name: ${ident}` : 'Value is not mutable!')
         }
     },
 
@@ -159,10 +160,6 @@ export const actionDictionary = {
         } else {
             throw new Error(`Cannot find function with name: ${name.sourceString}`)
         }
-    },
-
-    Ref(_curly, ident) {
-        return ident.sourceString
     },
 
     Return(_out, _op, value, _cp) {
