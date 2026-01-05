@@ -14,6 +14,7 @@ Then unzip into any directory and run these commands:
 ```bash
 npm install
 sudo npm link
+```
 
 ## Roadmap
 
