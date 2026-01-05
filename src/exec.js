@@ -18,6 +18,10 @@ export function runBowl(code) {
                 throw new Error(`Unknown file extension: ${fileExt.sourceString}`)
             }
         },
+
+        Comment(_hash, _op, _cp) {
+            return
+        },
     }
 
 

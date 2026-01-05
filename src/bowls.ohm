@@ -1,4 +1,5 @@
 NoodleBowl {
-	Main = Entry+
+	Main = (Entry | Comment)+
     Entry = "run" (~".nd" ~".bowl" any)* (".nd" | ".bowl")
+    Comment = "#(" (~")" any)* ")"
 }

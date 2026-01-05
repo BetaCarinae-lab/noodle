@@ -85,7 +85,7 @@ NOODLE {
   
   ObjectProperty = ident ("." ident)+
 
-  Comment = "#" "(" (~")" any*) ")"
+  Comment = "#" "(" (~")" any)* ")"
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
@@ -95,7 +95,7 @@ NOODLE {
   
   Ref = "&" ident
 
-  Type = "number" | "string" | "fn" | "array" | "object" | "reference"
+  Type = "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
 
   FuncBody = "{" Statement+ "}"
 

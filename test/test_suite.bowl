@@ -6,3 +6,4 @@ run ./test/booleans.nd
 run ./test/if_else.nd
 run ./test/comments.nd
 run ./test/bowl_test/test.bowl
+#(Comment)
