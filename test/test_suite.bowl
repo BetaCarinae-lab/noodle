@@ -1,9 +1,9 @@
-run ./test/math.nd
-run ./test/fnTest.nd
-run ./test/objects.nd
-run ./test/array.nd
-run ./test/booleans.nd
-run ./test/if_else.nd
-run ./test/comments.nd
-run ./test/bowl_test/test.bowl
+run ./math.nd
+run ./fnTest.nd
+run ./objects.nd
+run ./array.nd
+run ./booleans.nd
+run ./if_else.nd
+run ./comments.nd
+run ./bowl_test/test.bowl
 #(Comment)

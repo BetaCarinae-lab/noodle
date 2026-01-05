@@ -1,2 +1,2 @@
-run ./test/bowl_test/p1.nd
-run ./test/bowl_test/p2.nd
+run ./bowl_test/p1.nd
+run ./bowl_test/p2.nd
