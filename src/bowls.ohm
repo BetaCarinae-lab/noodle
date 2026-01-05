@@ -1,5 +1,7 @@
 NoodleBowl {
-	Main = (Entry | Comment)+
+	Main = (Entry | Comment | Register)+
     Entry = "run" (~".nd" ~".bowl" any)* (".nd" | ".bowl")
+    Register = "register" (~"as" ~".nd" any)* ".nd" "as" Type "("? "override"? ")"? 
+    Type = "module"
     Comment = "#(" (~")" any)* ")"
 }

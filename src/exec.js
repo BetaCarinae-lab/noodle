@@ -2,9 +2,14 @@ import { readFileSync } from "fs"
 import { actionDictionary } from './semantics.js';
 import * as ohm from "ohm-js"
 
+async function registerJS(path) {
+    let { exported } = await import(path)
+    return exported
+}
+
 export function runBowl(code) {
     let env = {}
-    let bowlDict = {
+    const bowlDict = {
         Main(entries) {
             return entries.children.map(c => c.eval())
         },
@@ -13,7 +18,7 @@ export function runBowl(code) {
             if(fileExt.sourceString == '.nd') {
                 env = runND(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'), env, true)
             } else if (fileExt.sourceString == '.bowl') {
-                runBowl(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'), env)
+                runBowl(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'))
             } else {
                 throw new Error(`Unknown file extension: ${fileExt.sourceString}`)
             }
@@ -22,8 +27,20 @@ export function runBowl(code) {
         Comment(_hash, _op, _cp) {
             return
         },
-    }
 
+        Register(_reg, path, ext, _as, type, _op, override, _cp) {
+            if(type.sourceString == 'module') {
+                let newenv = runND(readFileSync(path.sourceString + ext.sourceString, 'utf-8'), env)
+                if(!override.sourceString) {
+                    env = {...newenv, ...env}
+                } else {
+                    env = {...env, ...newenv}
+                }
+            } else if(type.sourceString == 'js-module') {
+                
+            }
+        },
+    }
 
     let grammar = ohm.grammar(readFileSync('./src/bowls.ohm', 'utf-8'))
     const semantics = grammar.createSemantics().addOperation('eval()', bowlDict)
