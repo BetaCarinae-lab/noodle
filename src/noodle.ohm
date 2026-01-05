@@ -15,6 +15,7 @@ NOODLE {
           | TemplateConstruction
           | Return
           | Exists
+          | Comment
           | BooleanOperators
           | True
           | False
@@ -43,7 +44,7 @@ NOODLE {
        | References "++"					--increment
        | References "--"					--decrement
 
-  Fn = FnType* "fn" ident ParameterList FuncBody
+  Fn = "persistant"? "fn" ident ParameterList FuncBody
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
@@ -83,16 +84,18 @@ NOODLE {
   MethodCall = "<" ObjectProperty StatementParameterList ">"
   
   ObjectProperty = ident ("." ident)+
+
+  Comment = "#" "(" (~")" any*) ")"
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
-  If = "if" "(" BooleanOperators ")" FuncBody
+  If = "if" "(" BooleanOperators ")" FuncBody?
 
   VarGet = "<" ident ">"
   
   Ref = "&" ident
 
-  Type = "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
+  Type = "number" | "string" | "fn" | "array" | "object" | "reference"
 
   FuncBody = "{" Statement+ "}"
 

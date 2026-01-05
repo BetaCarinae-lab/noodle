@@ -76,11 +76,11 @@ export const actionDictionary = {
         return chars.sourceString;
     },
 
-    Fn(typeList, _fn, name, ParameterList, body) {
+    Fn(persistant, _fn, name, ParameterList, body) {
         ParameterList = ParameterList.eval(this.args.env);
         var functionEnv = this.args.env
         this.args.env[name.sourceString] = {
-            properties: typeList.asIteration().children.map(c => c.sourceString),
+            persistant: persistant.sourceString ? true : false,
             body: (parameters) => {
                 parameters.forEach((param, index) => {
                     functionEnv[ParameterList[index].replace('mut ', '')] = {
@@ -113,6 +113,10 @@ export const actionDictionary = {
         } else {
             throw new Error(`No Value Found with name: ${id.sourceString}`)
         }
+    },
+
+    Comment(_, _op, _txt, _cp) {
+        return
     },
 
     Parameter(mut, ident) {
