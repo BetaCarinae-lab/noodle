@@ -22,10 +22,6 @@ export const actionDictionary = {
         return stmt.eval(this.args.env);
     },
 
-    Import(_imp, _op, path, _cp) {
-        
-    },
-
     Print(_print, _lp, expr, _rp) {
         const value = expr.eval(this.args.env);
         if(typeof value == 'object') {
@@ -33,6 +29,10 @@ export const actionDictionary = {
         } else {
             console.log('OUT: ' + value);
         }
+    },
+
+    Math_parens(_op, expr, _cp) {
+        return expr.eval(this.args.env)
     },
 
     Math_add(expr1, _plus, expr2) {
