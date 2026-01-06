@@ -9,7 +9,6 @@ NOODLE {
           | Template
           | Fn
           | Ref
-          | Import
           | If
           | MethodCall
           | ObjectPropertyAccess
@@ -18,6 +17,7 @@ NOODLE {
           | Delete
           | Exit
           | Exists
+          | Null
           | Comment
           | BooleanOperators
           | True
@@ -40,14 +40,15 @@ NOODLE {
 
   Print = "writeLn" "(" Statement ")"
 
-  Math = Expr "+" Expr			--add
+  Math = "(" Expr ")"       --parens
+       | Expr "+" Expr			--add
   	   | Expr "-" Expr			--minus
        | Expr "*" Expr	        --times
        | Expr "/" Expr	   	    --divide	
        | References "++"					--increment
        | References "--"					--decrement
 
-  Fn = "persistant"? "fn" ident ParameterList FuncBody
+  Fn = "persistent"? "fn" ident ParameterList FuncBody
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
@@ -64,11 +65,9 @@ NOODLE {
   
   ArrayAccess = "<" ident "at" Statement ">"
 
-  Import = "import" "(" Path ")"
+  keyword = "if" | "true" | "false" | "yes" | "no" | "yeah" | "nah" | "else" | "exit" | "delete" | "prop" | "writeLn" | "null" | "none" | "fn" | "output"
 
   Delete = "delete" ident
-
-Path = "." ("/" ident)* "." ident
 
   Exit = "exit" Statement
   
@@ -106,6 +105,8 @@ Path = "." ("/" ident)* "." ident
   
   Ref = "&" ident
 
+  Null = "null" | "none"
+
   Type = "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
 
   FuncBody = "{" Statement+ "}"
@@ -122,7 +123,7 @@ Path = "." ("/" ident)* "." ident
 
   string = "\"" (~"\"" any)* "\""
 
-  ident = letter idchar*
+  ident = ~keyword letter idchar*
 
   idchar = "_" | letter | number
 
