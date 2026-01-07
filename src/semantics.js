@@ -31,6 +31,15 @@ export const actionDictionary = {
         }
     },
 
+    Loop(_loop, expr, body) {
+        let i = 0
+        console.log(expr.eval(this.args.env))
+        while(i != expr.eval(this.args.env)) {
+            body.eval(this.args.env)
+            i++
+        }
+    },
+
     Math_parens(_op, expr, _cp) {
         return expr.eval(this.args.env)
     },
@@ -85,7 +94,11 @@ export const actionDictionary = {
     },
 
     number(digits) {
-        return Number(digits.sourceString);
+        if(digits.sourceString == 'inf') {
+            return Infinity
+        } else {
+            return Number(digits.sourceString);
+        }
     },
 
     string(_open, chars, _close) {

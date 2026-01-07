@@ -10,15 +10,15 @@ NOODLE {
           | Fn
           | Ref
           | If
+          | Loop
+          | Delete
+          | Comment
+          | Exit
           | MethodCall
           | ObjectPropertyAccess
           | TemplateConstruction
           | Return
-          | Delete
-          | Exit
           | Exists
-          | Null
-          | Comment
           | BooleanOperators
           | True
           | False
@@ -48,28 +48,28 @@ NOODLE {
        | References "++"					--increment
        | References "--"					--decrement
 
-  Fn = "persistent"? "fn" ident ParameterList FuncBody
+  Fn = "persistant"? "fn" ident ParameterList FuncBody
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
   Parameter = "mut"? ident
+
+  Delete = "delete" ident
+
+  Exit = "exit" Statement
   
   References = Ref | ObjectProperty
   
   Array = "[" listOf<Statement, ","> "]"
 
   End = "end"
+
+  Comment = "#" "(" (~")" any)* ")"
   
   True = "true" | "yes" | "yeah"
   False = "false" | "no" | "nah"
   
   ArrayAccess = "<" ident "at" Statement ">"
-
-  keyword = "if" | "true" | "false" | "yes" | "no" | "yeah" | "nah" | "else" | "exit" | "delete" | "prop" | "writeLn" | "null" | "none" | "fn" | "output"
-
-  Delete = "delete" ident
-
-  Exit = "exit" Statement
   
   StatementParameterList = "(" ListOf<Statement, ","> ")"
 
@@ -94,8 +94,6 @@ NOODLE {
   MethodCall = "<" ObjectProperty StatementParameterList ">"
   
   ObjectProperty = ident ("." ident)+
-
-  Comment = "#" "(" (~")" any)* ")"
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
@@ -105,26 +103,25 @@ NOODLE {
   
   Ref = "&" ident
 
-  Null = "null" | "none"
-
-  Type = "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
+  Type = "number" | "string" | "fn" | "array" | "object" | "reference"
 
   FuncBody = "{" Statement+ "}"
 
   FnType = "async" | "pub" | "local"
   
-  Exists = ident "exists"
+  Exists = References "exists"
 
   Expr = number | string | VarGet | FnCall | MethodCall | ObjectPropertyAccess
   
-  number = digit+
+  number = digit+ | "inf"
   
   Return = "output" "(" Statement ")"
+  
+  Loop = "loop" Expr FuncBody
 
   string = "\"" (~"\"" any)* "\""
 
-  ident = ~keyword letter idchar*
+  ident = letter idchar*
 
   idchar = "_" | letter | number
-
 }
