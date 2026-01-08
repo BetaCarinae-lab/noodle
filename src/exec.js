@@ -4,9 +4,21 @@ import * as ohm from "ohm-js"
 import { MWD } from "./info.js";
 import * as path_module from "path";
 
+function loadGrammar(filename) {
+  let grammarPath;
+  if (process.pkg) {
+    // When running from pkg executable
+    grammarPath = path.join(path.dirname(process.execPath), 'src', filename);
+  } else {
+    // Running in development
+    grammarPath = path.join(__dirname, filename);
+  }
+  return fs.readFileSync(grammarPath, "utf-8");
+}
+
 const grammars = {
-    noodle: ohm.grammar(readFileSync(MWD + "/" + "noodle.ohm", "utf-8")),
-    bowl: ohm.grammar(readFileSync(MWD + "/" + "bowls.ohm", "utf-8")),
+    noodle: ohm.grammar(loadGrammar('noodle.ohm')),
+    bowl: ohm.grammar(loadGrammar('bowls.ohm')),
 }
 
 async function registerJS(path) {
