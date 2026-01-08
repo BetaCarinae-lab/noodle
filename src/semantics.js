@@ -68,10 +68,11 @@ export const actionDictionary = {
         return expr1.eval(this.args.env) / expr2.eval(this.args.env)
     },
 
-    VarCreate(mut, pers, type, name, _eq, value) {
-        if(typeof value.eval(this.args.env) == type.sourceString || (type.sourceString == 'array' && Array.isArray(value.eval(this.args.env)))) {
+    VarCreate(mut, pers, strict, type, name, _eq, value) {
+        if(type.sourceString == "any" || typeof value.eval(this.args.env) == type.sourceString || (type.sourceString == 'array' && Array.isArray(value.eval(this.args.env)))) {
             this.args.env[name.sourceString] = {
                 type: type.sourceString,
+                strict: strict.sourceString ? true : false,
                 value: value.eval(this.args.env),
                 mutable: mut.sourceString ? true : false,
                 persistant: pers.sourceString ? true : false,
@@ -83,9 +84,29 @@ export const actionDictionary = {
 
     VarAssign(name, _eq, value) {
         if(this.args.env[name.sourceString] && this.args.env[name.sourceString].mutable) {
-            this.args.env[name.sourceString].value = value
+            if(this.args.env[name.sourceString].strict && this.args.env[name.sourceString].type == typeof value.eval(this.args.env)) {
+                this.args.env[name.sourceString].value = value
+            } else if(!this.args.env[name.sourceString].strict) {
+                this.args.env[name.sourceString].value = value
+            } else {
+                throw new Error(`Variable is strictly set to type ${this.args.env[name.sourceString].type}`)
+            }
         } else {
             throw new Error(this.args.env[name.sourceString] ? `That value is not mutable` : `No value found with name ${name.sourceString}`)
+        }
+    },
+
+    TryCatch(_try, trybody, _catch, _op, errorname, _cp, catchbody) {
+        try {
+            trybody.eval(this.args.env)
+        } catch(error) {
+            if(errorname.sourceString) {
+                let catchbodyenv = this.args.env
+                catchbodyenv[errorname.sourceString] = error
+                catchbody.eval(catchbodyenv)
+            } else {
+                catchbody.eval(this.args.env)
+            }
         }
     },
 
