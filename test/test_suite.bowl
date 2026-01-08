@@ -1,4 +1,5 @@
 run ./math.nd
+run ./variables.nd
 run ./fnTest.nd
 run ./objects.nd
 run ./array.nd
