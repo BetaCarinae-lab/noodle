@@ -8,7 +8,7 @@ This language is **not** intended for production use.
 Noodle is a *hobby and experimental project*, and its features, behavior, and stability are subject to change at any time.
 
 ## INSTALLATION
-To install this language, download any release **except 0.9.7**, which has severe security flaws
+To install this language, download any release **except 0.9.7**, which has severe security flaws  
 Then unzip into any directory and run these commands:
 ```bash
 chmod +x ./install.sh
@@ -27,3 +27,4 @@ you should now be able to run `noodle --help` or any other command
 
 At this time, the project is maintained solely by me. Contributions are not currently being accepted, as this project is intended for personal learning and so i have at  
 least something on my portfolio.  
+
