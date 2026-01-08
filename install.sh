@@ -3,8 +3,8 @@
 set -e
 
 BINARY_NAME="noodle"
-SRC_BINARY="./dist/noodle-linux"
-SRC_GRAMMARS="./dist/noodle.ohm ./dist/bowls.ohm"
+SRC_BINARY="./noodle-linux"
+SRC_GRAMMARS="./noodle.ohm ./bowls.ohm"
 DEST="/usr/local/bin/$BINARY_NAME"
 
 echo "Installing $BINARY_NAME..."
@@ -17,4 +17,4 @@ for f in $SRC_GRAMMARS; do
   sudo cp "$f" "/usr/local/bin/"
 done
 
-echo "Installation complete! Binary and grammars are ready."
+echo "Installation Done, Use noodle --help for a list of commands"
