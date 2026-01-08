@@ -1,0 +1,13 @@
+number a is 10
+boolean b is true
+string c is "Hello"
+array d is [1, 2, 3]
+any e is ", World!"
+writeLn("Expected Output: Hello, World!")
+writeLn(<c> + <e>)
+mut strict number f is 10
+try {
+    f is [1, 2, 3]
+} catch() {
+    writeLn("strict works")
+}
