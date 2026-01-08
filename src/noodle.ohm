@@ -10,6 +10,7 @@ NOODLE {
           | Loop
           | Delete
           | Comment
+          | TryCatch
           | Exit
           | Return
           | End
@@ -49,7 +50,7 @@ NOODLE {
   ExitValues = "success" | "failure"
 
   Exit = "exit" ExitValues
-  
+
   References = Ref | ObjectProperty
   
   Array = "[" listOf<Statement, ","> "]"
@@ -67,7 +68,7 @@ NOODLE {
 
   FnCall = "<" ident StatementParameterList ">"
 
-  VarCreate = "mut"? "persistant"? Type ident "is" Statement
+  VarCreate = "mut"? "persistant"? "strict"? Type ident "is" Statement
 
   VarAssign = ident "is" Statement
   
@@ -95,13 +96,15 @@ NOODLE {
   
   Ref = "&" ident
 
-  Type = "number" | "string" | "fn" | "array" | "object" | "reference"
+  Type = "any" | "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
 
   FuncBody = "{" Statement+ "}"
 
   FnType = "async" | "pub" | "local"
   
   Exists = References "exists"
+  
+  TryCatch = "try" FuncBody "catch" "(" ident? ")" FuncBody
 
   Expr = BooleanOperators 
   		  | Math
