@@ -4,7 +4,6 @@ import { readFileSync } from 'fs'
 import path from 'path';
 import { runBowl, runND } from '../src/exec.js';
 import readline from "readline";
-import { newProject } from '../src/create_new_project.js';
 import { VERSION } from '../src/info.js';
 import { MWD } from '../src/info.js';
 import { exit } from 'process';
@@ -36,8 +35,6 @@ if(!process.argv[2]) {
         })
     }
     repl()
-} else if (process.argv[2] == '--new') {
-    newProject(process.argv[3], process.cwd())
 } else if (process.argv[2] == '--info' || process.argv[3] == '--info') {
     console.log(`
     ------------------------------------------
@@ -47,6 +44,7 @@ if(!process.argv[2]) {
     UsingBowl: ${usingBowl}
     Reading: ${file_path}
     Debug: ${env.secure.debug}
+    ExplainParse: ${process.argv[3] == '--parseinfo'}
 
     ## Working Directory and Versions
     NDV: ${VERSION}
@@ -65,6 +63,7 @@ if(!process.argv[2]) {
         noodle -> Opens Noodle REPL
         noodle --info or noodle ./file.nd --info -> prints run info
         noodle --help -> prints this
+        noodle ./file.nd --parseinfo -> Prints ohm match trace, will fill up your terminal
         noodle ./file.nd or noodle ./file.bowl -> runs a nd or bowl file
     `)
     exit(0)
@@ -84,6 +83,7 @@ console.log(`
 UsingBowl: ${usingBowl}
 Reading: ${file_path}
 Debug: ${env.secure.debug}
+ExplainParse: ${process.argv[3] == '--parseinfo'}
 
 ## Working Directory and Versions
 NDV: ${VERSION}
@@ -98,7 +98,7 @@ NodeV: ${process.version}
 if(usingBowl) {
     runBowl(inputCode)
 } else {
-    runND(inputCode, env)
+    runND(inputCode, env, process.argv[3] == '--parseinfo')
 }
 
 exit(0)
