@@ -7,3 +7,5 @@ a++
 writeLn(<a>)
 a--
 writeLn(<a>)
+
+writeLn(-5)

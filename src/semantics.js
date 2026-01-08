@@ -5,7 +5,15 @@ import { inspect } from "util";
 
 export const actionDictionary = {
     Program(statements, _semi) {
-        statements.children.map(s => s.eval(this.args.env));
+        try {
+            statements.children.map(s => s.eval(this.args.env));
+        } catch (error) {
+            if(error instanceof ReturnSignal) {
+                return error
+            } else {
+                throw new Error(error)
+            }
+        }
         // clean up
         console.log('Cleaning up!')
         Object.keys(this.args.env).forEach(key => {
@@ -168,7 +176,7 @@ export const actionDictionary = {
     },
 
     Exit(_ex, uhoh) {
-        throw new Error(uhoh.eval(this.args.env))
+        throw new ReturnSignal(uhoh.eval(this.args.env))
     },
 
     Exists(id, _exists) {
@@ -235,6 +243,10 @@ export const actionDictionary = {
                 body.eval(this.args.env)
             }
         }
+    },
+
+    Math_negate(_m, value) {
+        return -value.eval(this.args.env)
     },
 
     //                     hehe
