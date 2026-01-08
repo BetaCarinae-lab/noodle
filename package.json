@@ -1,8 +1,8 @@
 {
   "name": "noodle",
-  "version": "0.9.7",
+  "version": "0.1.0",
   "main": "main.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "build": "pkg . --out-dir dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64"
   },
@@ -16,11 +16,11 @@
       "src/semantics.js",
       "src/info.js",
       "src/etc.js",
-      "src/create_new_project.js",
       "bin/noodle.js"
     ],
     "assets": [
-      "src/*.ohm"
+      "src/noodle.ohm",
+      "src/bowls.ohm"
     ]
   },
   "bin": {
@@ -33,10 +33,13 @@
     "url": "https://github.com/BetaCarinae-lab/noodle/issues"
   },
   "homepage": "https://github.com/BetaCarinae-lab/noodle#readme",
-  "description": "Language i built in JS",
+  "description": "Language i built in JS using ohmjs",
   "dependencies": {
     "fs": "^0.0.1-security",
     "fs-extra": "^11.3.3",
     "ohm-js": "^17.3.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
   }
 }

@@ -1,24 +1,25 @@
-import { readFileSync } from "fs"
-import { actionDictionary } from './semantics.js';
-import * as ohm from "ohm-js"
-import { MWD } from "./info.js";
-import * as path_module from "path";
+const { readFileSync } = require("fs")
+const { actionDictionary } = require('./semantics.js');
+const ohm = require("ohm-js")
+const { MWD } = require("./info.js");
+const path_module = require("path");
 
 function loadGrammar(filename) {
   let grammarPath;
+  let usesrc = process.pkg ? false : true
   if (process.pkg) {
     // When running from pkg executable
-    grammarPath = path.join(path.dirname(process.execPath), 'src', filename);
+    grammarPath = path_module.join(path_module.dirname(process.execPath), filename);
   } else {
     // Running in development
-    grammarPath = path.join(__dirname, filename);
+    grammarPath = path_module.join(usesrc ? path_module.dirname(MWD) + '/src/' : path_module.dirname(MWD), filename);
   }
-  return fs.readFileSync(grammarPath, "utf-8");
+  return readFileSync(grammarPath, "utf-8");
 }
 
 const grammars = {
-    noodle: ohm.grammar(loadGrammar('noodle.ohm')),
-    bowl: ohm.grammar(loadGrammar('bowls.ohm')),
+    noodle: ohm.grammar(loadGrammar('/noodle.ohm')),
+    bowl: ohm.grammar(loadGrammar('./bowls.ohm')),
 }
 
 async function registerJS(path) {
@@ -26,7 +27,7 @@ async function registerJS(path) {
     return exported
 }
 
-export function runBowl(code, path) {
+function runBowl(code, path) {
     let env = {}
     const bowlDict = {
         Main(entries) {
@@ -96,7 +97,7 @@ export function runBowl(code, path) {
     }
 }
 
-export function runND(inputCode, env_, _fromBowl) {
+function runND(inputCode, env_, _fromBowl) {
     let env = env_
     
     const semantics = grammars.noodle.createSemantics().addOperation('eval(env)', actionDictionary);
@@ -119,4 +120,10 @@ export function runND(inputCode, env_, _fromBowl) {
         env: env,
         exitCode: exitCode
     }
+}
+
+
+module.exports = {
+    runBowl,
+    runND,
 }

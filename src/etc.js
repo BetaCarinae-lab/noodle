@@ -1,10 +1,10 @@
-export class ReturnSignal {
+class ReturnSignal {
     constructor(value) {
         this.value = value
     }
 }
 
-export class Enviroment {
+class Enviroment {
     constructor(parent = null) { 
         this.parent = parent
         this.values = {}
@@ -25,4 +25,9 @@ export class Enviroment {
     remove(name) {
         this.values[name] = "deleted"
     }
+}
+
+module.exports = {
+    ReturnSignal,
+    Enviroment
 }
