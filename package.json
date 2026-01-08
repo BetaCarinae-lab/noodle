@@ -1,17 +1,30 @@
 {
   "name": "noodle",
-  "version": "1.0.0",
+  "version": "0.9.7",
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "pkg . --out-dir dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BetaCarinae-lab/noodle.git"
   },
+  "pkg": {
+    "scripts": [
+      "src/exec.js",
+      "src/semantics.js",
+      "src/info.js",
+      "src/etc.js",
+      "src/create_new_project.js",
+      "bin/noodle.js"
+    ],
+    "assets": [
+      "src/*.ohm"
+    ]
+  },
   "bin": {
-    "noodle": "./src/main.js"
+    "noodle": "bin/noodle.js"
   },
   "keywords": [],
   "author": "Betacarinae",
