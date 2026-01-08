@@ -26,7 +26,11 @@ export function runBowl(code, path) {
             if(fileExt.sourceString == '.nd') {
                 //console.log(`go from: ${MWD} to: ${path_module.resolve(path.sourceString + fileExt.sourceString)}`)
                 //console.log(path_module.resolve(path.sourceString + fileExt.sourceString))
-                env = runND(readFileSync(path_module.resolve(path.sourceString + fileExt.sourceString), 'utf-8'), env, true)
+                let result = runND(readFileSync(path_module.resolve(path.sourceString + fileExt.sourceString), 'utf-8'), env, true)
+
+                env = result.env
+                
+                return result.exitCode
 
             } else if (fileExt.sourceString == '.bowl') {
 
@@ -55,6 +59,18 @@ export function runBowl(code, path) {
                 
             }
         },
+
+        Log(_log, _oq, text, _cq) {
+            console.log('B-OUT: ' + text.sourceString)
+        },
+
+        If(_if, entry, expected, _then, torun, _if2, _not, torunifnot) {
+            if(entry.eval().value == expected.sourceString) {
+                torun.eval()
+            } else {
+                torunifnot.eval()
+            }
+        },
     } 
     const semantics = grammars.bowl.createSemantics().addOperation('eval()', bowlDict)
 
@@ -78,12 +94,17 @@ export function runND(inputCode, env_, _fromBowl) {
     */
     let matchResult = grammars.noodle.match(inputCode);
 
+    let exitCode;
+
     if(matchResult.succeeded()) {
         console.log("Match Succeeded, Applying Semantics");
-        semantics(matchResult).eval(env);
+        exitCode = semantics(matchResult).eval(env);
     } else {
         console.log('noodle error: ' + matchResult.message);
     }
 
-    return env
+    return {
+        env: env,
+        exitCode: exitCode
+    }
 }

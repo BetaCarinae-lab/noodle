@@ -34,6 +34,7 @@ NOODLE {
        | Expr "*" Expr	        --times
        | Expr "/" Expr	   	    --divide	
        | "(" Expr ")"       --parens
+       | "-" Expr			--negate
        | ident "++"					--increment
        | ident "--"					--decrement
 
