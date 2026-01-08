@@ -1,6 +1,6 @@
 # NOODLE
 
-**Noodle** is an experimental programming language currently under development. The goal of the project is to explore a language design that is performant and easy to set up anywhere, while maintaining a concise and expressive syntax. Its syntax is inspired by elements of **Rust** and **JavaScript**. Which it is written in
+**Noodle** is a project of mine, It is a language in js using ohm-js, It's syntax is inspired by rust and javascript
 
 ## Warning
 
@@ -8,13 +8,13 @@ This language is **not** intended for production use.
 Noodle is a *hobby and experimental project*, and its features, behavior, and stability are subject to change at any time.
 
 ## INSTALLATION
-To install this language, download any release with these prerequisites:
-Node v18 or higher,
+To install this language, download any release **except 0.9.7**, which has severe security flaws
 Then unzip into any directory and run these commands:
 ```bash
-npm install
-sudo npm link
+chmod +x ./install.sh
+./install.sh
 ```
+you should now be able to run `noodle --help` or any other command
 
 ## Roadmap
 
@@ -25,6 +25,5 @@ sudo npm link
 
 ## Contributing
 
-At this time, the project is maintained solely by the author. Contributions are not currently being accepted, as this project is intended for personal experimentation and learning.
-You may see 3 different people in the git logs, Betacarinae-lab is my github account, Betacarinae is my main computer
-and Finn Fagan is my main programming computer
+At this time, the project is maintained solely by me. Contributions are not currently being accepted, as this project is intended for personal learning and so i have at  
+least something on my portfolio.  
