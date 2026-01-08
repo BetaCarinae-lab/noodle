@@ -1,9 +1,6 @@
-import { ReturnSignal } from "./etc.js";
-import { inspect } from "util";
+const { ReturnSignal } = require("./etc.js");
 
-
-
-export const actionDictionary = {
+const actionDictionary = {
     Program(statements, _semi) {
         try {
             statements.children.map(s => s.eval(this.args.env));
@@ -432,4 +429,8 @@ export const actionDictionary = {
         }
         return returned
     },                                    
+}
+
+module.exports = {
+    actionDictionary
 }
