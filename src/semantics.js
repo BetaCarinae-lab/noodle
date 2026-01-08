@@ -101,6 +101,10 @@ export const actionDictionary = {
         }
     },
 
+    ExitValues(value) {
+        return value.sourceString
+    },
+
     string(_open, chars, _close) {
         return chars.sourceString;
     },
