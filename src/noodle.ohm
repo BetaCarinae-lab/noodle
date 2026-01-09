@@ -50,8 +50,6 @@ NOODLE {
   ExitValues = "success" | "failure"
 
   Exit = "exit" ExitValues
-
-  References = Ref | ObjectProperty
   
   Array = "[" listOf<Statement, ","> "]"
 
@@ -70,7 +68,7 @@ NOODLE {
 
   VarCreate = "mut"? "persistant"? "strict"? Type ident "is" Statement
 
-  VarAssign = ident "is" Statement
+  VarAssign = (ident | RefResolve) "is" Statement
   
   Property = "mut"? "prop" ident "is" Type ","
   
@@ -92,35 +90,39 @@ NOODLE {
   
   If = "if" "(" BooleanOperators ")" FuncBody "else"? FuncBody?
 
-  VarGet = "<" ident ">"
+  VarGet = "<" (ident | RefResolve) ">"
   
-  Ref = "&" ident
+  Reference = "&" ident
 
   Type = "any" | "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
 
   FuncBody = "{" Statement+ "}"
+  
+  RefResolve = "|" ident "|"
 
   FnType = "async" | "pub" | "local"
   
-  Exists = References "exists"
+  Exists = ident "exists"
   
   TryCatch = "try" FuncBody "catch" "(" ident? ")" FuncBody
 
   Expr = BooleanOperators 
-  		  | Math
-  		  | number 
-          | string 
-          | ArrayAccess
-          | VarGet 
-          | Exists
-          | FnCall
-          | MethodCall
-          | ObjectPropertyAccess
-          | MethodCall
-          | TemplateConstruction
-          | ObjectPropertyAccess
-          | True
-          | False
+        | Math
+        | number 
+        | string 
+        | ArrayAccess
+        | VarGet 
+        | Exists
+        | FnCall
+        | MethodCall
+        | RefResolve
+        | ObjectPropertyAccess
+        | MethodCall
+        | TemplateConstruction
+        | ObjectPropertyAccess
+        | True
+        | False
+        | Reference
   
   number = digit+ | "inf"
   
