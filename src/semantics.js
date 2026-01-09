@@ -80,16 +80,16 @@ const actionDictionary = {
     },
 
     VarAssign(name, _eq, value) {
-        if(this.args.env[name.sourceString] && this.args.env[name.sourceString].mutable) {
-            if(this.args.env[name.sourceString].strict && this.args.env[name.sourceString].type == typeof value.eval(this.args.env)) {
-                this.args.env[name.sourceString].value = value
-            } else if(!this.args.env[name.sourceString].strict) {
-                this.args.env[name.sourceString].value = value
+        if(this.args.env[name.eval(this.args.env)] && this.args.env[name.eval(this.args.env)].mutable) {
+            if(this.args.env[name.eval(this.args.env)].strict && this.args.env[name.eval(this.args.env)].type == typeof value.eval(this.args.env)) {
+                this.args.env[name.eval(this.args.env)].value = value
+            } else if(!this.args.env[name.eval(this.args.env)].strict) {
+                this.args.env[name.eval(this.args.env)].value = value
             } else {
-                throw new Error(`Variable is strictly set to type ${this.args.env[name.sourceString].type}`)
+                throw new Error(`Variable is strictly set to type ${this.args.env[name.eval(this.args.env)].type}`)
             }
         } else {
-            throw new Error(this.args.env[name.sourceString] ? `That value is not mutable` : `No value found with name ${name.sourceString}`)
+            throw new Error(this.args.env[name.eval(this.args.env)] ? `That value is not mutable` : `No value found with name ${name.eval(this.args.env)}`)
         }
     },
 
@@ -107,12 +107,28 @@ const actionDictionary = {
         }
     },
 
+    Reference(_a, id) {
+        return {references: id.sourceString}
+    },
+
+    RefResolve(_pipe, id, _pipe2) {
+        return this.args.env[this.args.env[id.sourceString].value.references]
+    },
+
     VarGet(_ot, name, _ct) {
-        if(this.args.env[name.sourceString]) {
-             return this.args.env[name.sourceString].value
+        if(typeof name.eval(this.args.env) == 'object') {
+            return name.eval(this.args.env).value
         } else {
-            throw new Error(`No value found with name: ${name.sourceString}`)
+            if(this.args.env[name.sourceString]) {
+                return this.args.env[name.sourceString].value
+            } else {
+                throw new Error(`No value found with name: ${name.eval(this.args.env)}`)
+            }
         }
+    },
+
+    ident(first, rest) {
+        return first.sourceString + rest.sourceString
     },
 
     Expr(e) {
