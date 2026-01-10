@@ -1,3 +1,0 @@
-import(./module.nd)
-
-writeLn(<add(10, 10)>)

@@ -1,1 +1,0 @@
-if run ./full_bowl_test/test.nd success then log "Ran Successfully"

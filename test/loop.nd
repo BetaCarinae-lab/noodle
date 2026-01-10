@@ -1,3 +1,0 @@
-loop 3 {
-    writeLn("This will repeat 5 times")
-}

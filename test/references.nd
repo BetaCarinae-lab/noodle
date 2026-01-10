@@ -1,7 +1,0 @@
-number a is 10
-
-object b is &a
-
-|b| is 11
-
-writeLn(<|b|>)

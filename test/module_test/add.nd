@@ -1,3 +1,0 @@
-persistant fn add(a, b) {
-    output(<a> + <b>)
-}
