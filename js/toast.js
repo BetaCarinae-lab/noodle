@@ -63,12 +63,12 @@ const actionDictionary = {
     VarCreate(mut, pers, strict, type, name, _eq, value) {
         return {
             type: "var_create",
-            mut: mut.sourceString ? true : false,
-            pers: pers.sourceString ? true : false,
+            mutable: mut.sourceString ? true : false,
+            persistant: pers.sourceString ? true : false,
             strict: strict.sourceString ? true : false,
             var_type: type.sourceString,
             name: name.sourceString,
-            value: value.ast()
+            expr: value.ast()
         }
     },
 

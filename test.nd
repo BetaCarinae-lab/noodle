@@ -1,1 +1,3 @@
-writeLn("Hello, World!")
+number a is 10
+
+writeLn(<a>)

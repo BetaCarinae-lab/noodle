@@ -1,0 +1,21 @@
+[
+  {
+    "type": "var_create",
+    "mutable": false,
+    "persistant": false,
+    "strict": false,
+    "var_type": "number",
+    "name": "a",
+    "expr": {
+      "type": "number",
+      "digits": "10"
+    }
+  },
+  {
+    "type": "print",
+    "expr": {
+      "type": "var_get",
+      "id": "a"
+    }
+  }
+]
