@@ -21,11 +21,27 @@ pub fn refer(stmt: &Stmt, ctx: &mut Context) {
 
             }
         },
+
         Stmt::var_create { mutable, persistant, strict, var_type, name, expr } => {
-            ctx.set(name.clone(), Variable { name: name.clone(), mutable: *mutable, persistant: *persistant, strict: *strict, var_type: var_type.clone(), value: eval_expr(&expr, ctx) });
+            ctx.set(
+                name.clone(), 
+                Variable { 
+                    name: name.clone(), 
+                    mutable: *mutable, 
+                    persistant: *persistant, 
+                    strict: *strict, 
+                    var_type: var_type.clone(), 
+                    value: eval_expr(&expr, ctx) 
+                }
+            );
+        },
+
+        Stmt::Function { persistant, name, parameter_list, body } => {
+            println!("{} {} {:?} {:?}", persistant, name, parameter_list, body)
         }
     }
 }
+
 
 
 pub fn eval_expr(expr: &Expr, ctx: &Context) -> ExprTypes {

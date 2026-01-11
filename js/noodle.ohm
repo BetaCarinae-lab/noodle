@@ -43,7 +43,7 @@ NOODLE {
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
-  Parameter = "mut"? ident
+  Parameter = "mut"? ident ":" Type
 
   Delete = "delete" ident
 

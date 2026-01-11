@@ -3,6 +3,8 @@ use crate::context::ExprTypes;
 use crate::Context;
 use crate::eval::eval_expr;
 
+// why does every language use the // comment syntax
+
 #[derive(Debug, Deserialize)]
 pub struct Program(pub Vec<Stmt>);
 
@@ -12,6 +14,7 @@ impl Program {
     }
 }
 
+#[derive(Clone)]
 pub struct Variable {
     #[allow(unused)]
     pub name: String,
@@ -54,14 +57,44 @@ impl Variable {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(tag = "type")]
 pub enum Stmt {
     #[serde(rename = "print")]
     Print { expr: Expr },
     #[allow(nonstandard_style)]
-    var_create { mutable: bool, persistant: bool, strict: bool, var_type: String, name: String, expr: Expr },
+    var_create { 
+        mutable: bool, 
+        persistant: bool, 
+        strict: bool, 
+        var_type: String, 
+        name: String, 
+        expr: Expr 
+    },
+    #[serde(rename = "function")]
+    Function {
+        persistant: bool,
+        name: String,
+        #[serde(rename = "ParameterList")]
+        parameter_list: ParameterList,
+        body: ParameterList
+    }
 }
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ParameterList {
+    #[serde(rename = "pList")]
+    pub pList: Vec<Parameter>
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Parameter {
+    pub mutable: bool,
+    #[serde(rename = "requiredType")]
+    pub required_type: String,
+    pub name: String
+}
+
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(tag = "type")]

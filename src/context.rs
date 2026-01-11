@@ -28,6 +28,10 @@ impl Context {
             .insert(name, value);
     }
 
+    pub fn copy_scope(&self) -> Context {
+        return Context { scopes: self.scopes.clone() }
+    }
+
     #[allow(unused)]
     pub fn push_scope(&mut self) {
         self.scopes.push(HashMap::new());

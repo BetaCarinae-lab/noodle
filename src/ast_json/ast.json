@@ -1,21 +1,30 @@
 [
   {
-    "type": "var_create",
-    "mutable": false,
+    "type": "function",
     "persistant": false,
-    "strict": false,
-    "var_type": "number",
-    "name": "a",
-    "expr": {
-      "type": "string",
-      "value": "Hello, World!"
-    }
-  },
-  {
-    "type": "print",
-    "expr": {
-      "type": "var_get",
-      "id": "a"
+    "name": "main",
+    "ParameterList": {
+      "type": "parameter_list",
+      "pList": [
+        {
+          "type": "parameter",
+          "mutable": false,
+          "requiredType": "number",
+          "name": "a"
+        }
+      ]
+    },
+    "body": {
+      "type": "func_body",
+      "body": [
+        {
+          "type": "print",
+          "expr": {
+            "type": "string",
+            "value": "Hello!"
+          }
+        }
+      ]
     }
   }
 ]

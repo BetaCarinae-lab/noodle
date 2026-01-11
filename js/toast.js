@@ -172,11 +172,11 @@ const actionDictionary = {
             type: "comment"
         }
     },
-
-    Parameter(mut, ident) {
+    Parameter(mut, ident, _, type) {
         return {
             type: "parameter",
             mutable: mut.sourceString ? true : false,
+            requiredType: type.sourceString,
             name: ident.sourceString, 
         }
     },
@@ -352,7 +352,7 @@ const actionDictionary = {
     ParameterList(_op, listOfParams, _cp) {
         return {
             type: "parameter_list",
-            pList: listOfParams.asIteration().children.map(c => c.sourceString),
+            pList: listOfParams.asIteration().children.map(c => c.ast()),
         }
     },
 
@@ -364,10 +364,7 @@ const actionDictionary = {
     },
 
     _iter(...children) {
-        return {
-            type: "iter",
-            children: children.map(c => c.ast())
-        }
+        return children.map(c => c.ast())
     },
 
     ObjectPropertyAccess(_ob, objectProperty,_cb) {

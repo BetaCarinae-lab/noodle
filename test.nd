@@ -1,3 +1,5 @@
-number a is "Hello, World!"
 
-writeLn(<a>)
+
+fn main(a: number) {
+    writeLn("Hello!")
+}
