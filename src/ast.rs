@@ -13,15 +13,21 @@ impl Program {
 }
 
 pub struct Variable {
+    #[allow(unused)]
     pub name: String,
+    #[allow(unused)]
     pub mutable: bool,
+    #[allow(unused)]
     pub persistant: bool,
+    #[allow(unused)]
     pub strict: bool,
+    #[allow(unused)]
     pub var_type: String,
     pub value: ExprTypes,
 }
 
 impl Variable {
+    #[allow(unused)]
     pub fn new(name: String, mutable: bool, persistant: bool, strict: bool, var_type: String, value: ExprTypes) -> Self{
         Self {
             name: name,
@@ -37,6 +43,8 @@ impl Variable {
         return self.value.clone()
     }
 
+
+    #[allow(unused)]
     pub fn set(&mut self, set_to: Expr, ctx: &Context) {
         if(self.mutable) {
             self.value = eval_expr(&set_to, ctx)
@@ -51,6 +59,7 @@ impl Variable {
 pub enum Stmt {
     #[serde(rename = "print")]
     Print { expr: Expr },
+    #[allow(nonstandard_style)]
     var_create { mutable: bool, persistant: bool, strict: bool, var_type: String, name: String, expr: Expr },
 }
 
@@ -68,21 +77,30 @@ pub enum Expr {
         digits: String,
     },
 
+    #[serde(rename = "string")]
+    String {
+        value: String,
+    },
+
+    #[allow(nonstandard_style)]
     multiply {
         expr1: Box<Expr>,
         expr2: Box<Expr>,
     },
 
+    #[allow(nonstandard_style)]
     subtract {
         expr1: Box<Expr>,
         expr2: Box<Expr>,
     },
 
+    #[allow(nonstandard_style)]
     divide {
         expr1: Box<Expr>,
         expr2: Box<Expr>
     },
 
+    #[allow(nonstandard_style)]
     var_get {
         id: String
     },

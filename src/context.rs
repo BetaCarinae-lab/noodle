@@ -28,10 +28,12 @@ impl Context {
             .insert(name, value);
     }
 
+    #[allow(unused)]
     pub fn push_scope(&mut self) {
         self.scopes.push(HashMap::new());
     }
 
+    #[allow(unused)]
     pub fn pop_scope(&mut self) {
         self.scopes.pop();
     }
@@ -40,5 +42,6 @@ impl Context {
 #[derive(Debug, Clone)]
 pub enum ExprTypes {
     Number(i64),
+    String(String),
     Expr(Expr),
 }

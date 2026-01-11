@@ -15,6 +15,9 @@ pub fn refer(stmt: &Stmt, ctx: &mut Context) {
                 ExprTypes::Expr(val) => {
                     println!("OUT: {:?}", val)
                 }
+                ExprTypes::String(val) => {
+                    println!("OUT: {:?}", val)
+                }
 
             }
         },
@@ -54,6 +57,10 @@ pub fn eval_expr(expr: &Expr, ctx: &Context) -> ExprTypes {
                 }
                 None => {return ExprTypes::Expr(Expr::Number { digits: "NULL".to_string() });}
             }
+        },
+
+        Expr::String { value } => {
+            ExprTypes::String(value.clone())
         }
     }
 }
@@ -69,11 +76,17 @@ pub fn handle_number(val: ExprTypes, ctx: &Context) -> i64 {
                 ExprTypes::Number(value) => {
                     return value
                 }
-                ExprTypes::Expr(value) => {
+                ExprTypes::Expr(_value) => {
                     println!("Unhandled Error at eval.rs 65, attempted to handle expr number, failed miserably, im sorry :(");
                     return 0
                 }
+                ExprTypes::String(val) => {
+                    return -60
+                }
             }
+        }
+        ExprTypes::String(value) => {
+            return -60
         }
     }
 }

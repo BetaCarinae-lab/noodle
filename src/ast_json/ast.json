@@ -7,8 +7,8 @@
     "var_type": "number",
     "name": "a",
     "expr": {
-      "type": "number",
-      "digits": "10"
+      "type": "string",
+      "value": "Hello, World!"
     }
   },
   {
