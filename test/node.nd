@@ -1,0 +1,11 @@
+node root {
+    writeLn("Entry Point")
+    
+    merge globals
+}
+
+node globals {
+    number a is 10;
+}
+
+run

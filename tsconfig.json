@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "nodenext",      // Important! ESM output
+    "outDir": "dist",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*"]
+}

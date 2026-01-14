@@ -1,5 +1,5 @@
 NOODLE {
-  Program     = (Statement ";"?)+
+  Program     = Statement ";"?
   Statement   = Print 
           | VarCreate
           | VarAssign
@@ -43,7 +43,7 @@ NOODLE {
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
-  Parameter = "mut"? ident
+  Parameter = "mut"? ident ":" Type
 
   Delete = "delete" ident
 
@@ -66,11 +66,14 @@ NOODLE {
 
   FnCall = "<" ident StatementParameterList ">"
 
-  VarCreate = "mut"? "persistant"? "strict"? Type ident "is" Statement
+  Mut = "mut"?
+
+
+  VarCreate = Mut "persistant"? "strict"? Type ident "is" Statement
 
   VarAssign = (ident | RefResolve) "is" Statement
   
-  Property = "mut"? "prop" ident "is" Type ","
+  Property = Mut "prop" ident "is" Type ","
   
   TemplateBody = "{"  (~"}" Property | Method)* "}"
   

@@ -1,0 +1,125 @@
+export class ReturnSignal {
+    value: any;
+
+    constructor(value: any) {
+        this.value = value
+    }
+}
+
+export class Enviroment {
+    parent: Enviroment | null
+    values: { [key: string]: any }
+
+    constructor(parent = null) { 
+        this.parent = parent
+        this.values = {}
+    }
+
+    get(name: string) {
+        if(this.values[name]) {
+            return this.values[name]
+        } else {
+            throw new Error(`Can't get ${name}, no variable with that name!`)
+        }
+    }
+
+    store(name: string, value: Variable) {
+        this.values[name] = value
+    }
+
+    remove(name: string) {
+        this.values[name] = "deleted"
+    }
+}
+
+export function getType(value: any) {
+    if(typeof value == "undefined") {
+        return "undefined"
+    } else if(typeof value == "string") {
+        return "string"
+    } else if(typeof value == "boolean") {
+        return "bool"
+    } else if(typeof value == "number") {
+        return "number"
+    } else if(typeof value == "object") {
+        if(value.references) {
+            return "reference"
+        } else if(Array.isArray(value)) {
+            return "array"
+        } else {
+            return "object"
+        }
+    } else {
+        return "no_type"
+    }
+}
+
+export class Func {
+    persistant: boolean
+    body: (parameters: any[]) => any
+
+
+    constructor(persistant: boolean, body: (parameters: any[]) => any) {
+        this.persistant = persistant
+        this.body = body
+    }
+
+    call(params: any[]) {
+        return this.body(params)
+    }
+}
+
+
+
+export class Variable {
+    name: string
+    mutable: boolean
+    persistant: boolean
+    value: any
+    strict: boolean
+    type: string
+
+
+    constructor(name: string, mutable: boolean, persistant: boolean, value: any, strict: boolean) {
+        this.name = name
+        this.mutable = mutable
+        this.persistant = persistant
+        this.strict = strict
+        this.type = getType(value)
+        this.value = value
+    }
+
+    get() {
+        return this.value
+    }
+
+    set(value: any) {
+        if(this.isMutable()) {
+            if(this.isStrict()) {
+                if(this.type == getType(value)) {
+                    this.value = value
+                } else {
+                    console.error('Cannot change variables value, is strict, and new value isn\' of correct type!')
+                    return null
+                }
+            } else {
+                this.value = value
+            }
+        } else {
+            console.error('Cannot change variables value, isn\' mutable!')
+            return null;
+        }
+    }
+
+    isMutable() {
+        return this.mutable
+    }
+
+    isPersistant() {
+        return this.persistant
+    }
+
+    isStrict() {
+        return this.strict
+    }
+}

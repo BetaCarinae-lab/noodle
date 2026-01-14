@@ -2,7 +2,7 @@
   "name": "noodle",
   "version": "1.0.0",
   "main": "main.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "pkg . --out-dir dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64"
   },
@@ -40,6 +40,9 @@
     "ohm-js": "^17.3.0"
   },
   "devDependencies": {
-    "pkg": "^5.8.1"
+    "@types/node": "^25.0.8",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

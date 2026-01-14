@@ -1,0 +1,9 @@
+persistant fn topower(x, exponent) {
+    mut number x_new is x
+    loop <exponent> {
+        x_new = x_new * x_new
+    }
+    output(x_new)
+}
+
+writeLn(<topower(2, 2)>)
