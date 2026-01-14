@@ -12,9 +12,6 @@ type OhmThis = {
   args: OhmArgs;
 };
 
-
-type Action = (this: OhmThis, ...args: ohm.Node[]) => unknown;
-
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node, _semi: ohm.Node) {
         try {
@@ -23,16 +20,15 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             if(error instanceof ReturnSignal) {
                 return error
             } else {
-                throw new Error(`${error}`)
+                throw new Error(`${error} (${this.source.sourceString})`)
             }
         }
         // clean up
-        console.log('Cleaning up!')
+        //console.log('Cleaning up!')
         Object.keys(this.args.env).forEach(key => {
             if(this.args.env[key] && this.args.env[key].persistant) {
-                console.log('Variable is persistant, ignoring')
+                //console.log('Variable is persistant, ignoring')
             } else {
-                console.log(`Deleting ${key}`)
                 this.args.env[key] = null;
             }
         })
@@ -40,6 +36,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Statement(stmt: ohm.Node) {
         return stmt.eval(this.args.env);
+    },
+
+    _terminal(this: ohm.TerminalNode) {
+        return this.sourceString
     },
 
     Print(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
@@ -119,15 +119,15 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     RefResolve(_pipe: ohm.Node, id: ohm.Node, _pipe2: ohm.Node) {
-        return this.args.env[this.args.env[id.sourceString].getValue().references]
+        return this.args.env[this.args.env[id.sourceString].get().references]
     },
 
     VarGet(_ot: ohm.Node, name: ohm.Node, _ct: ohm.Node) {
         if(typeof name.eval(this.args.env) == 'object') {
-            return name.eval(this.args.env).getValue()
+            return name.eval(this.args.env).get()
         } else {
             if(this.args.env[name.sourceString]) {
-                return this.args.env[name.sourceString].getValue()
+                return this.args.env[name.sourceString].get()
             } else {
                 throw new Error(`No value found with name: ${name.eval(this.args.env)}`)
             }
@@ -161,7 +161,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     Fn(persistant: ohm.Node, _fn: ohm.Node, name: ohm.Node, ParameterList: ohm.Node, body: ohm.Node) {
         ParameterList = ParameterList.eval(this.args.env);
         var functionEnv = this.args.env
-        this.args.env[name.sourceString] = new Func(persistant.sourceString ? true : false, 
+        this.args.env[name.sourceString] = new Func(
+            persistant.sourceString ? true : false, 
             (parameters: any[]) => {
                 parameters.forEach((param, index) => {
                     functionEnv[ParameterList[index].replace('mut ', '')] = {
@@ -190,7 +191,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     ArrayAccess(_ot: ohm.Node, id: ohm.Node, _at: ohm.Node, index: ohm.Node, _ct: ohm.Node) {
         if(this.args.env[id.sourceString]) {
-            return this.args.env[id.sourceString].getValue()[index.eval(this.args.env)]
+            return this.args.env[id.sourceString].get()[index.eval(this.args.env)]
         } else {
             throw new Error(`No Value Found with name: ${id.sourceString}`)
         }
@@ -342,8 +343,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     ObjectProperty(Mid: ohm.Node, _d: ohm.Node, ids: ohm.Node) {
-        if(this.args.env[Mid.sourceString].getValue() && typeof this.args.env[Mid.sourceString].getValue() == 'object') {
-            let value = this.args.env[Mid.sourceString].getValue()
+        if(this.args.env[Mid.sourceString].get() && typeof this.args.env[Mid.sourceString].get() == 'object') {
+            let value = this.args.env[Mid.sourceString].get()
             ids.asIteration().children.forEach((id) => {
                 value = value[id.sourceString]
             })
@@ -366,26 +367,29 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
-    Template(_temp: ohm.Node, name: ohm.Node, body: ohm.Node) {
+    Template(persistant: ohm.Node, _temp: ohm.Node, name: ohm.Node, body: ohm.Node) {
         let constructorArgs = body.eval(this.args.env)
         type parameterList = {
             values: any[],
             refers: string[]
         }
         if(!this.args.env[name.sourceString]) {
-            this.args.env[name.sourceString] = (parameters: parameterList) => {
-                const returnedObject: { [key: string]: any } = {}
-                parameters.values.forEach((value: any, index: number) => {
-                    returnedObject[parameters.refers[index]] = value
-                })
-                Object.keys(constructorArgs).forEach(key => {
-                    // include methods in the object
-                    if(!constructorArgs[key].property) {
-                        returnedObject[key] = constructorArgs[key]
-                    }
-                })
+            this.args.env[name.sourceString] = {
+                persistant: persistant.sourceString ? true : false,
+                construct: (parameters: parameterList) => {
+                    const returnedObject: { [key: string]: any } = {}
+                    parameters.values.forEach((value: any, index: number) => {
+                        returnedObject[parameters.refers[index]] = value
+                    })
+                    Object.keys(constructorArgs).forEach(key => {
+                        // include methods in the object
+                        if(!constructorArgs[key].property) {
+                            returnedObject[key] = constructorArgs[key]
+                        }
+                    })
 
-                return returnedObject
+                    return returnedObject
+                }
             }
         } else {
             throw new Error(`${name} already exists!`)
@@ -394,7 +398,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     TemplateConstruction(id: ohm.Node, objectBody: ohm.Node) {
         if(this.args.env[id.sourceString]) {
-            return this.args.env[id.sourceString](objectBody.eval(this.args.env))
+            return this.args.env[id.sourceString].construct(objectBody.eval(this.args.env))
         }
     },
 

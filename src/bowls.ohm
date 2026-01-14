@@ -2,7 +2,7 @@ NoodleBowl {
 	Main = (Entry | Comment | Register | Log | If)+
     Entry = "run" (~".nd" ~".bowl" any)* (".nd" | ".bowl")
     Register = "register" (~"as" ~".nd" any)* ".nd" "as" Type "("? "override"? ")"? 
-    Type = "module"
+    Type = "module" | "js-module"
     Log = "log" "\"" (~"\"" any)* "\""
     If = "if" Entry ("success" | "failure") "then" (Entry | Comment | Register | Log | If) "if" "not" (Entry | Comment | Register | Log | If)
     Comment = "#(" (~")" any)* ")"

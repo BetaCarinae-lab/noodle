@@ -1,12 +1,12 @@
 import { readFileSync } from "fs"
 import { actionDictionary } from './semantics.ts';
+import { __dirname, __filename } from "./info.ts";
 import * as ohm from "ohm-js"
-import { MWD } from './info.ts';
 import * as path_module from "path";
 
 export function loadGrammar(filename: string) {
   let grammarPath;
-  grammarPath = './src/' + filename
+  grammarPath = __dirname + '/' + filename
   console.log(`loading grammar at ${grammarPath}`)
   return ohm.grammar(readFileSync(grammarPath, "utf-8"));
 }
