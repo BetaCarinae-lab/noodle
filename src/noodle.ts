@@ -5,7 +5,7 @@ import path from 'path';
 import { runBowl, runND } from './exec.js';
 import readline from"readline";
 import { VERSION } from './info.js';
-import { MWD } from'./info.js';
+import { __dirname, __filename } from'./info.js';
 import { exit } from 'process';
 
 
@@ -45,7 +45,8 @@ if(!process.argv[2]) {
 
     ## Working Directory and Versions
     NDV: ${VERSION}
-    MWD: ${MWD}
+    DN: ${__dirname}
+    FN: ${__filename}
     CWD: ${process.cwd()}
     Trying to Read: ${file_path}
     NodeV: ${process.version}
@@ -85,7 +86,8 @@ ExplainParse: ${process.argv[3] == '--parseinfo'}
 
 ## Working Directory and Versions
 NDV: ${VERSION}
-MWD: ${MWD}
+DN: ${__dirname}
+FN: ${__filename}
 CWD: ${process.cwd()}
 Trying to Read: ${file_path}
 NodeV: ${process.version}

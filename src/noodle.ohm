@@ -1,5 +1,5 @@
 NOODLE {
-  Program     = Statement ";"?
+  Program     = Statement* ";"?
   Statement   = Print 
           | VarCreate
           | VarAssign
@@ -68,7 +68,6 @@ NOODLE {
 
   Mut = "mut"?
 
-
   VarCreate = Mut "persistant"? "strict"? Type ident "is" Statement
 
   VarAssign = (ident | RefResolve) "is" Statement
@@ -77,7 +76,7 @@ NOODLE {
   
   TemplateBody = "{"  (~"}" Property | Method)* "}"
   
-  Template = "template" ident TemplateBody
+  Template = "persistant"? "template" ident TemplateBody
    
   TemplateConstruction = ident ObjectBody
   
