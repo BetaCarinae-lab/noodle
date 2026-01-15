@@ -39,13 +39,15 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "fs-extra": "^11.3.3",
-    "ohm-js": "^17.3.0"
+    "ohm-js": "^17.3.0",
+    "readline-sync": "^1.4.10"
   },
   "devDependencies": {
     "@types/node": "^25.0.8",
+    "@types/readline-sync": "^1.4.8",
+    "pkg": "^5.8.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "pkg": "^5.8.1",
     "typescript": "^5.9.3"
   }
 }

@@ -68,6 +68,7 @@ NOODLE {
     = "(" Expr ")"               --parens
     | number
     | string
+    | Query
     | ArrayAccess
     | VarGet
     | Exists
@@ -133,6 +134,8 @@ NOODLE {
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
   If = "if" "(" Expr ")" FuncBody "else"? FuncBody?
+
+  Query = "query" "(" Expr ")"
 
   VarGet = "<" (ident | RefResolve) ">"
   
