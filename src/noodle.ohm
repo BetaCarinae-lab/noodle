@@ -15,29 +15,71 @@ NOODLE {
           | Return
           | End
           | Expr
-              
-              
-  BooleanOperators = Expr "==" Expr --eq
-  				   | Expr "===" Expr --deepEq
-             | Expr "&&" Expr --and
-             | Expr "||" Expr --or
-             | Expr "::" Expr --xor
-             | Expr ">" Expr --greater
-             | Expr "<" Expr --less
-             | Expr ">=" Expr--greatereq
-             | Expr "<=" Expr --lesseq
-             |"!" Expr --not
 
   Print = "writeLn" "(" Expr ")"
 
-  Math = Expr "+" Expr			--add
-  	   | Expr "-" Expr			--minus
-       | Expr "*" Expr	        --times
-       | Expr "/" Expr	   	    --divide	
-       | "(" Expr ")"       --parens
-       | "-" Expr			--negate
-       | ident "++"					--increment
-       | ident "--"					--decrement
+  Expr = LogicalOr
+
+  LogicalOr
+    = LogicalOr "||" LogicalAnd  --or
+    | LogicalAnd
+
+  LogicalAnd
+    = LogicalAnd "&&" LogicalXor   --and
+    | LogicalXor
+
+  LogicalXor
+    = LogicalXor "::" LogicalAnd --xor
+    | Equality
+
+  Equality
+    = Equality "==" Comparison   --eq
+    | Equality "===" Comparison  --deepEq
+    | Comparison
+
+  Comparison
+    = Comparison ">" Additive    --greater
+    | Comparison "<" Additive    --less
+    | Comparison ">=" Additive   --greatereq
+    | Comparison "<=" Additive   --lesseq
+    | Additive
+
+  Additive
+    = Additive "+" Multiplicative --add
+    | Additive "-" Multiplicative --minus
+    | Multiplicative
+
+  Multiplicative
+    = Multiplicative "*" Unary   --times
+    | Multiplicative "/" Unary   --divide
+    | Unary
+
+  Unary
+    = "!" Unary                  --not
+    | "-" Unary                  --negate
+    | Postfix
+
+  Postfix
+    = ident "++"                 --increment
+    | ident "--"                 --decrement
+    | Primary
+
+  Primary
+    = "(" Expr ")"               --parens
+    | number
+    | string
+    | ArrayAccess
+    | VarGet
+    | Exists
+    | FnCall
+    | MethodCall
+    | RefResolve
+    | ObjectPropertyAccess
+    | TemplateConstruction
+    | True
+    | False
+    | Reference
+
 
   Fn = "persistant"? "fn" ident ParameterList FuncBody
   
@@ -90,7 +132,7 @@ NOODLE {
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
-  If = "if" "(" BooleanOperators ")" FuncBody "else"? FuncBody?
+  If = "if" "(" Expr ")" FuncBody "else"? FuncBody?
 
   VarGet = "<" (ident | RefResolve) ">"
   
@@ -107,24 +149,6 @@ NOODLE {
   Exists = ident "exists"
   
   TryCatch = "try" FuncBody "catch" "(" ident? ")" FuncBody
-
-  Expr = BooleanOperators 
-        | Math
-        | number 
-        | string 
-        | ArrayAccess
-        | VarGet 
-        | Exists
-        | FnCall
-        | MethodCall
-        | RefResolve
-        | ObjectPropertyAccess
-        | MethodCall
-        | TemplateConstruction
-        | ObjectPropertyAccess
-        | True
-        | False
-        | Reference
   
   number = digit+ | "inf"
   

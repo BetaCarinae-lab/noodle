@@ -60,23 +60,23 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
-    Math_parens(_op: ohm.Node, expr: ohm.Node, _cp: ohm.Node) {
+    Primary_parens(_op: ohm.Node, expr: ohm.Node, _cp: ohm.Node) {
         return expr.eval(this.args.env)
     },
 
-    Math_add(expr1: ohm.Node, _plus: ohm.Node, expr2: ohm.Node) {
+    Additive_add(expr1: ohm.Node, _plus: ohm.Node, expr2: ohm.Node) {
         return expr1.eval(this.args.env) + expr2.eval(this.args.env)
     },
 
-    Math_minus(expr1: ohm.Node, _minus: ohm.Node, expr2: ohm.Node) {
+    Additive_minus(expr1: ohm.Node, _minus: ohm.Node, expr2: ohm.Node) {
         return expr1.eval(this.args.env) - expr2.eval(this.args.env)
     },
 
-    Math_times(expr1: ohm.Node, _times: ohm.Node, expr2: ohm.Node) {
+    Multiplicative_times(expr1: ohm.Node, _times: ohm.Node, expr2: ohm.Node) {
         return expr1.eval(this.args.env) * expr2.eval(this.args.env)
     },
 
-    Math_divide(expr1: ohm.Node, _divide: ohm.Node, expr2: ohm.Node) {
+    Multiplicative_divide(expr1: ohm.Node, _divide: ohm.Node, expr2: ohm.Node) {
         return expr1.eval(this.args.env) / expr2.eval(this.args.env)
     },
 
@@ -233,43 +233,43 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return false
     },
 
-    BooleanOperators_eq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+    Equality_eq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) == s2.eval(this.args.env)
     },
 
-    BooleanOperators_deepEq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+    Equality_deepEq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) === s2.eval(this.args.env)
     },
 
-    BooleanOperators_and(s1: ohm.Node, _and: ohm.Node, s2: ohm.Node) {
+    LogicalAnd_and(s1: ohm.Node, _and: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) && s2.eval(this.args.env)
     },
 
-    BooleanOperators_or(s1: ohm.Node, _or: ohm.Node, s2: ohm.Node) {
+    LogicalOr_or(s1: ohm.Node, _or: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) || s2.eval(this.args.env)
     },
     
-    BooleanOperators_xor(s1: ohm.Node, _cc: ohm.Node, s2: ohm.Node) {
+    LogicalXor_xor(s1: ohm.Node, _cc: ohm.Node, s2: ohm.Node) {
         return !(s1.eval(this.args.env) === s2.eval(this.args.env))
     },
 
-    BooleanOperators_greater(s1: ohm.Node, _arrow: ohm.Node, s2: ohm.Node) {
+    Comparison_greater(s1: ohm.Node, _arrow: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) > s2.eval(this.args.env)
     },
 
-    BooleanOperators_less(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+    Comparison_less(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) < s2.eval(this.args.env)
     },
 
-    BooleanOperators_greatereq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+    Comparison_greatereq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) >= s2.eval(this.args.env)
     },
 
-    BooleanOperators_lesseq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+    Comparison_lesseq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) <= s2.eval(this.args.env)
     },
 
-    BooleanOperators_not(_: ohm.Node, s: ohm.Node) {
+    Unary_not(_: ohm.Node, s: ohm.Node) {
         return !s.eval(this.args.env)
     },
 
@@ -287,12 +287,12 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
-    Math_negate(_m: ohm.Node, value: ohm.Node) {
+    Unary_negate(_m: ohm.Node, value: ohm.Node) {
         return -value.eval(this.args.env)
     },
 
     //                     hehe
-    Math_increment(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
+    Postfix_increment(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
         if(this.args.env[ident] && this.args.env[ident].isMutable()) {
             this.args.env[ident].value++
@@ -301,7 +301,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
-    Math_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
+    Postfix_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
         if(this.args.env[ident] && this.args.env[ident].isMutable()) {
             this.args.env[ident].value--
