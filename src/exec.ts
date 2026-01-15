@@ -1,45 +1,33 @@
-const { readFileSync } = require("fs")
-const { actionDictionary } = require('./semantics.js');
-const ohm = require("ohm-js")
-const { MWD } = require("./info.js");
-const path_module = require("path");
+import { readFileSync } from "fs"
+import { actionDictionary } from './semantics.js';
+import * as ohm from "ohm-js"
+import * as path_module from "path";
 
-function loadGrammar(filename) {
+export function loadGrammar(filename: string) {
   let grammarPath;
-  let usesrc = process.pkg ? false : true
-  if (process.pkg) {
-    // When running from pkg executable
-    grammarPath = path_module.join(path_module.dirname(process.execPath), filename);
-  } else {
-    // Running in development
-    grammarPath = path_module.join(usesrc ? path_module.dirname(MWD) + '/src/' : path_module.dirname(MWD), filename);
-  }
-  return readFileSync(grammarPath, "utf-8");
+  grammarPath = __dirname + '/' + filename
+  console.log(`loading grammar at ${grammarPath}`)
+  return ohm.grammar(readFileSync(grammarPath, "utf-8"));
 }
 
-const grammars = {
-    noodle: ohm.grammar(loadGrammar('/noodle.ohm')),
-    bowl: ohm.grammar(loadGrammar('./bowls.ohm')),
+export const grammars = {
+    noodle: loadGrammar('../grammar/noodle.ohm'),
+    bowl: loadGrammar('../grammar/bowls.ohm'),
 }
 
-async function registerJS(path) {
-    let { exported } = await import(path)
-    return exported
-}
-
-function runBowl(code, path) {
+export function runBowl(code: string) {
     let env = {}
     const bowlDict = {
-        Main(entries) {
+        Main(entries: ohm.Node) {
             return entries.children.map(c => c.eval())
         },
 
-        Entry(_run, path, fileExt) {
+        Entry(_run: ohm.Node, path: ohm.Node, fileExt: ohm.Node) {
 
             if(fileExt.sourceString == '.nd') {
                 //console.log(`go from: ${MWD} to: ${path_module.resolve(path.sourceString + fileExt.sourceString)}`)
                 //console.log(path_module.resolve(path.sourceString + fileExt.sourceString))
-                let result = runND(readFileSync(path_module.resolve(path.sourceString + fileExt.sourceString), 'utf-8'), env, true)
+                let result = runND(readFileSync(path_module.resolve(path.sourceString + fileExt.sourceString), 'utf-8'), env)
 
                 env = result.env
                 
@@ -56,11 +44,11 @@ function runBowl(code, path) {
             }
         },
 
-        Comment(_hash, _op, _cp) {
+        Comment(_hash: ohm.Node, _op: ohm.Node, _cp: ohm.Node) {
             return
         },
 
-        Register(_reg, path, ext, _as, type, _op, override, _cp) {
+        Register(_reg: ohm.Node, path: ohm.Node, ext: ohm.Node, _as: ohm.Node, type: ohm.Node, _op: ohm.Node, override: ohm.Node, _cp: ohm.Node) {
             if(type.sourceString == 'module') {
                 let newenv = runND(readFileSync(path.sourceString + ext.sourceString, 'utf-8'), env)
                 if(!override.sourceString) {
@@ -73,11 +61,11 @@ function runBowl(code, path) {
             }
         },
 
-        Log(_log, _oq, text, _cq) {
+        Log(_log: ohm.Node, _oq: ohm.Node, text: ohm.Node, _cq: ohm.Node) {
             console.log('B-OUT: ' + text.sourceString)
         },
 
-        If(_if, entry, expected, _then, torun, _if2, _not, torunifnot) {
+        If(_if: ohm.Node, entry: ohm.Node, expected: ohm.Node, _then: ohm.Node, torun: ohm.Node, _if2: ohm.Node, _not: ohm.Node, torunifnot: ohm.Node) {
             if(entry.eval().value == expected.sourceString) {
                 torun.eval()
             } else {
@@ -87,9 +75,12 @@ function runBowl(code, path) {
     } 
     const semantics = grammars.bowl.createSemantics().addOperation('eval()', bowlDict)
 
+    /**
+     * @type {ohm.MatchResult}
+     */
     const matchResult = grammars.bowl.match(code)
 
-    if(matchResult.succeeded()) {
+    if(!matchResult.failed()) {
         console.log('Match Succeded, Running Bowl List')
         semantics(matchResult).eval()
     } else {
@@ -97,10 +88,10 @@ function runBowl(code, path) {
     }
 }
 
-function runND(inputCode, env_, _fromBowl) {
+export function runND(inputCode: string, env_: object) {
     let env = env_
     
-    const semantics = grammars.noodle.createSemantics().addOperation('eval(env)', actionDictionary);
+    const semantics = grammars.noodle.createSemantics().addOperation('eval(env)', actionDictionary as ohm.ActionDict<unknown>);
 
     /**
     * @type {import('ohm-js').MatchResult}
@@ -109,7 +100,7 @@ function runND(inputCode, env_, _fromBowl) {
 
     let exitCode;
 
-    if(matchResult.succeeded()) {
+    if(!matchResult.failed()) {
         console.log("Match Succeeded, Applying Semantics");
         exitCode = semantics(matchResult).eval(env);
     } else {
@@ -118,12 +109,7 @@ function runND(inputCode, env_, _fromBowl) {
 
     return {
         env: env,
-        exitCode: exitCode
+        exitCode: exitCode,
+        matchResult: matchResult
     }
-}
-
-
-module.exports = {
-    runBowl,
-    runND,
 }

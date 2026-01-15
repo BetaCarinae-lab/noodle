@@ -1,33 +1,49 @@
-const { ReturnSignal } = require("./etc.js");
+import { Func, ReturnSignal } from "./etc.js";
+import * as ohm from "ohm-js"
+import { Variable } from "./etc.js";
+import readLineSync from 'readline-sync';
 
-const actionDictionary = {
-    Program(statements, _semi) {
+type Env = Record<string, Variable | Func>;
+
+type OhmArgs = {
+  env: Env;
+};
+
+type OhmThis = {
+  args: OhmArgs;
+};
+
+export const actionDictionary: ohm.ActionDict<unknown> = {
+    Program(statements: ohm.Node, _semi: ohm.Node) {
         try {
             statements.children.map(s => s.eval(this.args.env));
         } catch (error) {
             if(error instanceof ReturnSignal) {
                 return error
             } else {
-                throw new Error(error)
+                throw new Error(`${error} (${this.source.sourceString})`)
             }
         }
         // clean up
-        console.log('Cleaning up!')
+        //console.log('Cleaning up!')
         Object.keys(this.args.env).forEach(key => {
             if(this.args.env[key] && this.args.env[key].persistant) {
-                console.log('Variable is persistant, ignoring')
+                //console.log('Variable is persistant, ignoring')
             } else {
-                console.log(`Deleting ${key}`)
                 this.args.env[key] = null;
             }
         })
     },
 
-    Statement(stmt) {
+    Statement(stmt: ohm.Node) {
         return stmt.eval(this.args.env);
     },
 
-    Print(_print, _lp, expr, _rp) {
+    _terminal(this: ohm.TerminalNode) {
+        return this.sourceString
+    },
+
+    Print(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
         const value = expr.eval(this.args.env);
         if(typeof value == 'object') {
             console.log('OUT: ' + JSON.stringify(value));
@@ -36,7 +52,7 @@ const actionDictionary = {
         }
     },
 
-    Loop(_loop, expr, body) {
+    Loop(_loop: ohm.Node, expr: ohm.Node, body: ohm.Node) {
         let i = 0
         console.log(expr.eval(this.args.env))
         while(i != expr.eval(this.args.env)) {
@@ -45,58 +61,50 @@ const actionDictionary = {
         }
     },
 
-    Math_parens(_op, expr, _cp) {
+    Primary_parens(_op: ohm.Node, expr: ohm.Node, _cp: ohm.Node) {
         return expr.eval(this.args.env)
     },
 
-    Math_add(expr1, _plus, expr2) {
+    Additive_add(expr1: ohm.Node, _plus: ohm.Node, expr2: ohm.Node) {
         return expr1.eval(this.args.env) + expr2.eval(this.args.env)
     },
 
-    Math_minus(expr1, _minus, expr2) {
+    Additive_minus(expr1: ohm.Node, _minus: ohm.Node, expr2: ohm.Node) {
         return expr1.eval(this.args.env) - expr2.eval(this.args.env)
     },
 
-    Math_times(expr1, _times, expr2) {
+    Multiplicative_times(expr1: ohm.Node, _times: ohm.Node, expr2: ohm.Node) {
         return expr1.eval(this.args.env) * expr2.eval(this.args.env)
     },
 
-    Math_divide(expr1, _divide, expr2) {
+    Multiplicative_divide(expr1: ohm.Node, _divide: ohm.Node, expr2: ohm.Node) {
         return expr1.eval(this.args.env) / expr2.eval(this.args.env)
     },
 
-    VarCreate(mut, pers, strict, type, name, _eq, value) {
+    Mut(mut) {
+        return mut.sourceString ? true : false
+    },
+
+    VarCreate(mut: ohm.Node, pers: ohm.Node, strict: ohm.Node, type: ohm.Node, name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
         if(type.sourceString == "any" || typeof value.eval(this.args.env) == type.sourceString || (type.sourceString == 'array' && Array.isArray(value.eval(this.args.env)))) {
-            this.args.env[name.sourceString] = {
-                type: type.sourceString,
-                strict: strict.sourceString ? true : false,
-                value: value.eval(this.args.env),
-                mutable: mut.sourceString ? true : false,
-                persistant: pers.sourceString ? true : false,
-            }
+            this.args.env[name.sourceString] = new Variable(name.eval(this.args.env), mut.eval(this.args.env), pers.eval(this.args.env), value.eval(this.args.env), strict.sourceString ? true : false)
         } else {
             throw new Error(`Mismatched Types, Expected ${type.sourceString}, Got ${typeof value.eval(this.args.env)}`)
         }
     },
 
-    VarAssign(name, _eq, value) {
-        if(this.args.env[name.eval(this.args.env)] && this.args.env[name.eval(this.args.env)].mutable) {
-            if(this.args.env[name.eval(this.args.env)].strict && this.args.env[name.eval(this.args.env)].type == typeof value.eval(this.args.env)) {
-                this.args.env[name.eval(this.args.env)].value = value
-            } else if(!this.args.env[name.eval(this.args.env)].strict) {
-                this.args.env[name.eval(this.args.env)].value = value
-            } else {
-                throw new Error(`Variable is strictly set to type ${this.args.env[name.eval(this.args.env)].type}`)
-            }
+    VarAssign(name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
+        if(this.args.env[name.sourceString]) {
+            this.args.env[name.sourceString].set(value)
         } else {
-            throw new Error(this.args.env[name.eval(this.args.env)] ? `That value is not mutable` : `No value found with name ${name.eval(this.args.env)}`)
+            console.error(`Can't find ${name.sourceString}`)
         }
     },
 
-    TryCatch(_try, trybody, _catch, _op, errorname, _cp, catchbody) {
+    TryCatch(_try: ohm.Node, trybody: ohm.Node, _catch: ohm.Node, _op: ohm.Node, errorname: ohm.Node, _cp: ohm.Node, catchbody: ohm.Node) {
         try {
             trybody.eval(this.args.env)
-        } catch(error) {
+        } catch(error: any) {
             if(errorname.sourceString) {
                 let catchbodyenv = this.args.env
                 catchbodyenv[errorname.sourceString] = error
@@ -107,35 +115,35 @@ const actionDictionary = {
         }
     },
 
-    Reference(_a, id) {
+    Reference(_a: ohm.Node, id: ohm.Node) {
         return {references: id.sourceString}
     },
 
-    RefResolve(_pipe, id, _pipe2) {
-        return this.args.env[this.args.env[id.sourceString].value.references]
+    RefResolve(_pipe: ohm.Node, id: ohm.Node, _pipe2: ohm.Node) {
+        return this.args.env[this.args.env[id.sourceString].get().references]
     },
 
-    VarGet(_ot, name, _ct) {
+    VarGet(_ot: ohm.Node, name: ohm.Node, _ct: ohm.Node) {
         if(typeof name.eval(this.args.env) == 'object') {
-            return name.eval(this.args.env).value
+            return name.eval(this.args.env).get()
         } else {
             if(this.args.env[name.sourceString]) {
-                return this.args.env[name.sourceString].value
+                return this.args.env[name.sourceString].get()
             } else {
                 throw new Error(`No value found with name: ${name.eval(this.args.env)}`)
             }
         }
     },
 
-    ident(first, rest) {
+    ident(first: ohm.Node, rest: ohm.Node) {
         return first.sourceString + rest.sourceString
     },
 
-    Expr(e) {
+    Expr(e: ohm.Node) {
         return e.eval(this.args.env);
     },
 
-    number(digits) {
+    number(digits: ohm.Node) {
         if(digits.sourceString == 'inf') {
             return Infinity
         } else {
@@ -143,20 +151,20 @@ const actionDictionary = {
         }
     },
 
-    ExitValues(value) {
+    ExitValues(value: ohm.Node) {
         return value.sourceString
     },
 
-    string(_open, chars, _close) {
+    string(_open: ohm.Node, chars: ohm.Node, _close: ohm.Node) {
         return chars.sourceString;
     },
 
-    Fn(persistant, _fn, name, ParameterList, body) {
+    Fn(persistant: ohm.Node, _fn: ohm.Node, name: ohm.Node, ParameterList: ohm.Node, body: ohm.Node) {
         ParameterList = ParameterList.eval(this.args.env);
         var functionEnv = this.args.env
-        this.args.env[name.sourceString] = {
-            persistant: persistant.sourceString ? true : false,
-            body: (parameters) => {
+        this.args.env[name.sourceString] = new Func(
+            persistant.sourceString ? true : false, 
+            (parameters: any[]) => {
                 parameters.forEach((param, index) => {
                     functionEnv[ParameterList[index].replace('mut ', '')] = {
                         type: typeof param,
@@ -167,7 +175,7 @@ const actionDictionary = {
 
                 try {
                     body.eval(functionEnv)
-                } catch(error) {
+                } catch(error: any) {
                     if(error instanceof ReturnSignal) {
                         return error.value
                     } else {
@@ -175,97 +183,98 @@ const actionDictionary = {
                     }
                 }
             }
-        }
+        )
     },
 
-    Array(_ob, values, _cb) {
+    Array(_ob: ohm.Node, values: ohm.Node, _cb: ohm.Node) {
         return values.asIteration().children.map(c => c.eval(this.args.env))
     },
 
-    ArrayAccess(_ot, id, _at, index, _ct) {
+    ArrayAccess(_ot: ohm.Node, id: ohm.Node, _at: ohm.Node, index: ohm.Node, _ct: ohm.Node) {
         if(this.args.env[id.sourceString]) {
-            return this.args.env[id.sourceString].value[index.eval(this.args.env)]
+            return this.args.env[id.sourceString].get()[index.eval(this.args.env)]
         } else {
             throw new Error(`No Value Found with name: ${id.sourceString}`)
         }
     },
 
-    Comment(_, _op, _txt, _cp) {
+    Comment(_: ohm.Node, _op: ohm.Node, _txt: ohm.Node, _cp: ohm.Node) {
         return
     },
 
-    Parameter(mut, ident) {
+    Parameter(mut: ohm.Node, ident: ohm.Node, _thing, type) {
         return {
             mutable: mut.sourceString ? true : false,
+            type: type.sourceString,
             name: ident.sourceString, 
         }
     },
 
-    Delete(_delete, id) {
-        if(this.args.env[id.sourceString] && this.args.env[id.sourceString].mutable) {
+    Delete(_delete: ohm.Node, id: ohm.Node) {
+        if(this.args.env[id.sourceString] && this.args.env[id.sourceString].isMutable()) {
             this.args.env[id.sourceString] = "deleted by program"
         } else {
             throw new Error(`Can't delete if variable ${id.sourceString} doesn't exist!`)
         }
     },
 
-    Exit(_ex, uhoh) {
+    Exit(_ex: ohm.Node, uhoh: ohm.Node) {
         throw new ReturnSignal(uhoh.eval(this.args.env))
     },
 
-    Exists(id, _exists) {
+    Exists(id: ohm.Node, _exists: ohm.Node) {
         return this.args.env[id.sourceString] ? true : false
     },
 
-    True(_val) {
+    True(_val: ohm.Node) {
         return true
     },
 
-    False(_val) {
+    False(_val: ohm.Node) {
         return false
     },
 
-    BooleanOperators_eq(s1, _eq, s2) {
+    Equality_eq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) == s2.eval(this.args.env)
     },
 
-    BooleanOperators_deepEq(s1, _eq, s2) {
+    Equality_deepEq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) === s2.eval(this.args.env)
     },
 
-    BooleanOperators_and(s1, _and, s2) {
+    LogicalAnd_and(s1: ohm.Node, _and: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) && s2.eval(this.args.env)
     },
 
-    BooleanOperators_or(s1, _or, s2) {
+    LogicalOr_or(s1: ohm.Node, _or: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) || s2.eval(this.args.env)
     },
     
-    BooleanOperators_xor(s1, _cc, s2) {
+    LogicalXor_xor(s1: ohm.Node, _cc: ohm.Node, s2: ohm.Node) {
         return !(s1.eval(this.args.env) === s2.eval(this.args.env))
     },
 
-    BooleanOperators_greater(s1, _arrow, s2) {
+    Comparison_greater(s1: ohm.Node, _arrow: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) > s2.eval(this.args.env)
     },
 
-    BooleanOperators_less(s1, _eq, s2) {
+    Comparison_less(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) < s2.eval(this.args.env)
     },
 
-    BooleanOperators_greatereq(s1, _eq, s2) {
+    Comparison_greatereq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) >= s2.eval(this.args.env)
     },
 
-    BooleanOperators_lesseq(s1, _eq, s2) {
+    Comparison_lesseq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
         return s1.eval(this.args.env) <= s2.eval(this.args.env)
     },
 
-    BooleanOperators_not(_, s) {
+    Unary_not(_: ohm.Node, s: ohm.Node) {
         return !s.eval(this.args.env)
     },
 
-    If(_if, _op, condition, _cp, body, _else, elseBody) {
+    If(_if: ohm.Node, _op: ohm.Node, condition: ohm.Node, _cp: ohm.Node, body: ohm.Node, _else: ohm.Node, elseBody: ohm.Node) {
         if(_else.sourceString) {
             if(condition.eval(this.args.env)) {
                 body.eval(this.args.env)
@@ -279,30 +288,51 @@ const actionDictionary = {
         }
     },
 
-    Math_negate(_m, value) {
+    Unary_negate(_m: ohm.Node, value: ohm.Node) {
         return -value.eval(this.args.env)
     },
 
     //                     hehe
-    Math_increment(ident_untrimmed, _pp) {
+    Postfix_increment(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
-        if(this.args.env[ident] && this.args.env[ident].mutable) {
+        if(this.args.env[ident] && this.args.env[ident].isMutable()) {
             this.args.env[ident].value++
         } else {
             throw new Error(this.args.env[ident] ? 'Value is not mutable!': `No value found with name: ${ident}`)
         }
     },
 
-    Math_decrement(ident_untrimmed, _pp) {
-        let ident = ident_untrimmed.sourceString.replace('&', '')
-        if(this.args.env[ident] && this.args.env[ident].mutable) {
-            this.args.env[ident].value--
-        } else {
-            throw new Error(this.args.env[ident].mutable ? `No value found with name: ${ident}` : 'Value is not mutable!')
+    Query(_quer, _op, text, _cp) {
+        let input = readLineSync.question(text.eval(this.args.env), {
+            hideEchoBack: false,
+        })
+        console.log(' ')
+        return input
+    },
+
+    As(expr, _as, type) {
+        if(type.sourceString == "fn" || type.sourceString == "object" || type.sourceString == "array" || type.sourceString == "reference" || type.sourceString == "any") {
+            console.error('Invalid type conversion')
+        }
+        if(typeof expr.eval(this.args.env) == 'number' && type.sourceString == 'string') {
+            return expr.eval(this.args.env).toString()
+        } else if(typeof expr.eval(this.args.env) == 'string' && type.sourceString == 'number') {
+            return parseInt(expr.eval(this.args.env))
+        } else if(typeof expr.eval(this.args.env) == type.sourceString) {
+            return expr.eval(this.args.env)
         }
     },
 
-    FnCall(_os, name, parameterList, _cs) {
+    Postfix_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
+        let ident = ident_untrimmed.sourceString.replace('&', '')
+        if(this.args.env[ident] && this.args.env[ident].isMutable()) {
+            this.args.env[ident].value--
+        } else {
+            throw new Error(this.args.env[ident].isMutable() ? `No value found with name: ${ident}` : 'Value is not mutable!')
+        }
+    },
+
+    FnCall(_os: ohm.Node, name: ohm.Node, parameterList: ohm.Node, _cs: ohm.Node) {
         if(this.args.env[name.sourceString]) {
             return this.args.env[name.sourceString].body(parameterList.eval(this.args.env))
         } else {
@@ -310,33 +340,33 @@ const actionDictionary = {
         }
     },
 
-    Return(_out, _op, value, _cp) {
+    Return(_out: ohm.Node, _op: ohm.Node, value: ohm.Node, _cp: ohm.Node) {
         throw new ReturnSignal(value.eval(this.args.env))
     },
 
-    FuncBody(_ob, body, _cb) {
+    FuncBody(_ob: ohm.Node, body: ohm.Node, _cb: ohm.Node) {
         return body.eval(this.args.env)
     },
 
-    ParameterList(_op, listOfParams, _cp) {
+    ParameterList(_op: ohm.Node, listOfParams: ohm.Node, _cp: ohm.Node) {
         return listOfParams.asIteration().children.map(c => c.sourceString)
     },
 
-    StatementParameterList(_op, listOfParams, _cp) {
+    StatementParameterList(_op: ohm.Node, listOfParams: ohm.Node, _cp: ohm.Node) {
         return listOfParams.asIteration().children.map(c => c.eval(this.args.env))
     },
 
     _iter(...children) {
-        return children.map(c => c.eval(this.args.env))
+        return children.map((c: any) => c.eval(this.args.env))
     },
 
-    ObjectPropertyAccess(_ob, objectProperty,_cb) {
+    ObjectPropertyAccess(_ob: ohm.Node, objectProperty: ohm.Node,_cb: ohm.Node) {
         return objectProperty.eval(this.args.env)
     },
 
-    ObjectProperty(Mid, _d, ids) {
-        if(this.args.env[Mid.sourceString].value && typeof this.args.env[Mid.sourceString].value == 'object') {
-            let value = this.args.env[Mid.sourceString].value
+    ObjectProperty(Mid: ohm.Node, _d: ohm.Node, ids: ohm.Node) {
+        if(this.args.env[Mid.sourceString].get() && typeof this.args.env[Mid.sourceString].get() == 'object') {
+            let value = this.args.env[Mid.sourceString].get()
             ids.asIteration().children.forEach((id) => {
                 value = value[id.sourceString]
             })
@@ -346,11 +376,11 @@ const actionDictionary = {
         }
     },
 
-    MethodCall(_1, objProp, ParamList, _2) {
+    MethodCall(_1: ohm.Node, objProp: ohm.Node, ParamList: ohm.Node, _2: ohm.Node) {
         let fn = objProp.eval(this.args.env)
         try {
             fn.body(ParamList.eval(this.args.env))
-        } catch(error) {
+        } catch(error: any) {
             if(error instanceof ReturnSignal) {
                 return error.value
             } else {
@@ -359,43 +389,50 @@ const actionDictionary = {
         }
     },
 
-    Template(_temp, name, body) {
+    Template(persistant: ohm.Node, _temp: ohm.Node, name: ohm.Node, body: ohm.Node) {
         let constructorArgs = body.eval(this.args.env)
+        type parameterList = {
+            values: any[],
+            refers: string[]
+        }
         if(!this.args.env[name.sourceString]) {
-            this.args.env[name.sourceString] = (parameters) => {
-                let returnedObject = {}
-                parameters.values.forEach((value, index) => {
-                    returnedObject[parameters.refers[index]] = value
-                })
-                Object.keys(constructorArgs).forEach(key => {
-                    // include methods in the object
-                    if(!constructorArgs[key].property) {
-                        returnedObject[key] = constructorArgs[key]
-                    }
-                })
+            this.args.env[name.sourceString] = {
+                persistant: persistant.sourceString ? true : false,
+                construct: (parameters: parameterList) => {
+                    const returnedObject: { [key: string]: any } = {}
+                    parameters.values.forEach((value: any, index: number) => {
+                        returnedObject[parameters.refers[index]] = value
+                    })
+                    Object.keys(constructorArgs).forEach(key => {
+                        // include methods in the object
+                        if(!constructorArgs[key].property) {
+                            returnedObject[key] = constructorArgs[key]
+                        }
+                    })
 
-                return returnedObject
+                    return returnedObject
+                }
             }
         } else {
             throw new Error(`${name} already exists!`)
         }
     },
 
-    TemplateConstruction(id, objectBody) {
+    TemplateConstruction(id: ohm.Node, objectBody: ohm.Node) {
         if(this.args.env[id.sourceString]) {
-            return this.args.env[id.sourceString](objectBody.eval(this.args.env))
+            return this.args.env[id.sourceString].construct(objectBody.eval(this.args.env))
         }
     },
 
-    ObjectBody(_ob, name, _dingdong, statement, _, _cb) {
+    ObjectBody(_ob: ohm.Node, name: ohm.Node, _dingdong: ohm.Node, statement: ohm.Node, _: ohm.Node, _cb: ohm.Node) {
         return {
             values: statement.eval(this.args.env),
             refers: name.asIteration().children.map(c => c.sourceString)
         }
     },
 
-    TemplateBody(_ob, properties, _cb) {
-        let returnedObject = {}
+    TemplateBody(_ob: ohm.Node, properties: ohm.Node, _cb: ohm.Node) {
+        const returnedObject: { [key: string]: any } = {}
         properties.children.forEach((property, index) => {
             property = property.eval(this.args.env)
             if(property.property) {
@@ -408,7 +445,7 @@ const actionDictionary = {
         return returnedObject
     },
 
-    Property(mut, _prop, id, _is, type, _) {
+    Property(mut: ohm.Node, _prop: ohm.Node, id: ohm.Node, _is: ohm.Node, type: ohm.Node, _: ohm.Node) {
         return {
             property: true,
             name: id.sourceString,
@@ -417,13 +454,13 @@ const actionDictionary = {
         }
     },
 
-    Method(_method, id, _is, paramList, funcBody) {
+    Method(_method: ohm.Node, id: ohm.Node, _is: ohm.Node, paramList: ohm.Node, funcBody: ohm.Node) {
         paramList = paramList.eval(this.args.env);
         var methodEnv = this.args.env
         let returned = {
             property: false,
             name: id.sourceString,
-            body: (parameters) => {
+            body: (parameters: any[]) => {
                 parameters.forEach((param, index) => {
                     methodEnv[paramList[index].replace('mut ', '')] = {
                         type: typeof param,
@@ -434,7 +471,7 @@ const actionDictionary = {
 
                 try {
                     funcBody.eval(methodEnv)
-                } catch(error) {
+                } catch(error: any) {
                     if(error instanceof ReturnSignal) {
                         return error.value
                     } else {
@@ -445,8 +482,4 @@ const actionDictionary = {
         }
         return returned
     },                                    
-}
-
-module.exports = {
-    actionDictionary
 }
