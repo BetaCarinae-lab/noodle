@@ -1,6 +1,5 @@
 import { readFileSync } from "fs"
-import { actionDictionary } from './semantics.ts';
-import { __dirname, __filename } from "./info.ts";
+import { actionDictionary } from './semantics.js';
 import * as ohm from "ohm-js"
 import * as path_module from "path";
 
@@ -12,8 +11,8 @@ export function loadGrammar(filename: string) {
 }
 
 export const grammars = {
-    noodle: loadGrammar('noodle.ohm'),
-    bowl: loadGrammar('bowls.ohm'),
+    noodle: loadGrammar('../grammar/noodle.ohm'),
+    bowl: loadGrammar('../grammar/bowls.ohm'),
 }
 
 export function runBowl(code: string) {

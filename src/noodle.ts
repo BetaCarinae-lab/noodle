@@ -5,7 +5,6 @@ import path from 'path';
 import { runBowl, runND } from './exec.js';
 import readline from"readline";
 import { VERSION } from './info.js';
-import { __dirname, __filename } from'./info.js';
 import { exit } from 'process';
 
 
