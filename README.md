@@ -20,11 +20,12 @@ you should now be able to run `noodle --help` or any other command
 
 - Define core language concepts  
 - Prototype language semantics in JavaScript  
-- Implement basic language features *(current stage)*  
+- Implement basic language features <= ( WE ARE HERE )  
 - Continue iterative development and feature expansion  
 
 ## Contributing
 
 At this time, the project is maintained solely by me. Contributions are not currently being accepted, as this project is intended for personal learning and so i have at  
 least something on my portfolio.  
+
 
