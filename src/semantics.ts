@@ -303,9 +303,24 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Query(_quer, _op, text, _cp) {
-        return readLineSync.question(text.eval(this.args.env), {
+        let input = readLineSync.question(text.eval(this.args.env), {
             hideEchoBack: false,
         })
+        console.log(' ')
+        return input
+    },
+
+    As(expr, _as, type) {
+        if(type.sourceString == "fn" || type.sourceString == "object" || type.sourceString == "array" || type.sourceString == "reference" || type.sourceString == "any") {
+            console.error('Invalid type conversion')
+        }
+        if(typeof expr.eval(this.args.env) == 'number' && type.sourceString == 'string') {
+            return expr.eval(this.args.env).toString()
+        } else if(typeof expr.eval(this.args.env) == 'string' && type.sourceString == 'number') {
+            return parseInt(expr.eval(this.args.env))
+        } else if(typeof expr.eval(this.args.env) == type.sourceString) {
+            return expr.eval(this.args.env)
+        }
     },
 
     Postfix_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {

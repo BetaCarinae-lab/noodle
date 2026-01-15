@@ -73,6 +73,7 @@ NOODLE {
     | VarGet
     | Exists
     | FnCall
+    | As
     | MethodCall
     | RefResolve
     | ObjectPropertyAccess
@@ -87,6 +88,8 @@ NOODLE {
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
   Parameter = "mut"? ident ":" Type
+
+  As = Expr "as" Type
 
   Delete = "delete" ident
 
