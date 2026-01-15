@@ -4,7 +4,8 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "build": "pkg . --out-dir dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64"
+    "build": "pkg . --out-dir dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
+    "bundle": "tsc"
   },
   "repository": {
     "type": "git",
@@ -12,19 +13,20 @@
   },
   "pkg": {
     "scripts": [
-      "src/exec.js",
-      "src/semantics.js",
-      "src/info.js",
-      "src/etc.js",
-      "bin/noodle.js"
+      "js/exec.js",
+      "js/semantics.js",
+      "js/info.js",
+      "js/etc.js",
+      "js/noodle.js"
     ],
     "assets": [
-      "src/noodle.ohm",
-      "src/bowls.ohm"
+      "./grammar/noodle.ohm",
+      "./grammar/bowls.ohm",
+      "./package.json"
     ]
   },
   "bin": {
-    "noodle": "bin/noodle.js"
+    "noodle": "js/noodle.js"
   },
   "keywords": [],
   "author": "Betacarinae",
@@ -43,6 +45,7 @@
     "@types/node": "^25.0.8",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
+    "pkg": "^5.8.1",
     "typescript": "^5.9.3"
   }
 }
