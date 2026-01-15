@@ -1,4 +1,4 @@
-fn add(mut a, b) {
+fn add(mut a: number, b: number) {
     output(<a> + <b>)
 }
 
