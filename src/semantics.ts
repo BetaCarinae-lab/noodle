@@ -1,6 +1,7 @@
 import { Func, ReturnSignal } from "./etc.js";
 import * as ohm from "ohm-js"
 import { Variable } from "./etc.js";
+import readLineSync from 'readline-sync';
 
 type Env = Record<string, Variable | Func>;
 
@@ -299,6 +300,12 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         } else {
             throw new Error(this.args.env[ident] ? 'Value is not mutable!': `No value found with name: ${ident}`)
         }
+    },
+
+    Query(_quer, _op, text, _cp) {
+        return readLineSync.question(text.eval(this.args.env), {
+            hideEchoBack: false,
+        })
     },
 
     Postfix_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {

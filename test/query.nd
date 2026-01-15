@@ -1,0 +1,3 @@
+string input is query("Enter name:")
+
+writeLn("Hello " + <input>)
