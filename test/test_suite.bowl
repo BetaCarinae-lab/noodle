@@ -3,6 +3,7 @@ run ./variables.nd
 run ./fnTest.nd
 run ./objects.nd
 run ./array.nd
+run ./query.nd
 run ./booleans.nd
 run ./if_else.nd
 run ./comments.nd
