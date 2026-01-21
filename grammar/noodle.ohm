@@ -1,9 +1,8 @@
 NOODLE {
-  Program     = Statement* ";"?
+  Program     = Statement+
   Statement   = Print 
           | VarCreate
           | VarAssign
-          | Array
           | Template
           | Fn
           | If
@@ -68,15 +67,16 @@ NOODLE {
     = "(" Expr ")"               --parens
     | number
     | string
+    | VarGet
+   	| Conversions
     | Query
     | ArrayAccess
-    | VarGet
+    | ObjectPropertyAccess
     | Exists
     | FnCall
-    | As
     | MethodCall
     | RefResolve
-    | ObjectPropertyAccess
+    | Array
     | TemplateConstruction
     | True
     | False
@@ -113,6 +113,9 @@ NOODLE {
   FnCall = "<" ident StatementParameterList ">"
 
   Mut = "mut"?
+  
+  Conversions = "asFloat" "(" Expr ")" --asfloat
+  					    | "asString" "(" Expr ")" --asstring
 
   VarCreate = Mut "persistant"? "strict"? Type ident "is" Statement
 
