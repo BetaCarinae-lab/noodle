@@ -1,7 +1,7 @@
 import { Func, ReturnSignal } from "./etc.js";
 import * as ohm from "ohm-js"
 import { Variable } from "./etc.js";
-import readLineSync from 'readline-sync';
+import promptSync from 'prompt-sync';
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
@@ -120,7 +120,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             if(this.args.env[name.sourceString]) {
                 return this.args.env[name.sourceString].get()
             } else {
-                throw new Error(`No value found with name: ${name.eval(this.args.env)}`)
+                console.error(`No value found with name: ${name.eval(this.args.env)}`)
             }
         }
     },
@@ -293,11 +293,11 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Query(_quer, _op, text, _cp) {
-        let input = readLineSync.question(text.eval(this.args.env), {
-            hideEchoBack: false,
-        })
-        console.log(' ')
-        return input
+        const prompt = promptSync({ sigint: true });
+
+        const val = prompt(text.eval(this.args.env));
+
+        return val
     },
 
     As(expr, _as, type) {
@@ -351,7 +351,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     ObjectPropertyAccess(_ob: ohm.Node, objectProperty: ohm.Node,_cb: ohm.Node) {
-        return objectProperty.eval(this.args.env)
+        return objectProperty.eval(this.args.env).val
     },
 
     ObjectProperty(Mid: ohm.Node, _d: ohm.Node, ids: ohm.Node) {
@@ -360,7 +360,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             ids.asIteration().children.forEach((id) => {
                 value = value[id.sourceString]
             })
-            return value
+            return {
+                og: this.args.env[Mid.sourceString],
+                val: value
+            }
         } else {
             throw new Error(`Either can\'t find value ${Mid.sourceString}, or value is not an object`)
         }
@@ -369,7 +372,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     MethodCall(_1: ohm.Node, objProp: ohm.Node, ParamList: ohm.Node, _2: ohm.Node) {
         let fn = objProp.eval(this.args.env)
         try {
-            fn.body(ParamList.eval(this.args.env))
+            fn.val.env["self"] = fn.og // Add self to the method env
+            fn.val.body(ParamList.eval(this.args.env))
         } catch(error: any) {
             if(error instanceof ReturnSignal) {
                 return error.value
@@ -458,7 +462,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         let returned = {
             property: false,
             name: id.sourceString,
-            body: (parameters: any[]) => {
+            env: methodEnv,
+            body: function (parameters: any[]) {
                 parameters.forEach((param, index) => {
                     methodEnv[paramList[index].replace('mut ', '')] = {
                         type: typeof param,
@@ -468,7 +473,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 })
 
                 try {
-                    funcBody.eval(methodEnv)
+                    funcBody.eval(this.env)
                 } catch(error: any) {
                     if(error instanceof ReturnSignal) {
                         return error.value
