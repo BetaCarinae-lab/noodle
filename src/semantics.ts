@@ -3,25 +3,15 @@ import * as ohm from "ohm-js"
 import { Variable } from "./etc.js";
 import readLineSync from 'readline-sync';
 
-type Env = Record<string, Variable | Func>;
-
-type OhmArgs = {
-  env: Env;
-};
-
-type OhmThis = {
-  args: OhmArgs;
-};
-
 export const actionDictionary: ohm.ActionDict<unknown> = {
-    Program(statements: ohm.Node, _semi: ohm.Node) {
+    Program(statements: ohm.Node) {
         try {
             statements.children.map(s => s.eval(this.args.env));
         } catch (error) {
             if(error instanceof ReturnSignal) {
                 return error
             } else {
-                throw new Error(`${error} (${this.source.sourceString})`)
+                throw new Error(`${error} (${this.source.getLineAndColumn()})`)
             }
         }
         // clean up
@@ -416,6 +406,14 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         } else {
             throw new Error(`${name} already exists!`)
         }
+    },
+
+    Conversions_asfloat(_asfloat, _op, expr, _cp) {
+        return parseFloat(expr.eval(this.args.env))
+    },
+
+    Conversions_asstring(_asstring, _op, expr, _cp) {
+        return expr.eval(this.args.env).toString()
     },
 
     TemplateConstruction(id: ohm.Node, objectBody: ohm.Node) {

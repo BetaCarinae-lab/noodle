@@ -1,4 +1,1 @@
-number a is query("A: ") as number
-number b is query("B: ) as number
-
-writeLn(<a> + <b>)
+writeLn(asString(<a>))

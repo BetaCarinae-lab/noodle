@@ -1,0 +1,6 @@
+template rand {
+    prop seed is number,
+    method next() is () {
+        
+    }
+}
