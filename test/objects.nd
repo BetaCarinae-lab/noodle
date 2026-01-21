@@ -4,6 +4,9 @@ template MyStruct {
     method greet is () {
         writeLn("Hello")
     }
+    method echoProperty is () {
+        writeLn(<self.property>)
+    }
 }
 
 object a is MyStruct {
@@ -14,3 +17,5 @@ object a is MyStruct {
 <a.greet()>
 
 writeLn(<a.property> + <a.property2>)
+
+<a.echoProperty()>

@@ -37,10 +37,11 @@
   "homepage": "https://github.com/BetaCarinae-lab/noodle#readme",
   "description": "Language i built in JS using ohmjs",
   "dependencies": {
+    "@types/prompt-sync": "^4.2.3",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.3.3",
     "ohm-js": "^17.3.0",
-    "readline-sync": "^1.4.10"
+    "prompt-sync": "^4.2.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.8",
