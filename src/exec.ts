@@ -1,6 +1,6 @@
 import { readFileSync } from "fs"
 import { actionDictionary } from './semantics.js';
-import * as ohm from "ohm-js"
+import * as ohm from "noodle-ohm"
 import * as path_module from "path";
 
 export function loadGrammar(filename: string) {
@@ -19,7 +19,7 @@ export function runBowl(code: string) {
     let env = {}
     const bowlDict = {
         Main(entries: ohm.Node) {
-            return entries.children.map(c => c.eval())
+            return entries.children.map((c: any) => c.eval())
         },
 
         Entry(_run: ohm.Node, path: ohm.Node, fileExt: ohm.Node) {

@@ -17,7 +17,8 @@
       "js/semantics.js",
       "js/info.js",
       "js/etc.js",
-      "js/noodle.js"
+      "js/noodle.js",
+      "js/ohm.js"
     ],
     "assets": [
       "./grammar/noodle.ohm",
@@ -40,7 +41,7 @@
     "@types/prompt-sync": "^4.2.3",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.3.3",
-    "ohm-js": "^17.3.0",
+    "noodle-ohm": "github:BetaCarinae-lab/noodle-ohmjs-prebuilt",
     "prompt-sync": "^4.2.0"
   },
   "devDependencies": {

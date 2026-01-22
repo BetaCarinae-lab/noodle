@@ -1,8 +1,7 @@
 import { Func, ReturnSignal } from "./etc.js";
-import * as ohm from "ohm-js"
-import { Variable } from "./etc.js";
+import * as ohm from "noodle-ohm"
+import { Variable } from "./etc.js";    
 import promptSync from 'prompt-sync';
-
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
         try {
@@ -154,7 +153,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         var functionEnv = this.args.env
         this.args.env[name.sourceString] = new Func(
             persistant.sourceString ? true : false, 
-            (parameters: any[]) => {
+            functionEnv,
+            function(parameters: any[]) {
                 parameters.forEach((param, index) => {
                     functionEnv[ParameterList[index].replace('mut ', '')] = {
                         type: typeof param,
@@ -164,7 +164,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 })
 
                 try {
-                    body.eval(functionEnv)
+                    body.eval()
                 } catch(error: any) {
                     if(error instanceof ReturnSignal) {
                         return error.value

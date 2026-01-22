@@ -1,3 +1,12 @@
+export type env = {
+    pointers: {
+        [key: string]: string
+    },
+    env: {
+        [key: string]: any
+    }
+}
+
 export class ReturnSignal {
     value: any;
 
@@ -7,28 +16,20 @@ export class ReturnSignal {
 }
 
 export class Enviroment {
-    parent: Enviroment | null
-    values: { [key: string]: any }
+    pointers: {[key: string]: string}
+    env: {[key: string]: string}
 
-    constructor(parent = null) { 
-        this.parent = parent
-        this.values = {}
+    constructor() {
+        this.pointers = {}
+        this.env = {}
     }
 
-    get(name: string) {
-        if(this.values[name]) {
-            return this.values[name]
+    get(pointername: string) {
+        if(this.pointers[pointername] && this.env[this.pointers[pointername]]) {
+            return this.env[this.pointers[pointername]]
         } else {
-            throw new Error(`Can't get ${name}, no variable with that name!`)
+            console.error(`Failed to get value from address: ${pointername}`)
         }
-    }
-
-    store(name: string, value: Variable) {
-        this.values[name] = value
-    }
-
-    remove(name: string) {
-        this.values[name] = "deleted"
     }
 }
 
@@ -56,11 +57,13 @@ export function getType(value: any) {
 
 export class Func {
     persistant: boolean
+    env: {[key: string]: any}
     body: (parameters: any[]) => any
 
 
-    constructor(persistant: boolean, body: (parameters: any[]) => any) {
+    constructor(persistant: boolean, env: {[key: string]: any}, body: (parameters: any[]) => any) {
         this.persistant = persistant
+        this.env = env
         this.body = body
     }
 
