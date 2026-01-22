@@ -15,9 +15,11 @@ export class ReturnSignal {
     }
 }
 
+
+
 export class Enviroment {
     pointers: {[key: string]: string}
-    env: {[key: string]: string}
+    env: {[key: string]: any}
 
     constructor() {
         this.pointers = {}
@@ -30,6 +32,44 @@ export class Enviroment {
         } else {
             console.error(`Failed to get value from address: ${pointername}`)
         }
+    }
+
+    set(pointername: string, value: any) {
+        this.pointers[pointername] = pointername
+        this.env[pointername] = value
+    }
+
+    exists(name: string) {
+        return this.pointers[name] && this.env[this.pointers[name]]
+    }
+
+    createChild() {
+        return this
+    } 
+    
+    /**
+     * 
+     * @param selfPriority - Do i override?
+     * @param newenv - Env to merge with
+     */
+    merge(selfPriority: any, newenv: Enviroment) {
+        if(selfPriority) {
+            this.env = {... newenv, ...this.env}
+        } else {
+            this.env = {...this.env, ...newenv}
+        }
+    }
+
+    cleanUp() {
+        // clean up
+        //console.log('Cleaning up!')
+        Object.keys(this.pointers).forEach(key => {
+            if(this.env[this.pointers[key]] && this.env[this.pointers[key]].persistant) {
+                //console.log('Variable is persistant, ignoring')
+            } else {
+                this.env[this.pointers[key]] = null;
+            }
+        })
     }
 }
 
@@ -69,6 +109,10 @@ export class Func {
 
     call(params: any[]) {
         return this.body(params)
+    }
+
+    set() {
+        console.error('This shouldn\' happen 3:')
     }
 }
 

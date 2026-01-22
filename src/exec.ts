@@ -1,5 +1,6 @@
 import { readFileSync } from "fs"
 import { actionDictionary } from './semantics.js';
+import { Enviroment } from "./etc.js";
 import * as ohm from "noodle-ohm"
 import * as path_module from "path";
 
@@ -16,8 +17,8 @@ export const grammars = {
 }
 
 export function runBowl(code: string) {
-    let env = {}
-    const bowlDict = {
+    let env = new Enviroment()
+    const bowlDict: ohm.ActionDict<unknown> = {
         Main(entries: ohm.Node) {
             return entries.children.map((c: any) => c.eval())
         },
@@ -50,12 +51,8 @@ export function runBowl(code: string) {
 
         Register(_reg: ohm.Node, path: ohm.Node, ext: ohm.Node, _as: ohm.Node, type: ohm.Node, _op: ohm.Node, override: ohm.Node, _cp: ohm.Node) {
             if(type.sourceString == 'module') {
-                let newenv = runND(readFileSync(path.sourceString + ext.sourceString, 'utf-8'), env)
-                if(!override.sourceString) {
-                    env = {...newenv, ...env}
-                } else {
-                    env = {...env, ...newenv}
-                }
+                let newenv = runND(readFileSync(path.sourceString + ext.sourceString, 'utf-8'), env).env
+                
             } else if(type.sourceString == 'js-module') {
                 
             }
@@ -88,8 +85,8 @@ export function runBowl(code: string) {
     }
 }
 
-export function runND(inputCode: string, env_: object) {
-    let env = env_
+export function runND(inputCode: string, env_: Enviroment) {
+    let env = env_.createChild()
     
     const semantics = grammars.noodle.createSemantics().addOperation('eval(env)', actionDictionary as ohm.ActionDict<unknown>);
 
@@ -101,7 +98,7 @@ export function runND(inputCode: string, env_: object) {
     let exitCode;
 
     if(!matchResult.failed()) {
-        console.log("Match Succeeded, Applying Semantics");
+        //console.log("Match Succeeded, Applying Semantics");
         exitCode = semantics(matchResult).eval(env);
     } else {
         console.log('noodle error: ' + matchResult.message);
