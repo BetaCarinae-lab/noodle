@@ -6,9 +6,9 @@ import { runBowl, runND } from './exec.js';
 import readline from"readline";
 import { VERSION } from './info.js';
 import { exit } from 'process';
+import { Enviroment } from './etc.js';
 
-
-let env = {}
+let env = new Enviroment()
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -74,24 +74,7 @@ if(!process.argv[2]) {
 
 const inputCode = readFileSync(file_path, 'utf-8');
 
-console.log(`
-------------------------------------------
-### RunInfo:
-
-## Exec Params
-UsingBowl: ${usingBowl}
-Reading: ${file_path}
-ExplainParse: ${process.argv[3] == '--parseinfo'}
-
-## Working Directory and Versions
-NDV: ${VERSION}
-DN: ${__dirname}
-FN: ${__filename}
-CWD: ${process.cwd()}
-Trying to Read: ${file_path}
-NodeV: ${process.version}
-------------------------------------------
-`)
+console.log(`NDV: ${VERSION}`)
 
 
 if(usingBowl) {

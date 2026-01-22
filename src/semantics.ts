@@ -1,27 +1,21 @@
-import { Func, ReturnSignal } from "./etc.js";
+import { Enviroment, Func, ReturnSignal } from "./etc.js";
 import * as ohm from "noodle-ohm"
 import { Variable } from "./etc.js";    
 import promptSync from 'prompt-sync';
+
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
         try {
             statements.children.map(s => s.eval(this.args.env));
-        } catch (error) {
+        } catch (error: any) {
             if(error instanceof ReturnSignal) {
                 return error
             } else {
-                throw new Error(`${error} (${this.source.getLineAndColumn()})`)
+                console.error(`${error.stack} (line: ${this.source.getLineAndColumn().lineNum})`)
             }
         }
         // clean up
-        //console.log('Cleaning up!')
-        Object.keys(this.args.env).forEach(key => {
-            if(this.args.env[key] && this.args.env[key].persistant) {
-                //console.log('Variable is persistant, ignoring')
-            } else {
-                this.args.env[key] = null;
-            }
-        })
+        this.args.env.cleanUp()
     },
 
     Statement(stmt: ohm.Node) {
@@ -76,14 +70,14 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     VarCreate(mut: ohm.Node, pers: ohm.Node, strict: ohm.Node, type: ohm.Node, name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
         if(type.sourceString == "any" || typeof value.eval(this.args.env) == type.sourceString || (type.sourceString == 'array' && Array.isArray(value.eval(this.args.env)))) {
-            this.args.env[name.sourceString] = new Variable(name.eval(this.args.env), mut.eval(this.args.env), pers.eval(this.args.env), value.eval(this.args.env), strict.sourceString ? true : false)
+            this.args.env.set(name.sourceString, new Variable(name.eval(this.args.env), mut.eval(this.args.env), pers.eval(this.args.env), value.eval(this.args.env), strict.sourceString ? true : false))
         } else {
             throw new Error(`Mismatched Types, Expected ${type.sourceString}, Got ${typeof value.eval(this.args.env)}`)
         }
     },
 
     VarAssign(name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
-        if(this.args.env[name.sourceString]) {
+        if(this.args.env.exists(name.sourceString)) {
             this.args.env[name.sourceString].set(value)
         } else {
             console.error(`Can't find ${name.sourceString}`)
@@ -95,7 +89,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             trybody.eval(this.args.env)
         } catch(error: any) {
             if(errorname.sourceString) {
-                let catchbodyenv = this.args.env
+                let catchbodyenv = this.args.env.createChild()
                 catchbodyenv[errorname.sourceString] = error
                 catchbody.eval(catchbodyenv)
             } else {
@@ -105,21 +99,21 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Reference(_a: ohm.Node, id: ohm.Node) {
-        return {references: id.sourceString}
+        
     },
 
     RefResolve(_pipe: ohm.Node, id: ohm.Node, _pipe2: ohm.Node) {
-        return this.args.env[this.args.env[id.sourceString].get().references]
+        
     },
 
     VarGet(_ot: ohm.Node, name: ohm.Node, _ct: ohm.Node) {
         if(typeof name.eval(this.args.env) == 'object') {
             return name.eval(this.args.env).get()
         } else {
-            if(this.args.env[name.sourceString]) {
-                return this.args.env[name.sourceString].get()
+            if(this.args.env.exists(name.sourceString)) {
+                return this.args.env.get(name.sourceString).get()
             } else {
-                console.error(`No value found with name: ${name.eval(this.args.env)}`)
+                console.error(`No value found with name: ${name.eval(this.args.env)}, ${JSON.stringify(this.args.env.pointers, null, 2)}`)
             }
         }
     },
@@ -150,8 +144,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Fn(persistant: ohm.Node, _fn: ohm.Node, name: ohm.Node, ParameterList: ohm.Node, body: ohm.Node) {
         ParameterList = ParameterList.eval(this.args.env);
-        var functionEnv = this.args.env
-        this.args.env[name.sourceString] = new Func(
+        var functionEnv = this.args.env.createChild()
+        this.args.env.set(name.sourceString, new Func(
             persistant.sourceString ? true : false, 
             functionEnv,
             function(parameters: any[]) {
@@ -164,7 +158,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 })
 
                 try {
-                    body.eval()
+                    body.eval(functionEnv)
                 } catch(error: any) {
                     if(error instanceof ReturnSignal) {
                         return error.value
@@ -173,7 +167,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                     }
                 }
             }
-        )
+        ))
     },
 
     Array(_ob: ohm.Node, values: ohm.Node, _cb: ohm.Node) {
@@ -181,8 +175,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     ArrayAccess(_ot: ohm.Node, id: ohm.Node, _at: ohm.Node, index: ohm.Node, _ct: ohm.Node) {
-        if(this.args.env[id.sourceString]) {
-            return this.args.env[id.sourceString].get()[index.eval(this.args.env)]
+        if(this.args.env.exists(id.sourceString)) {
+            return this.args.env.get(id.sourceString).get()[index.eval(this.args.env)]
         } else {
             throw new Error(`No Value Found with name: ${id.sourceString}`)
         }
@@ -201,8 +195,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Delete(_delete: ohm.Node, id: ohm.Node) {
-        if(this.args.env[id.sourceString] && this.args.env[id.sourceString].isMutable()) {
-            this.args.env[id.sourceString] = "deleted by program"
+        if(this.args.env.exists(id.sourceString) && this.args.env.get(id.sourceString).isMutable()) {
+            this.args.env.set(id.sourceString, "deleted by program")
         } else {
             throw new Error(`Can't delete if variable ${id.sourceString} doesn't exist!`)
         }
@@ -213,7 +207,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Exists(id: ohm.Node, _exists: ohm.Node) {
-        return this.args.env[id.sourceString] ? true : false
+        return this.args.env.get(id.sourceString)
     },
 
     True(_val: ohm.Node) {
@@ -285,10 +279,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     //                     hehe
     Postfix_increment(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
-        if(this.args.env[ident] && this.args.env[ident].isMutable()) {
-            this.args.env[ident].value++
+        if(this.args.env.exists(ident) && this.args.env.get(ident).isMutable()) {
+            this.args.env.set(ident, this.args.env.get(ident) + 1)
         } else {
-            throw new Error(this.args.env[ident] ? 'Value is not mutable!': `No value found with name: ${ident}`)
+            throw new Error(this.args.env.exists(ident) ? 'Value is not mutable!': `No value found with name: ${ident}`)
         }
     },
 
@@ -315,16 +309,16 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Postfix_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
-        if(this.args.env[ident] && this.args.env[ident].isMutable()) {
-            this.args.env[ident].value--
+        if(this.args.env.exists(ident) && this.args.env.get(ident).isMutable()) {
+            this.args.env.set(ident, this.args.env.get(ident) - 1)
         } else {
-            throw new Error(this.args.env[ident].isMutable() ? `No value found with name: ${ident}` : 'Value is not mutable!')
+            throw new Error(this.args.env.exists(ident) ? 'Value is not mutable!': `No value found with name: ${ident}`)
         }
     },
 
     FnCall(_os: ohm.Node, name: ohm.Node, parameterList: ohm.Node, _cs: ohm.Node) {
-        if(this.args.env[name.sourceString]) {
-            return this.args.env[name.sourceString].body(parameterList.eval(this.args.env))
+        if(this.args.env.exists(name.sourceString)) {
+            return this.args.env.get(name.sourceString).body(parameterList.eval(this.args.env))
         } else {
             throw new Error(`Cannot find function with name: ${name.sourceString}`)
         }
@@ -355,13 +349,13 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     ObjectProperty(Mid: ohm.Node, _d: ohm.Node, ids: ohm.Node) {
-        if(this.args.env[Mid.sourceString].get() && typeof this.args.env[Mid.sourceString].get() == 'object') {
-            let value = this.args.env[Mid.sourceString].get()
+        if(this.args.env.get(Mid.sourceString).get() && typeof this.args.env.get(Mid.sourceString).get() == 'object') {
+            let value = this.args.env.get(Mid.sourceString).get()
             ids.asIteration().children.forEach((id) => {
                 value = value[id.sourceString]
             })
             return {
-                og: this.args.env[Mid.sourceString],
+                og: this.args.env.get(Mid.sourceString),
                 val: value
             }
         } else {
@@ -372,7 +366,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     MethodCall(_1: ohm.Node, objProp: ohm.Node, ParamList: ohm.Node, _2: ohm.Node) {
         let fn = objProp.eval(this.args.env)
         try {
-            fn.val.env["self"] = fn.og // Add self to the method env
+            fn.val.env.env["self"] = fn.og // Add self to the method env
+            fn.val.env.pointers["self"] = "self"
             fn.val.body(ParamList.eval(this.args.env))
         } catch(error: any) {
             if(error instanceof ReturnSignal) {
@@ -389,8 +384,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             values: any[],
             refers: string[]
         }
-        if(!this.args.env[name.sourceString]) {
-            this.args.env[name.sourceString] = {
+        if(!this.args.env.exists(name.sourceString)) {
+            this.args.env.set(name.sourceString, {
                 persistant: persistant.sourceString ? true : false,
                 construct: (parameters: parameterList) => {
                     const returnedObject: { [key: string]: any } = {}
@@ -406,7 +401,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
                     return returnedObject
                 }
-            }
+            })
         } else {
             throw new Error(`${name} already exists!`)
         }
@@ -421,8 +416,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     TemplateConstruction(id: ohm.Node, objectBody: ohm.Node) {
-        if(this.args.env[id.sourceString]) {
-            return this.args.env[id.sourceString].construct(objectBody.eval(this.args.env))
+        if(this.args.env.exists(id.sourceString)) {
+            return this.args.env.get(id.sourceString).construct(objectBody.eval(this.args.env))
         }
     },
 
@@ -458,7 +453,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Method(_method: ohm.Node, id: ohm.Node, _is: ohm.Node, paramList: ohm.Node, funcBody: ohm.Node) {
         paramList = paramList.eval(this.args.env);
-        var methodEnv = this.args.env
+        var methodEnv = this.args.env.createChild()
         let returned = {
             property: false,
             name: id.sourceString,
