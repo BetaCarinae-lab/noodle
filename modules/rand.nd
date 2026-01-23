@@ -1,6 +1,6 @@
-template rand {
-    prop seed is number,
-    method next() is () {
-        
+persistant template rand {
+    prop state is number,
+    method get is () {
+        output(<self.state>)
     }
 }

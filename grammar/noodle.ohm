@@ -50,7 +50,14 @@ NOODLE {
 
   Multiplicative
     = Multiplicative "*" Unary   --times
+    | Multiplicative "^" Unary   --powerof
+    | Multiplicative "%" Unary   --mod
     | Multiplicative "/" Unary   --divide
+    | Binary
+
+  Binary 
+    = Binary ">>>" Unary         --urightshift
+    | Binary ">>" Unary          --rightshift 
     | Unary
 
   Unary
@@ -119,7 +126,7 @@ NOODLE {
 
   VarCreate = Mut "persistant"? "strict"? Type ident "is" Statement
 
-  VarAssign = (ident | RefResolve) "is" Statement
+  VarAssign = (ObjectProperty | ident) "is" Statement
   
   Property = Mut "prop" ident "is" Type ","
   
@@ -167,7 +174,9 @@ NOODLE {
 
   string = "\"" (~"\"" any)* "\""
 
-  ident = letter idchar*
+  keyword = "loop" | "exists" | "fn" | "is" | "query" | "output" | "method" | "template" | "delete" | "writeLn" 
+
+  ident = ~keyword letter idchar*
 
   idchar = "_" | letter | number
 }

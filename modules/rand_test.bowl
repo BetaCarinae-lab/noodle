@@ -1,0 +1,2 @@
+run ./rand.nd
+run ./rand_test.nd

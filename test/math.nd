@@ -3,9 +3,9 @@ writeLn(5 - 5)
 writeLn(5 * 5)
 writeLn(5 / 5)
 mut number a is 0
-a++
+a is <a> + 1
 writeLn(<a>)
-a--
+a is <a> - 1
 writeLn(<a>)
 
 writeLn(-5)
