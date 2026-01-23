@@ -39,6 +39,14 @@ export class Enviroment {
         this.env[pointername] = value
     }
 
+    varset(pname: string, value: any) {
+        if(this.pointers[pname] && this.env[this.pointers[pname]]) {
+            this.env[this.pointers.pname].set(value)
+        } else {
+            console.error(`Couldn\'t find ${pname}, ${JSON.stringify(this.env[this.pointers.pname])}`)
+        }
+    }
+
     exists(name: string) {
         return this.pointers[name] && this.env[this.pointers[name]]
     }
@@ -115,7 +123,6 @@ export class Func {
         console.error('This shouldn\' happen 3:')
     }
 }
-
 
 
 export class Variable {

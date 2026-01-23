@@ -1,7 +1,7 @@
 import { readFileSync } from "fs"
 import { actionDictionary } from './semantics.js';
 import { Enviroment } from "./etc.js";
-import * as ohm from "noodle-ohm"
+import * as ohm from "ohm-js"
 import * as path_module from "path";
 
 export function loadGrammar(filename: string) {
@@ -52,7 +52,7 @@ export function runBowl(code: string) {
         Register(_reg: ohm.Node, path: ohm.Node, ext: ohm.Node, _as: ohm.Node, type: ohm.Node, _op: ohm.Node, override: ohm.Node, _cp: ohm.Node) {
             if(type.sourceString == 'module') {
                 let newenv = runND(readFileSync(path.sourceString + ext.sourceString, 'utf-8'), env).env
-                
+                env.merge(override.sourceString, newenv)
             } else if(type.sourceString == 'js-module') {
                 
             }

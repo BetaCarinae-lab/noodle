@@ -1,7 +1,8 @@
 import { Enviroment, Func, ReturnSignal } from "./etc.js";
-import * as ohm from "noodle-ohm"
+import * as ohm from "ohm-js"
 import { Variable } from "./etc.js";    
 import promptSync from 'prompt-sync';
+import { inspect } from "node:util";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
@@ -64,6 +65,22 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return expr1.eval(this.args.env) / expr2.eval(this.args.env)
     },
 
+    Multiplicative_powerof(expr1: ohm.Node, _carrot, expr2: ohm.Node) {
+        return expr1.eval(this.args.env) ^ expr2.eval(this.args.env)
+    },
+
+    Multiplicative_mod(expr1: ohm.Node, _percent, expr2: ohm.Node) {
+        return expr1.eval(this.args.env) % expr2.eval(this.args.env)
+    },
+
+    Binary_urightshift(expr1: ohm.Node, _leftleftleft, expr2: ohm.Node) {
+        return expr1.eval(this.args.env) >>> expr2.eval(this.args.env)
+    },
+
+    Binary_rightshift(expr1: ohm.Node, _leftleftleft, expr2: ohm.Node) {
+        return expr1.eval(this.args.env) >> expr2.eval(this.args.env)
+    },
+
     Mut(mut) {
         return mut.sourceString ? true : false
     },
@@ -77,10 +94,36 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     VarAssign(name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
-        if(this.args.env.exists(name.sourceString)) {
-            this.args.env[name.sourceString].set(value)
+        if(this.args.env.exists(name.sourceString) || typeof name.eval(this.args.env) == 'object') {
+            // Handle Object Property Reassigning
+            if(typeof name.eval(this.args.env) == "object") {
+                let ids = name.eval(this.args.env)
+                let idList: string[] = ids.ids.asIteration().children.map((c: ohm.Node) => c.sourceString)
+                let obj = this.args.env.get(ids.Mid).get();
+                let current = obj;
+
+                for (let i = 0; i < idList.length - 1; i++) {
+                    const key = idList[i];
+
+                    if (
+                        typeof current[key] !== "object" ||
+                        current[key] === null
+                    ) {
+                        current[key] = {};
+                    }
+
+                    current = current[key];
+                }
+
+                current[idList[idList.length - 1]] = value.eval(this.args.env);
+
+                //console.log(current[idList[idList.length - 1]])
+
+            } else {
+                this.args.env.varset(name.eval(this.args.env), value.eval(this.args.env))
+            }
         } else {
-            console.error(`Can't find ${name.sourceString}`)
+            console.error(`Can't find ${name.eval(this.args.env)}`)
         }
     },
 
@@ -356,7 +399,9 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             })
             return {
                 og: this.args.env.get(Mid.sourceString),
-                val: value
+                val: value,
+                Mid: Mid.sourceString,
+                ids: ids,
             }
         } else {
             throw new Error(`Either can\'t find value ${Mid.sourceString}, or value is not an object`)
