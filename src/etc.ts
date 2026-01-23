@@ -1,3 +1,5 @@
+import { inspect } from "node:util";
+
 export type env = {
     pointers: {
         [key: string]: string
@@ -41,6 +43,7 @@ export class Enviroment {
 
     varset(pname: string, value: any) {
         if(this.pointers[pname] && this.env[this.pointers[pname]]) {
+            //console.log(`${inspect(this.env[this.pointers[pname]])}, ${pname}, ${this.pointers[pname]}`)
             this.env[this.pointers.pname].set(value)
         } else {
             console.error(`Couldn\'t find ${pname}, ${JSON.stringify(this.env[this.pointers.pname])}`)
