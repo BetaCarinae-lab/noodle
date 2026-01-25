@@ -2,6 +2,7 @@ import { Enviroment, Func, ReturnSignal } from "./etc.js";
 import * as ohm from "ohm-js"
 import { Variable } from "./etc.js";    
 import promptSync from 'prompt-sync';
+// don't delete!, this is used for debugging!
 import { inspect } from "node:util";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
@@ -193,12 +194,16 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             functionEnv,
             function(parameters: any[]) {
                 parameters.forEach((param, index) => {
-                    functionEnv[ParameterList[index].replace('mut ', '')] = {
-                        type: typeof param,
-                        mutable: ParameterList[index].startsWith('mut '),
-                        value: param,
-                    }
+                    console.log(ParameterList[index])
+                    functionEnv.set(ParameterList[index].name, new Variable(
+                        ParameterList[index].name,
+                        ParameterList[index].mutable,
+                        false,
+                        param,
+                        false,
+                    ))
                 })
+                console.log(`WHOLE: ${inspect(functionEnv)}, \n ENV: ${inspect(functionEnv.env)}, \n POINTERS: ${inspect(functionEnv.pointers)}`)
 
                 try {
                     body.eval(functionEnv)
@@ -376,7 +381,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     ParameterList(_op: ohm.Node, listOfParams: ohm.Node, _cp: ohm.Node) {
-        return listOfParams.asIteration().children.map(c => c.sourceString)
+        return listOfParams.asIteration().children.map(c => c.eval(this.args.env))
     },
 
     StatementParameterList(_op: ohm.Node, listOfParams: ohm.Node, _cp: ohm.Node) {
@@ -416,6 +421,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             fn.val.body(ParamList.eval(this.args.env))
         } catch(error: any) {
             if(error instanceof ReturnSignal) {
+                //console.log(error.value)
                 return error.value
             } else {
                 throw new Error(error.stack)
@@ -505,18 +511,22 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             env: methodEnv,
             body: function (parameters: any[]) {
                 parameters.forEach((param, index) => {
-                    methodEnv[paramList[index].replace('mut ', '')] = {
-                        type: typeof param,
-                        mutable: paramList[index].startsWith('mut '),
-                        value: param,
-                    }
+                    console.log(paramList[index])
+                    this.env.set(paramList[index].name, new Variable(
+                        paramList[index].name,
+                        paramList[index].mutable,
+                        false,
+                        param,
+                        false,
+                    ))
                 })
 
                 try {
                     funcBody.eval(this.env)
                 } catch(error: any) {
                     if(error instanceof ReturnSignal) {
-                        return error.value
+                        //console.log(error.value)
+                        throw new ReturnSignal(error.value)
                     } else {
                         console.error(error.stack)
                     }
