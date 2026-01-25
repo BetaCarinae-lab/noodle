@@ -42,11 +42,11 @@ export class Enviroment {
     }
 
     varset(pname: string, value: any) {
-        if(this.pointers[pname] && this.env[this.pointers[pname]]) {
+        if(this.pointers[pname] && this.env[this.pointers[pname]] && this.env[this.pointers[pname]].set.toString()) {
             //console.log(`${inspect(this.env[this.pointers[pname]])}, ${pname}, ${this.pointers[pname]}`)
             this.env[this.pointers.pname].set(value)
         } else {
-            console.error(`Couldn\'t find ${pname}, ${JSON.stringify(this.env[this.pointers.pname])}`)
+            console.error(`Couldn\'t find ${pname}, ${JSON.stringify(this.env[this.pointers.pname])} or variable doesn't inherit [set]`)
         }
     }
 
