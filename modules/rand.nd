@@ -1,6 +1,9 @@
 persistant template rand {
     prop state is number,
     method get is () {
+        mut number t is <self.state> * 249150925125
+        t is <t> % 149059405902
+        self.state is <t>
         output(<self.state>)
     }
 }
