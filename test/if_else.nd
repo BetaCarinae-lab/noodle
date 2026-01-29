@@ -9,3 +9,5 @@ if(10 == 20) {
 } else {
     writeLn("Correct!")
 }
+
+writeLn("IF_ELSE END")

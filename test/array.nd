@@ -1,3 +1,5 @@
 array arr is [10, 10 + 10, 30]
 
 writeLn(<arr at 2>)
+
+writeLn("ARRAY END")

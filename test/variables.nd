@@ -11,3 +11,5 @@ try {
 } catch() {
     writeLn("strict works")
 }
+
+writeLn("VARS END")

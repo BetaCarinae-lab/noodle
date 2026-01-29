@@ -11,3 +11,5 @@ writeLn(<a>)
 writeLn(-5)
 
 writeLn((5 + 5) * 5)
+
+writeLn("MATH END")
