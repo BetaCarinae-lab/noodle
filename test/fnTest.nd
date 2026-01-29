@@ -3,3 +3,5 @@ fn add(mut a: number, b: number) {
 }
 
 writeLn(<add(20, 10)>)
+
+writeLn("FNTEST END")

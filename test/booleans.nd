@@ -7,3 +7,5 @@ writeLn(10 >= 20)
 writeLn(10 <= 20)
 writeLn(10 > 20)
 writeLn(10 < 20)
+
+writeLn("BOOL END")

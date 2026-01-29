@@ -39,7 +39,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Loop(_loop: ohm.Node, expr: ohm.Node, body: ohm.Node) {
         let i = 0
-        console.log(expr.eval(this.args.env))
+        //console.log(expr.eval(this.args.env))
         while(i != expr.eval(this.args.env)) {
             body.eval(this.args.env)
             i++
@@ -121,7 +121,13 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 //console.log(current[idList[idList.length - 1]])
 
             } else {
-                this.args.env.varset(name.eval(this.args.env), value.eval(this.args.env))
+                this.args.env.set(name.eval(this.args.env), new Variable(
+                    name.sourceString,
+                    this.args.env.get(name.sourceString).mutable,
+                    this.args.env.get(name.sourceString).persistant,
+                    value.eval(this.args.env),
+                    this.args.env.get(name.sourceString).strict,
+                ))
             }
         } else {
             console.error(`Can't find ${name.eval(this.args.env)}`)
@@ -154,10 +160,15 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         if(typeof name.eval(this.args.env) == 'object') {
             return name.eval(this.args.env).get()
         } else {
-            if(this.args.env.exists(name.sourceString)) {
+            if(this.args.env.exists(name.sourceString) && this.args.env.get(name.sourceString) instanceof Variable) {
                 return this.args.env.get(name.sourceString).get()
             } else {
-                console.error(`No value found with name: ${name.eval(this.args.env)}, ${JSON.stringify(this.args.env.pointers, null, 2)}`)
+                if(this.args.env.get(name.sourceString) && this.args.env.get(name.sourceString) instanceof Variable) {
+                    console.error(`No value found with name: ${name.sourceString}, ${this.args.env.get(name.sourceString)}`)
+                } else {
+                    console.error(`No value found with name: ${name.sourceString}, ${this.args.env.get(name.sourceString)}`)
+                    return this.args.env.get(name.sourceString).value
+                }
             }
         }
     },
@@ -194,7 +205,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             functionEnv,
             function(parameters: any[]) {
                 parameters.forEach((param, index) => {
-                    console.log(ParameterList[index])
+                    //console.log(ParameterList[index])
                     functionEnv.set(ParameterList[index].name, new Variable(
                         ParameterList[index].name,
                         ParameterList[index].mutable,
@@ -203,7 +214,6 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                         false,
                     ))
                 })
-                console.log(`WHOLE: ${inspect(functionEnv)}, \n ENV: ${inspect(functionEnv.env)}, \n POINTERS: ${inspect(functionEnv.pointers)}`)
 
                 try {
                     body.eval(functionEnv)
@@ -511,7 +521,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             env: methodEnv,
             body: function (parameters: any[]) {
                 parameters.forEach((param, index) => {
-                    console.log(paramList[index])
+                    //console.log(paramList[index])
                     this.env.set(paramList[index].name, new Variable(
                         paramList[index].name,
                         paramList[index].mutable,

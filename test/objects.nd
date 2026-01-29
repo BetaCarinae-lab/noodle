@@ -25,3 +25,5 @@ writeLn(<a.property> + <a.property2>)
 <a.bumpProperty()>
 
 writeLn("PROP: " + <a.property>)
+
+writeLn("OBJ END")

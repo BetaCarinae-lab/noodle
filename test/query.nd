@@ -1,3 +1,5 @@
 string input is query("Enter name:")
 
 writeLn("Hello " + <input> + ";")
+
+writeLn("QUERY END")

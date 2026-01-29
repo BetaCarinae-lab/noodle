@@ -3,6 +3,6 @@
 set -e
 
 sudo ./build.sh
-cd test
-noodle ./test_suite.bowl
+cd modules
+noodle ./rand_test.bowl
 cd -
