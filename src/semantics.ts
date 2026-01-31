@@ -1,4 +1,4 @@
-import { Enviroment, Func, ReturnSignal } from "./etc.js";
+import { Enviroment, Func, ReturnSignal, Template } from "./etc.js";
 import * as ohm from "ohm-js"
 import { Variable } from "./etc.js";    
 import promptSync from 'prompt-sync';
@@ -7,6 +7,53 @@ import { inspect } from "node:util";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
+        this.args.env.set("DATE#", new Func(true, this.args.env, function(params) {
+            let date = new Date()
+            if(params[0] == "year") {
+                return date.getFullYear()
+            } else if(params[0] == "month") {
+                return date.getMonth()
+            } else if(params[0] == "day") {
+                return date.getDay()
+            } else if(params[0] == "hour") {
+                return date.getHours()
+            } else if(params[0] == "minutes") {
+                return date.getMinutes()
+            } else if(params[0] == "seconds") {
+                return date.getSeconds()
+            }
+        }))
+        this.args.env.set("MATH#", new Func(true, this.args.env, function(params) {
+            switch(params[0]) {
+                case 'trunc':
+                    return Math.trunc(params[1])
+                case 'sin':
+                    return Math.sin(params[1])
+                case 'cos':
+                    return Math.cos(params[1])
+                case 'tan':
+                    return Math.tan(params[1])
+                case 'imul':
+                    return Math.imul(params[1], params[2])
+                case 'pi':
+                    return Math.PI
+                case 'e':
+                    return Math.E
+                case 'round':
+                    return Math.round(params[1])
+                case 'floor':
+                    return Math.floor(params[1])
+                case 'ceil':
+                    return Math.ceil(params[1])
+                case 'u-rshift':
+                    return params[1] >>> params[2]
+                case 'rshift':
+                    return params[1] >> params[2]
+                default:
+                    console.error(`Math error, ${params[0]} is an invalid operation type`)
+                    break;
+            }
+        }))
         try {
             statements.children.map(s => s.eval(this.args.env));
         } catch (error: any) {
@@ -352,19 +399,6 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return val
     },
 
-    As(expr, _as, type) {
-        if(type.sourceString == "fn" || type.sourceString == "object" || type.sourceString == "array" || type.sourceString == "reference" || type.sourceString == "any") {
-            console.error('Invalid type conversion')
-        }
-        if(typeof expr.eval(this.args.env) == 'number' && type.sourceString == 'string') {
-            return expr.eval(this.args.env).toString()
-        } else if(typeof expr.eval(this.args.env) == 'string' && type.sourceString == 'number') {
-            return parseInt(expr.eval(this.args.env))
-        } else if(typeof expr.eval(this.args.env) == type.sourceString) {
-            return expr.eval(this.args.env)
-        }
-    },
-
     Postfix_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
         if(this.args.env.exists(ident) && this.args.env.get(ident).isMutable()) {
@@ -446,9 +480,9 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             refers: string[]
         }
         if(!this.args.env.exists(name.sourceString)) {
-            this.args.env.set(name.sourceString, {
-                persistant: persistant.sourceString ? true : false,
-                construct: (parameters: parameterList) => {
+            this.args.env.set(name.sourceString, new Template(
+                persistant.sourceString ? true : false,
+                (parameters: parameterList) => {
                     const returnedObject: { [key: string]: any } = {}
                     parameters.values.forEach((value: any, index: number) => {
                         returnedObject[parameters.refers[index]] = value
@@ -462,7 +496,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
                     return returnedObject
                 }
-            })
+            ))
         } else {
             throw new Error(`${name} already exists!`)
         }
@@ -478,6 +512,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     TemplateConstruction(id: ohm.Node, objectBody: ohm.Node) {
         if(this.args.env.exists(id.sourceString)) {
+            console.log(inspect(this.args.env.get(id.sourceString).construct(objectBody.eval(this.args.env))))
             return this.args.env.get(id.sourceString).construct(objectBody.eval(this.args.env))
         }
     },

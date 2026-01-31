@@ -41,6 +41,10 @@ export class Enviroment {
         this.env[pointername] = value
     }
 
+    reference(name: string, references: string) {
+        this.pointers[name] = references
+    }
+
     varset(pname: string, value: any) {
         if(this.pointers[pname] && this.env[this.pointers[pname]] && this.env[this.pointers[pname]] instanceof Variable) {
             //console.log(`${inspect(this.env[this.pointers[pname]])}`)
@@ -149,6 +153,39 @@ export class Func {
     }
 }
 
+type plist = {
+    refers: string[],
+    values: any[]
+}
+
+export class Template {
+    persistant: boolean
+    construct: (paramlist: plist) => { [key: string]: any }
+
+    constructor(persistant: boolean, construct: (paramList: plist) => { [key: string]: any }) {
+        this.persistant = persistant
+        this.construct = construct
+    }
+
+    tree() {
+        console.log(inspect(this))
+    }
+} 
+
+'\a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\v\w\y\z'
+'\!\@\#\$\%\^\&\*\(\)\-\=\\\}\{\[\]'
+// why can every letter except u and x be used as an escape char?
+// i'm getting sidetracked, back to work
+// but rq, what does this look like printed?
+// let allescapechars = '\a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\v\w\y\z'
+//console.log(allescapechars)
+/*
+cde
+   ghijklm
+spq
+        wyz
+*/
+// huh, anyway
 
 export class Variable {
     name: string

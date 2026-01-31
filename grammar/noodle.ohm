@@ -96,8 +96,6 @@ NOODLE {
   
   Parameter = "mut"? ident ":" Type
 
-  As = Expr "as" Type
-
   Delete = "delete" ident
 
   ExitValues = "success" | "failure"
@@ -159,8 +157,6 @@ NOODLE {
   FuncBody = "{" Statement+ "}"
   
   RefResolve = "|" ident "|"
-
-  FnType = "async" | "pub" | "local"
   
   Exists = ident "exists"
   
@@ -178,5 +174,5 @@ NOODLE {
 
   ident = ~keyword letter idchar*
 
-  idchar = "_" | letter | number
+  idchar = "_" | letter | number | "#" | "!" | "@"
 }
