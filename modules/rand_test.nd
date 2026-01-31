@@ -3,3 +3,4 @@ object rng is rand {
 }
 
 writeLn(<rng.get()>)
+writeLn(<rng.get()>)
