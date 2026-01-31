@@ -3,6 +3,9 @@ persistant template rand {
     method get is () {
         mut number t is <self.state> * 249150925125
         t is <t> / 20194019294000
+        t is <t> * <DATE#("seconds")>
+        t is <t> / <DATE#("minutes")>
+        t is <t> * 10
         self.state is <t>
         output(<self.state>)
     }

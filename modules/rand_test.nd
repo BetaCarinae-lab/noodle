@@ -2,5 +2,7 @@ object rng is rand {
     state: 40,
 }
 
-writeLn(<rng.get()>)
-writeLn(<rng.get()>)
+loop 10 {
+    writeLn(<rng.get()>)
+    writeLn(<rng.get()>)
+}
