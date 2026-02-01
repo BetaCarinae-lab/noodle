@@ -5,6 +5,7 @@ import promptSync from 'prompt-sync';
 // don't delete!, this is used for debugging!
 import { inspect } from "node:util";
 
+
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
         this.args.env.set("DATE#", new Func(true, this.args.env, function(params) {
@@ -62,7 +63,9 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             }
         }))
         try {
-            statements.children.map(s => s.eval(this.args.env));
+            statements.children.map(s => {
+                s.eval(this.args.env)
+            });
         } catch (error: any) {
             if(error instanceof ReturnSignal) {
                 return error
@@ -393,7 +396,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return -value.eval(this.args.env)
     },
 
-    //                     hehe
+    //                                           hehe
     Postfix_increment(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
         if(this.args.env.exists(ident) && this.args.env.get(ident).isMutable()) {
@@ -404,7 +407,6 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Query(_quer, _op, text, _cp) {
-        console.log(this.sourceString)
         const prompt = promptSync({ sigint: true });
 
         const val = prompt(text.eval(this.args.env));
