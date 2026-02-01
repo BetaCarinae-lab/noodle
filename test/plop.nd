@@ -1,0 +1,11 @@
+template EX {
+    prop variable is number,
+}
+
+object excon is EX {
+    variable: 10,
+}
+
+plop excon.variable (mut)
+
+writeLn(<variable>)

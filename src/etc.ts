@@ -173,10 +173,10 @@ export class Template {
 } 
 
 '\a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\v\w\y\z'
-'\!\@\#\$\%\^\&\*\(\)\-\=\\\}\{\[\]'
+'\!\@\#\$\%\^\&\*\(\)\-\=\\\}\{\[\]' 
 // why can every letter except u and x be used as an escape char?
 // i'm getting sidetracked, back to work
-// but rq, what does this look like printed?
+// but rq, what does this look like printed?    
 // let allescapechars = '\a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\v\w\y\z'
 //console.log(allescapechars)
 /*

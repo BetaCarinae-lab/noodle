@@ -2,4 +2,8 @@ array arr is [10, 10 + 10, 30]
 
 writeLn(<arr at 2>)
 
+string str is "Hello!"
+
+writeLn(<str at 3>)
+
 writeLn("ARRAY END")
