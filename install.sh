@@ -24,6 +24,33 @@ case "$OS" in
     ;;
 esac
 
+echo "Installing dependencies..."
+
+# Ubuntu/Debian
+if [ -f /etc/debian_version ]; then
+    sudo apt update
+    sudo apt install -y \
+        libsdl2-dev \
+        libgl1-mesa-dev \
+        libx11-dev \
+        libxi-dev \
+        libxrandr-dev \
+        libxcursor-dev \
+        libxinerama-dev \
+        libjpeg-turbo8
+fi
+
+# macOS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    brew install raylib sdl2
+fi
+
+echo "--------------------------"
+
+echo "Dependencies installed!"
+
+
+
 # Source binary path
 SRC_BINARY="$SCRIPT_DIR/dist/${BINARY_NAME}-${OS_NAME}"
 

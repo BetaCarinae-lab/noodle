@@ -4,7 +4,7 @@ import { Variable } from "./etc.js";
 import promptSync from 'prompt-sync';
 // don't delete!, this is used for debugging!
 import { inspect } from "node:util";
-
+import { GRAPHICS_API_BINDINGS } from "./graphics.js";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
@@ -69,6 +69,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 throw new Error(`ASSERT FAIL: ${params[0]} != ${params[1]}`)
             }
         }))
+        this.args.env.set('RLIB_WINDOW#', GRAPHICS_API_BINDINGS.window)
+        this.args.env.set('RLIB_GRAPHICS#', GRAPHICS_API_BINDINGS.graphics_handle)
+        this.args.env.set('RLIB_DRAW#', GRAPHICS_API_BINDINGS.draw)
+        this.args.env.set('RLIB_COLOR#', GRAPHICS_API_BINDINGS.color)
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)
