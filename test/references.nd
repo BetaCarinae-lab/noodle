@@ -1,7 +1,10 @@
 number a is 10
+b <-> a
+writeLn(<b>)
+<ASSERT#(<b>, 10)>
 
-object b is &a
+b is <b> + 1
 
-|b| is 11
+writeLn(<b>)
 
-writeLn(<|b|>)
+<ASSERT#(<b>, 11)>
