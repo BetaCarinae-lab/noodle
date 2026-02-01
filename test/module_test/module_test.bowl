@@ -1,3 +1,2 @@
 register ./module_test/add.nd as module (override)
-register ./module_test/powerof.ts as js-module (override)
 run ./test/module_test/file.nd
