@@ -19,7 +19,8 @@
       "js/info.js",
       "js/etc.js",
       "js/noodle.js",
-      "js/ohm.js"
+      "js/ohm.js",
+      "js/graphics.js"
     ],
     "assets": [
       "./grammar/noodle.ohm",
@@ -40,10 +41,13 @@
   "description": "Language i built in JS using ohmjs",
   "dependencies": {
     "@types/prompt-sync": "^4.2.3",
+    "canvas": "^3.2.1",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.3.3",
+    "nan": "^2.25.0",
     "ohm-js": "^17.3.0",
-    "prompt-sync": "^4.2.0"
+    "prompt-sync": "^4.2.0",
+    "raylib": "^0.14.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.8",
