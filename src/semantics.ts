@@ -54,6 +54,13 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                     break;
             }
         }))
+        this.args.env.set('CNV#', new Func(true, this.args.env, function(params) {
+            if(typeof params[0] == "string") {
+                return new Number(params[0]).valueOf()
+            } else if (typeof params[0] == "number") {
+                return new String(params[0]).valueOf()
+            }
+        }))
         try {
             statements.children.map(s => s.eval(this.args.env));
         } catch (error: any) {
@@ -73,6 +80,11 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     _terminal(this: ohm.TerminalNode) {
         return this.sourceString
+    },
+
+    Plop(_plop, ctxtopush: ohm.Node, _op, pers, mut, strict, _cp) {
+        let v = ctxtopush.eval(this.args.env)
+        this.args.env.set(v.final, new Variable(v.final, mut.sourceString ? true : false, pers.sourceString ? true : false, v.value, strict.sourceString ? true : false))
     },
 
     Print(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
@@ -392,6 +404,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Query(_quer, _op, text, _cp) {
+        console.log(this.sourceString)
         const prompt = promptSync({ sigint: true });
 
         const val = prompt(text.eval(this.args.env));
@@ -443,12 +456,17 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     ObjectProperty(Mid: ohm.Node, _d: ohm.Node, ids: ohm.Node) {
         if(this.args.env.get(Mid.sourceString).get() && typeof this.args.env.get(Mid.sourceString).get() == 'object') {
             let value = this.args.env.get(Mid.sourceString).get()
-            ids.asIteration().children.forEach((id) => {
+            let final;
+            ids.asIteration().children.forEach((id, index) => {
                 value = value[id.sourceString]
+                if(typeof ids.asIteration().children[index + 1] == 'undefined') {
+                    final = id.sourceString
+                }
             })
             return {
                 og: this.args.env.get(Mid.sourceString),
                 val: value,
+                final: final,
                 Mid: Mid.sourceString,
                 ids: ids,
             }
@@ -512,7 +530,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     TemplateConstruction(id: ohm.Node, objectBody: ohm.Node) {
         if(this.args.env.exists(id.sourceString)) {
-            console.log(inspect(this.args.env.get(id.sourceString).construct(objectBody.eval(this.args.env))))
+            //console.log(inspect(this.args.env.get(id.sourceString).construct(objectBody.eval(this.args.env))))
             return this.args.env.get(id.sourceString).construct(objectBody.eval(this.args.env))
         }
     },

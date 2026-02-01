@@ -7,6 +7,7 @@ NOODLE {
           | Fn
           | If
           | Loop
+          | Plop
           | Delete
           | Comment
           | TryCatch
@@ -153,6 +154,8 @@ NOODLE {
   Reference = "&" ident
 
   Type = "any" | "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
+
+  Plop = "plop" ObjectProperty "(" "persistant"? "mut"? "strict"? ")"
 
   FuncBody = "{" Statement+ "}"
   

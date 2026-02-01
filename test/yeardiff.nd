@@ -1,0 +1,15 @@
+#(
+    Little program that takes in a year and gets the
+    difference from that year and the current year
+)
+
+number cur is <DATE#("year")>
+
+string target_ is query("Enter year: ")
+number target is <CNV#(<target_>)>
+
+if(<target> >= <cur>) {
+    writeLn(<target> - <cur>)
+} else {
+    writeLn(<cur> - <target>)
+}
