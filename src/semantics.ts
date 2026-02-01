@@ -62,6 +62,13 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 return new String(params[0]).valueOf()
             }
         }))
+        this.args.env.set('ASSERT#', new Func(true, this.args.env, function(params) {
+            if(params[0] == params[1]) {
+                return true
+            } else {
+                throw new Error(`ASSERT FAIL: ${params[0]} != ${params[1]}`)
+            }
+        }))
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)
@@ -212,6 +219,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Reference(_a: ohm.Node, id: ohm.Node) {
         
+    },
+
+    RefCreate(id: ohm.Node, _coolthing_, id2: ohm.Node) {
+        this.args.env.reference(id.sourceString, id2.sourceString)
     },
 
     RefResolve(_pipe: ohm.Node, id: ohm.Node, _pipe2: ohm.Node) {
@@ -492,7 +503,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             }
         }
     },
-
+    
     Template(persistant: ohm.Node, _temp: ohm.Node, name: ohm.Node, body: ohm.Node) {
         let constructorArgs = body.eval(this.args.env)
         type parameterList = {

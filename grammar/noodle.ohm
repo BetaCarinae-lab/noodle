@@ -9,6 +9,7 @@ NOODLE {
           | Loop
           | Plop
           | Delete
+          | RefCreate
           | Comment
           | TryCatch
           | Exit
@@ -149,7 +150,7 @@ NOODLE {
 
   Query = "query" "(" Expr ")"
 
-  VarGet = "<" (ident | RefResolve) ">"
+  VarGet = "<" ident ">"
   
   Reference = "&" ident
 
@@ -160,6 +161,8 @@ NOODLE {
   FuncBody = "{" Statement+ "}"
   
   RefResolve = "|" ident "|"
+
+  RefCreate = ident "<->" ident
   
   Exists = ident "exists"
   
