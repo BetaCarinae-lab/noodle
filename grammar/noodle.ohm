@@ -81,6 +81,7 @@ NOODLE {
    	| Conversions
     | Query
     | ArrayAccess
+    | ArrayAssign
     | ObjectPropertyAccess
     | Exists
     | FnCall
@@ -91,7 +92,6 @@ NOODLE {
     | True
     | False
     | Reference
-    | ident
 
 
   Fn = "persistant"? "fn" ident ParameterList FuncBody
@@ -117,7 +117,9 @@ NOODLE {
   True = "true" | "yes" | "yeah"
   False = "false" | "no" | "nah"
 
-  ArrayAccess = "<" Expr "at" Statement ">"
+  ArrayAccess = "<"(Expr | ident) "at" Statement">"
+ 	
+  ArrayAssign = ident "at" Statement "is" Expr
   
   StatementParameterList = "(" ListOf<Statement, ","> ")"
 
@@ -128,9 +130,9 @@ NOODLE {
   Conversions = "asFloat" "(" Expr ")" --asfloat
   					    | "asString" "(" Expr ")" --asstring
 
-  VarCreate = Mut "persistant"? "strict"? Type ident "is" Statement
+  VarCreate = Mut "persistant"? "strict"? Type ident "is" Expr
 
-  VarAssign = (ObjectProperty | ident) "is" Statement
+  VarAssign = (ObjectProperty | ident) "is" Expr
   
   Property = Mut "prop" ident "is" Type ","
   

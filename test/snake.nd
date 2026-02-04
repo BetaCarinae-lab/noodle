@@ -1,12 +1,29 @@
 mut string direction is "up"
+mut boolean alive is true
 <INIT_WINDOW#(400, 400, "snake")
+
+fn handle_input() {
+    if(<IS_KEY_DOWN("W")>) {
+        direction is "up"
+    }
+    if(<IS_KEY_DOWN("S")>) {
+        direction is "down"
+    } 
+    if(<IS_KEY_DOWN("A")>) {
+        direction is "left"
+    }
+    if(<IS_KEY_DOWN("D")>) {
+        
+    }
+}
 
 fn main() {
     
 }
 
-while(!<WINDOW_SHOULD_CLOSE()>) {
+while(!<WINDOW_SHOULD_CLOSE() && <alive>>) {
     <main()>
 }
+
 
 <CLOSE_WINDOW#()>

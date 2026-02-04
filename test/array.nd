@@ -6,4 +6,16 @@ string str is "Hello!"
 
 writeLn(<str at 3>)
 
+array grid is <GRID#(5, 5)>
+
+writeLn(<grid>)
+
+array row is <grid at 4>
+
+writeLn(<row at 4>)
+
+arr at 3 is 69
+
+writeLn(<arr at 3>)
+
 writeLn("ARRAY END")

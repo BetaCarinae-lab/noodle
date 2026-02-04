@@ -1,7 +1,7 @@
 number window_w is 400
 number window_h is 400
 
-<INIT_WINDOW#(<window_w>, <window_h>, "window")>
+<INIT_WINDOW#(400, 400, "window")>
 
 mut number y_pos is 0
 mut number W is 10
