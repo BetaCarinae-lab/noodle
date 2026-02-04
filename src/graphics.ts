@@ -60,6 +60,13 @@ export function IS_KEY_DOWN(params: any[]) {
   return rl.IsKeyDown(keyCode);
 }
 
+export function GET_MOUSE(_params: any[]) {
+    return {
+        x: rl.GetMouseX(),
+        y: rl.GetMouseY(),
+    }
+}
+
 export function windowShouldClose(_params: any[]) {
   return rl.WindowShouldClose();
 }

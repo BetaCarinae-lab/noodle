@@ -1,0 +1,12 @@
+mut string direction is "up"
+<INIT_WINDOW#(400, 400, "snake")
+
+fn main() {
+    
+}
+
+while(!<WINDOW_SHOULD_CLOSE()>) {
+    <main()>
+}
+
+<CLOSE_WINDOW#()>
