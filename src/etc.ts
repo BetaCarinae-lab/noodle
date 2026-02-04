@@ -36,28 +36,13 @@ export class Enviroment {
         }
     }
 
-    set(pointername: string, value: any) {
+    new(pointername: string, value: any) {
         this.pointers[pointername] = pointername
         this.env[pointername] = value
     }
 
     reference(name: string, references: string) {
         this.pointers[name] = references
-    }
-
-    varset(pname: string, value: any) {
-        if(this.pointers[pname] && this.env[this.pointers[pname]] && this.env[this.pointers[pname]] instanceof Variable) {
-            let value = this.env[this.pointers[pname]]
-            if(value && value.mutable) {
-                if(!value.strict || typeof value == value.type) {
-                    this.env[this.pointers[pname]] = value
-                }
-            } else {
-                console.error(value ? 'Value isn\'t mutable!' : 'Value doesn\'t exist')
-            }
-        } else {
-            console.error(`Couldn\'t find ${pname}, ${JSON.stringify(this.env[this.pointers.pname])} or variable doesn't inherit [set]`)
-        }
     }
 
     exists(name: string) {
@@ -67,6 +52,20 @@ export class Enviroment {
     createChild() {
         return this
     } 
+
+    set(name: string, value: any) {
+        if(this.pointers[name] && this.env[this.pointers[name]]) {
+            let vari = this.env[this.pointers[name]]
+            //console.log('----------------------')
+            //console.log(`[SET]:\n(Setting ${name}, pointer value: ${this.pointers[name]}),\nVALUE: ${inspect(this.env[this.pointers[name]])}`)
+            //console.log('----------------------')
+            if(vari && vari.mutable) {
+                this.env[this.pointers[name]] = value
+            } else {
+                console.error('Can\'t set value, either isn\'t mutable, or doesn\'t exist at all')
+            }
+        }
+    }
     
     /**
      * 
