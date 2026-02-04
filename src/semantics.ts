@@ -181,6 +181,12 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
+    ArrayAssign(ident, _at, index, _is, expr) {
+        let edited = this.args.env.get(ident.sourceString)
+        edited[index.eval(this.args.env)] = expr.eval(this.args.env)
+        this.args.env.varset(ident.sourceString, edited)
+    },
+
     VarCreate(mut: ohm.Node, pers: ohm.Node, strict: ohm.Node, type: ohm.Node, name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
         if(type.sourceString == "any" || typeof value.eval(this.args.env) == type.sourceString || (type.sourceString == 'array' && Array.isArray(value.eval(this.args.env)))) {
             this.args.env.set(name.sourceString, new Variable(name.eval(this.args.env), mut.eval(this.args.env), pers.eval(this.args.env), value.eval(this.args.env), strict.sourceString ? true : false))
@@ -333,7 +339,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     ArrayAccess(_ot: ohm.Node, id: ohm.Node, _at: ohm.Node, index: ohm.Node, _ct: ohm.Node) {
         if(this.args.env.exists(id.sourceString)) {
-            console.log(id.eval(this.args.env))
+            //console.log(id.eval(this.args.env))
             let evaled = id.eval(this.args.env)
             if(typeof evaled == 'string') {
                 console.log('string')

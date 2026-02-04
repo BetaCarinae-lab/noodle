@@ -47,28 +47,10 @@ export class Enviroment {
 
     varset(pname: string, value: any) {
         if(this.pointers[pname] && this.env[this.pointers[pname]] && this.env[this.pointers[pname]] instanceof Variable) {
-            //console.log(`${inspect(this.env[this.pointers[pname]])}`)
-            try {
-                //console.log(typeof this.env[this.pointers.pname].set)
-                this.env[this.pointers.pname].set(value)
-            } catch(err) {
-                console.error('Uhoh, Variable doesn\'t inherit [set]!')
-                const variable = this.env[this.pointers.pname]
-                if(variable.mutable) {
-                    if(variable.strict) {
-                        if(variable.type == getType(value)) {
-                            //console.log(`${inspect(this.env[this.pointers.pname])}`)
-                            this.env[this.pointers.pname].value = value
-                        } else {
-                            console.error('Cannot change variables value, is strict, and new value isn\' of correct type!')
-                            return null
-                        }
-                    } else {
-                        variable.value = value
-                    }
-                } else {
-                    console.error('Cannot change variables value, isn\' mutable!')
-                    return null;
+            let value = this.env[this.pointers[pname]]
+            if(value && value.mutable) {
+                if(!value.strict || typeof value == value.type) {
+                    this.env[this.pointers[pname]] = value
                 }
             }
         } else {
