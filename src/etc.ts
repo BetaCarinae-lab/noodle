@@ -52,6 +52,8 @@ export class Enviroment {
                 if(!value.strict || typeof value == value.type) {
                     this.env[this.pointers[pname]] = value
                 }
+            } else {
+                console.error(value ? 'Value isn\'t mutable!' : 'Value doesn\'t exist')
             }
         } else {
             console.error(`Couldn\'t find ${pname}, ${JSON.stringify(this.env[this.pointers.pname])} or variable doesn't inherit [set]`)
