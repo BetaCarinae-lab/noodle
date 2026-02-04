@@ -9,7 +9,7 @@ import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, en
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
-        this.args.env.set("DATE#", new Func(true, this.args.env, function(params) {
+        this.args.env.new("DATE#", new Func(true, this.args.env, function(params) {
             let date = new Date()
             if(params[0] == "year") {
                 return date.getFullYear()
@@ -25,7 +25,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 return date.getSeconds()
             }
         }))
-        this.args.env.set("MATH#", new Func(true, this.args.env, function(params) {
+        this.args.env.new("MATH#", new Func(true, this.args.env, function(params) {
             switch(params[0]) {
                 case 'trunc':
                     return Math.trunc(params[1])
@@ -56,39 +56,39 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                     break;
             }
         }))
-        this.args.env.set('CNV#', new Func(true, this.args.env, function(params) {
+        this.args.env.new('CNV#', new Func(true, this.args.env, function(params) {
             if(typeof params[0] == "string") {
                 return new Number(params[0]).valueOf()
             } else if (typeof params[0] == "number") {
                 return new String(params[0]).valueOf()
             }
         }))
-        this.args.env.set('ASSERT#', new Func(true, this.args.env, function(params) {
+        this.args.env.new('ASSERT#', new Func(true, this.args.env, function(params) {
             if(params[0] == params[1]) {
                 return true
             } else {
                 throw new Error(`ASSERT FAIL: ${params[0]} != ${params[1]}`)
             }
         }))
-        this.args.env.set('FS_READ#', new Func(true, this.args.env, function(params) {
+        this.args.env.new('FS_READ#', new Func(true, this.args.env, function(params) {
             return fs.readFileSync(params[0], params[1])
         }))
-        this.args.env.set('GRID#', new Func(true, this.args.env, function(params) {
+        this.args.env.new('GRID#', new Func(true, this.args.env, function(params) {
             return Array.from({ length: params[0] }, () =>
                 Array.from({ length: params[1] }, () => null)
             );
             }
         ))
-        this.args.env.set('GET_MOUSE#', new Func(true, this.args.env, GET_MOUSE))
-        this.args.env.set('INIT_WINDOW#', new Func(true, this.args.env, initWindow))
-        this.args.env.set('WINDOW_SHOULD_CLOSE#', new Func(true, this.args.env, windowShouldClose))
-        this.args.env.set('BEGIN_DRAWING#', new Func(true, this.args.env, beginDrawing))
-        this.args.env.set('STOP_DRAWING#', new Func(true, this.args.env, endDrawing))
-        this.args.env.set('IS_KEY_DOWN#', new Func(true, this.args.env, IS_KEY_DOWN))
-        this.args.env.set('CLEAR_BACKGROUND#', new Func(true, this.args.env, clearBackground))
-        this.args.env.set('TEXT#', new Func(true, this.args.env, drawText))
-        this.args.env.set('RECTANGLE#', new Func(true, this.args.env, drawRectangle))
-        this.args.env.set('CLOSE_WINDOW#', new Func(true, this.args.env, closeWindow))
+        this.args.env.new('GET_MOUSE#', new Func(true, this.args.env, GET_MOUSE))
+        this.args.env.new('INIT_WINDOW#', new Func(true, this.args.env, initWindow))
+        this.args.env.new('WINDOW_SHOULD_CLOSE#', new Func(true, this.args.env, windowShouldClose))
+        this.args.env.new('BEGIN_DRAWING#', new Func(true, this.args.env, beginDrawing))
+        this.args.env.new('STOP_DRAWING#', new Func(true, this.args.env, endDrawing))
+        this.args.env.new('IS_KEY_DOWN#', new Func(true, this.args.env, IS_KEY_DOWN))
+        this.args.env.new('CLEAR_BACKGROUND#', new Func(true, this.args.env, clearBackground))
+        this.args.env.new('TEXT#', new Func(true, this.args.env, drawText))
+        this.args.env.new('RECTANGLE#', new Func(true, this.args.env, drawRectangle))
+        this.args.env.new('CLOSE_WINDOW#', new Func(true, this.args.env, closeWindow))
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)
@@ -114,7 +114,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Plop(_plop, ctxtopush: ohm.Node, _op, pers, mut, strict, _cp) {
         let v = ctxtopush.eval(this.args.env)
-        this.args.env.set(v.final, new Variable(v.final, mut.sourceString ? true : false, pers.sourceString ? true : false, v.value, strict.sourceString ? true : false))
+        this.args.env.new(v.final, new Variable(v.final, mut.sourceString ? true : false, pers.sourceString ? true : false, v.value, strict.sourceString ? true : false))
     },
 
     Print(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
@@ -184,12 +184,12 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     ArrayAssign(ident, _at, index, _is, expr) {
         let edited = this.args.env.get(ident.sourceString)
         edited[index.eval(this.args.env)] = expr.eval(this.args.env)
-        this.args.env.varset(ident.sourceString, edited)
+        this.args.env.set(ident.sourceString, edited)
     },
 
     VarCreate(mut: ohm.Node, pers: ohm.Node, strict: ohm.Node, type: ohm.Node, name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
         if(type.sourceString == "any" || typeof value.eval(this.args.env) == type.sourceString || (type.sourceString == 'array' && Array.isArray(value.eval(this.args.env)))) {
-            this.args.env.set(name.sourceString, new Variable(name.eval(this.args.env), mut.eval(this.args.env), pers.eval(this.args.env), value.eval(this.args.env), strict.sourceString ? true : false))
+            this.args.env.new(name.sourceString, new Variable(name.eval(this.args.env), mut.eval(this.args.env), pers.eval(this.args.env), value.eval(this.args.env), strict.sourceString ? true : false))
         } else {
             throw new Error(`Mismatched Types, Expected ${type.sourceString}, Got ${typeof value.eval(this.args.env)}`)
         }
@@ -222,7 +222,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 //console.log(current[idList[idList.length - 1]])
 
             } else {
-                this.args.env.set(name.eval(this.args.env), new Variable(
+                this.args.env.new(name.eval(this.args.env), new Variable(
                     name.sourceString,
                     this.args.env.get(name.sourceString).mutable,
                     this.args.env.get(name.sourceString).persistant,
@@ -305,7 +305,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     Fn(persistant: ohm.Node, _fn: ohm.Node, name: ohm.Node, ParameterList: ohm.Node, body: ohm.Node) {
         ParameterList = ParameterList.eval(this.args.env);
         var functionEnv = this.args.env.createChild()
-        this.args.env.set(name.sourceString, new Func(
+        this.args.env.new(name.sourceString, new Func(
             persistant.sourceString ? true : false, 
             functionEnv,
             function(parameters: any[]) {
@@ -342,7 +342,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             //console.log(id.eval(this.args.env))
             let evaled = id.eval(this.args.env)
             if(typeof evaled == 'string') {
-                console.log('string')
+                //console.log('string')
                 return this.args.env.get(evaled).value[index.eval(this.args.env)]
             } else {
                 return id.eval(this.args.env).value[index.eval(this.args.env)]
@@ -366,7 +366,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Delete(_delete: ohm.Node, id: ohm.Node) {
         if(this.args.env.exists(id.sourceString) && this.args.env.get(id.sourceString).isMutable()) {
-            this.args.env.set(id.sourceString, "deleted by program")
+            this.args.env.new(id.sourceString, "deleted by program")
         } else {
             throw new Error(`Can't delete if variable ${id.sourceString} doesn't exist!`)
         }
@@ -450,7 +450,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     Postfix_increment(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
         if(this.args.env.exists(ident) && this.args.env.get(ident).isMutable()) {
-            this.args.env.set(ident, this.args.env.get(ident) + 1)
+            this.args.env.new(ident, this.args.env.get(ident) + 1)
         } else {
             throw new Error(this.args.env.exists(ident) ? 'Value is not mutable!': `No value found with name: ${ident}`)
         }
@@ -467,7 +467,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     Postfix_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
         let ident = ident_untrimmed.sourceString.replace('&', '')
         if(this.args.env.exists(ident) && this.args.env.get(ident).isMutable()) {
-            this.args.env.set(ident, this.args.env.get(ident) - 1)
+            this.args.env.new(ident, this.args.env.get(ident) - 1)
         } else {
             throw new Error(this.args.env.exists(ident) ? 'Value is not mutable!': `No value found with name: ${ident}`)
         }
@@ -550,7 +550,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             refers: string[]
         }
         if(!this.args.env.exists(name.sourceString)) {
-            this.args.env.set(name.sourceString, new Template(
+            this.args.env.new(name.sourceString, new Template(
                 persistant.sourceString ? true : false,
                 (parameters: parameterList) => {
                     const returnedObject: { [key: string]: any } = {}

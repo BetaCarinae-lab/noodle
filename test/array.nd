@@ -1,4 +1,4 @@
-array arr is [10, 10 + 10, 30]
+mut array arr is [10, 10 + 10, 30]
 
 writeLn(<arr at 2>)
 
@@ -14,8 +14,8 @@ array row is <grid at 4>
 
 writeLn(<row at 4>)
 
-arr at 3 is 69
+arr at 2 is 69
 
-writeLn(<arr at 3>)
+writeLn(<arr at 2>)
 
 writeLn("ARRAY END")
