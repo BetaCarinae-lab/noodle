@@ -183,7 +183,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     ArrayAssign(ident, _at, index, _is, expr) {
         let edited = this.args.env.get(ident.sourceString)
-        edited[index.eval(this.args.env)] = expr.eval(this.args.env)
+        edited.value[index.eval(this.args.env)] = expr.eval(this.args.env)
         this.args.env.set(ident.sourceString, edited)
     },
 
