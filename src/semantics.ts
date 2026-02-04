@@ -5,7 +5,7 @@ import promptSync from 'prompt-sync';
 import * as fs from 'fs'
 // don't delete!, this is used for debugging!
 import { inspect } from "node:util";
-import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose } from "./graphics.js";
+import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE } from "./graphics.js";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
@@ -73,6 +73,13 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         this.args.env.set('FS_READ#', new Func(true, this.args.env, function(params) {
             return fs.readFileSync(params[0], params[1])
         }))
+        this.args.env.set('GRID#', new Func(true, this.args.env, function(params) {
+            return Array.from({ length: params[0] }, () =>
+                Array.from({ length: params[1] }, () => null)
+            );
+            }
+        ))
+        this.args.env.set('GET_MOUSE#', new Func(true, this.args.env, GET_MOUSE))
         this.args.env.set('INIT_WINDOW#', new Func(true, this.args.env, initWindow))
         this.args.env.set('WINDOW_SHOULD_CLOSE#', new Func(true, this.args.env, windowShouldClose))
         this.args.env.set('BEGIN_DRAWING#', new Func(true, this.args.env, beginDrawing))

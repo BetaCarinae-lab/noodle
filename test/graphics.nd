@@ -1,18 +1,35 @@
-<INIT_WINDOW#(400, 400, "window")>
+number window_w is 400
+number window_h is 400
+
+<INIT_WINDOW#(<window_w>, <window_h>, "window")>
 
 mut number y_pos is 0
+mut number W is 10
+mut number H is 10
+
+fn PointInRect(x: number, y: number, w: number, h: number, x1: number, y1: number) {
+  if(<x1> >= <x> && <x1> <= <x> + <w> && <y1> >= <y> && <y1> <= <y> + <h>) {
+    output(true)
+  } else {
+    output(false)
+  }
+}
+
 
 while(!<WINDOW_SHOULD_CLOSE#()>) {
     <BEGIN_DRAWING#()>
     <CLEAR_BACKGROUND#(0,0,0)>
-    <RECTANGLE#(0, <y_pos>, 10, 10, 255, 255, 255, 255)>
+    <RECTANGLE#(0, <y_pos>, <W>, <H>, 255, 255, 255, 255)>
     if(<IS_KEY_DOWN#("W")>) {
-        writeLn("UP")
-        y_pos is <y_pos> + 10
+        y_pos is <y_pos> - 10
     }
     if(<IS_KEY_DOWN#("S")>) {
-        writeLn("DOWN")
-        y_pos is <y_pos> - 10
+        y_pos is <y_pos> + 10
+    }
+    object mouse_pos is <GET_MOUSE#()>
+    <RECTANGLE#(<mouse_pos.x>, <mouse_pos.y>, <W>, <H>, 255, 0, 255, 255)>
+    if(<PointInRect(0, <y_pos>, <W>, <H>, <mouse_pos.x>, <mouse_pos.y>)>) {
+        writeLn("in bounds")
     }
     <STOP_DRAWING#()>
 } 
