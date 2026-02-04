@@ -2,9 +2,10 @@ import { Enviroment, Func, ReturnSignal, Template } from "./etc.js";
 import * as ohm from "ohm-js"
 import { Variable } from "./etc.js";    
 import promptSync from 'prompt-sync';
+import * as fs from 'fs'
 // don't delete!, this is used for debugging!
 import { inspect } from "node:util";
-import { GRAPHICS_API_BINDINGS } from "./graphics.js";
+import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose } from "./graphics.js";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
@@ -69,10 +70,18 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 throw new Error(`ASSERT FAIL: ${params[0]} != ${params[1]}`)
             }
         }))
-        this.args.env.set('RLIB_WINDOW#', GRAPHICS_API_BINDINGS.window)
-        this.args.env.set('RLIB_GRAPHICS#', GRAPHICS_API_BINDINGS.graphics_handle)
-        this.args.env.set('RLIB_DRAW#', GRAPHICS_API_BINDINGS.draw)
-        this.args.env.set('RLIB_COLOR#', GRAPHICS_API_BINDINGS.color)
+        this.args.env.set('FS_READ#', new Func(true, this.args.env, function(params) {
+            return fs.readFileSync(params[0], params[1])
+        }))
+        this.args.env.set('INIT_WINDOW#', new Func(true, this.args.env, initWindow))
+        this.args.env.set('WINDOW_SHOULD_CLOSE#', new Func(true, this.args.env, windowShouldClose))
+        this.args.env.set('BEGIN_DRAWING#', new Func(true, this.args.env, beginDrawing))
+        this.args.env.set('STOP_DRAWING#', new Func(true, this.args.env, endDrawing))
+        this.args.env.set('IS_KEY_DOWN#', new Func(true, this.args.env, IS_KEY_DOWN))
+        this.args.env.set('CLEAR_BACKGROUND#', new Func(true, this.args.env, clearBackground))
+        this.args.env.set('TEXT#', new Func(true, this.args.env, drawText))
+        this.args.env.set('RECTANGLE#', new Func(true, this.args.env, drawRectangle))
+        this.args.env.set('CLOSE_WINDOW#', new Func(true, this.args.env, closeWindow))
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)
@@ -157,6 +166,12 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     Mut(mut) {
         return mut.sourceString ? true : false
+    },
+
+    While(_while, _op, expr, _cp, body) {
+        while(expr.eval(this.args.env)) {
+            body.eval(this.args.env)
+        }
     },
 
     VarCreate(mut: ohm.Node, pers: ohm.Node, strict: ohm.Node, type: ohm.Node, name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {

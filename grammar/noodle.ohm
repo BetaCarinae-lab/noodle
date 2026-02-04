@@ -6,6 +6,7 @@ NOODLE {
           | Template
           | Fn
           | If
+          | While
           | Loop
           | Plop
           | Delete
@@ -109,6 +110,8 @@ NOODLE {
   End = "end"
 
   Comment = "#" "(" (~")" any)* ")"
+  
+  While = "while" "(" Expr ")" FuncBody
   
   True = "true" | "yes" | "yeah"
   False = "false" | "no" | "nah"

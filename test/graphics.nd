@@ -1,1 +1,20 @@
-<RLIB_WINDOW#("init", 400, 400, "window")>
+<INIT_WINDOW#(400, 400, "window")>
+
+mut number y_pos is 0
+
+while(!<WINDOW_SHOULD_CLOSE#()>) {
+    <BEGIN_DRAWING#()>
+    <CLEAR_BACKGROUND#(0,0,0)>
+    <RECTANGLE#(0, <y_pos>, 10, 10, 255, 255, 255, 255)>
+    if(<IS_KEY_DOWN#("W")>) {
+        writeLn("UP")
+        y_pos is <y_pos> + 10
+    }
+    if(<IS_KEY_DOWN#("S")>) {
+        writeLn("DOWN")
+        y_pos is <y_pos> - 10
+    }
+    <STOP_DRAWING#()>
+} 
+
+<CLOSE_WINDOW#()>
