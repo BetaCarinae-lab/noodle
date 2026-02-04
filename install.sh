@@ -28,7 +28,6 @@ echo "Installing dependencies..."
 
 # Ubuntu/Debian
 if [ -f /etc/debian_version ]; then
-    sudo apt update
     sudo apt install -y \
         libsdl2-dev \
         libgl1-mesa-dev \
