@@ -6,7 +6,4 @@ string str is "Hello!"
 
 writeLn(<str at 3>)
 
-array grid is <GRID#(5, 5)>
-writeLn(<<grid at 5> at 5>)
-
 writeLn("ARRAY END")

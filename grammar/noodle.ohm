@@ -91,6 +91,7 @@ NOODLE {
     | True
     | False
     | Reference
+    | ident
 
 
   Fn = "persistant"? "fn" ident ParameterList FuncBody
@@ -115,8 +116,8 @@ NOODLE {
   
   True = "true" | "yes" | "yeah"
   False = "false" | "no" | "nah"
-  
-  ArrayAccess = "<" ident "at" Statement ">"
+
+  ArrayAccess = "<" Expr "at" Statement ">"
   
   StatementParameterList = "(" ListOf<Statement, ","> ")"
 
