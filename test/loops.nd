@@ -15,4 +15,5 @@ writeLn("foreach:")
 
 foreach(<arr>, index) {
     writeLn("Index: " + <index>)
+    writeLn("Value: " + <arr at <index>>)
 }

@@ -306,6 +306,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         let loopEnv = this.args.env.createChild()
         loopEnv.new(indexname.sourceString, new Variable("i", true, false, "non_init", false))
         let array = array_.eval(this.args.env)
+        for(let i = 0; i < array.length; i++) {
+            loopEnv.set(indexname.sourceString, new Variable("i", true, false, i, false))
+            body.eval(loopEnv)
+        }
     },
 
     Fn(persistant: ohm.Node, _fn: ohm.Node, name: ohm.Node, ParameterList: ohm.Node, body: ohm.Node) {
