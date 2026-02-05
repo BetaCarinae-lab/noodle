@@ -1,5 +1,0 @@
-number timestoloop is 3
-
-loop <timestoloop> {
-    writeLn("This will repeat " + <timestoloop> + " times")
-}

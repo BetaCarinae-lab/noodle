@@ -33,6 +33,7 @@ export class Enviroment {
             return this.env[this.pointers[pointername]]
         } else {
             console.error(`Failed to get value from address: ${pointername}`)
+            console.error(inspect(this.pointers))
         }
     }
 

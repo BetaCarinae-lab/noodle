@@ -6,6 +6,7 @@ NOODLE {
           | Template
           | Fn
           | If
+          | ForEach
           | While
           | Loop
           | Plop
@@ -171,6 +172,8 @@ NOODLE {
   RefCreate = ident "<->" ident
   
   Exists = ident "exists"
+
+  ForEach = "foreach" "("Expr "," ident")" FuncBody
   
   TryCatch = "try" FuncBody "catch" "(" ident? ")" FuncBody
   
