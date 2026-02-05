@@ -89,6 +89,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         this.args.env.new('TEXT#', new Func(true, this.args.env, drawText))
         this.args.env.new('RECTANGLE#', new Func(true, this.args.env, drawRectangle))
         this.args.env.new('CLOSE_WINDOW#', new Func(true, this.args.env, closeWindow))
+        this.args.env.new('RAND#', new Func(true, this.args.env, (_params: any[]) => {return Math.random()}))
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)

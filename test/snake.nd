@@ -1,3 +1,8 @@
+#(
+    Apparently it's "hard" to code snake
+    this is a placeholder till i make a better version
+)
+
 number window_w is 400
 number window_h is 400
 
@@ -8,9 +13,12 @@ mut number H is 10
 mut number x is 0
 mut number y is 0
 
-mut boolean alive is true
+mut boolean inApple is false
 mut string dir is "down"
-mut array segments is []
+mut number score is 0
+
+mut number apple_x is <MATH#("round", <window_h> * <RAND#()>)>
+mut number apple_y is <MATH#("round", <window_w> * <RAND#()>)>
 
 fn handle_input() {
     if(<IS_KEY_DOWN#("W")>) {
@@ -45,8 +53,10 @@ fn handle_movement() {
     }
 }
 
-fn draw_segments() {
-    
+fn award_points() {
+    if(<PointInRect(<apple_x>, <apple_y>, <W>, <H>, <x>, <y>)>) {
+        score is <score> + 1
+    }
 }
 
 fn PointInRect(x: number, y: number, w: number, h: number, point_x: number, point_y: number) {
@@ -59,13 +69,28 @@ fn PointInRect(x: number, y: number, w: number, h: number, point_x: number, poin
 
 
 while(!<WINDOW_SHOULD_CLOSE#()>) {
+
     <BEGIN_DRAWING#()>
     <CLEAR_BACKGROUND#(0,0,0)>
+
+    <RECTANGLE#(<apple_x>, <apple_y>, <W>, <H>, 255, 0, 0, 255)>
     <RECTANGLE#(<x>, <y>, <W>, <H>, 255, 255, 255, 255)>
+
+    <TEXT#("SCORE: " + <score>, 0, 0, 20, 255, 255, 255, 255)>
+    <TEXT#("X: " + <x>, 0, 20, 20, 255, 255, 255, 255)>
+    <TEXT#("Y: " + <y>, 0, 40, 20, 255, 255, 255, 255)>
+
+    if(<x> >= <apple_x> && <x> <= <apple_x> + <W> && <y> >= <apple_y> && <y> <= <apple_y> + <H> && !<inApple>) {
+        score is <score> + 1
+        apple_x is <MATH#("round", <window_w> * <RAND#()>)>
+    } else {
+        #(do nothing)
+    }
+
     <handle_input()>
     <handle_movement()>
 
     <STOP_DRAWING#()>
-} 
+}
 
 <CLOSE_WINDOW#()>
