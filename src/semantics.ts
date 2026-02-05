@@ -302,16 +302,22 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return chars.sourceString;
     },
 
+    ForEach(_foreach, _op, array_, _, indexname, _cp, body) {
+        let loopEnv = this.args.env.createChild()
+        loopEnv.new(indexname.sourceString, new Variable("i", true, false, "non_init", false))
+        let array = array_.eval(this.args.env)
+    },
+
     Fn(persistant: ohm.Node, _fn: ohm.Node, name: ohm.Node, ParameterList: ohm.Node, body: ohm.Node) {
         ParameterList = ParameterList.eval(this.args.env);
         var functionEnv = this.args.env.createChild()
         this.args.env.new(name.sourceString, new Func(
             persistant.sourceString ? true : false, 
             functionEnv,
-            function(parameters: any[]) {
+            (parameters: any[]) => {
                 parameters.forEach((param, index) => {
                     //console.log(ParameterList[index])
-                    functionEnv.set(ParameterList[index].name, new Variable(
+                    functionEnv.new(ParameterList[index].name, new Variable(
                         ParameterList[index].name,
                         ParameterList[index].mutable,
                         false,
@@ -321,6 +327,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 })
 
                 try {
+                    //console.log('POINTERS: \n', functionEnv.pointers)
                     body.eval(functionEnv)
                 } catch(error: any) {
                     if(error instanceof ReturnSignal) {

@@ -1,29 +1,71 @@
-mut string direction is "up"
+number window_w is 400
+number window_h is 400
+
+<INIT_WINDOW#(400, 400, "window")>
+mut number W is 10
+mut number H is 10
+
+mut number x is 0
+mut number y is 0
+
 mut boolean alive is true
-<INIT_WINDOW#(400, 400, "snake")
+mut string dir is "down"
+mut array segments is []
 
 fn handle_input() {
-    if(<IS_KEY_DOWN("W")>) {
-        direction is "up"
+    if(<IS_KEY_DOWN#("W")>) {
+        dir is "up"
     }
-    if(<IS_KEY_DOWN("S")>) {
-        direction is "down"
-    } 
-    if(<IS_KEY_DOWN("A")>) {
-        direction is "left"
+    if(<IS_KEY_DOWN#("S")>) {
+        dir is "down"
     }
-    if(<IS_KEY_DOWN("D")>) {
-        
+    if(<IS_KEY_DOWN#("A")>) {
+        dir is "left"
+    }
+    if(<IS_KEY_DOWN#("D")>) {
+        dir is "right"
+    }
+    if(<IS_KEY_DOWN#("SPACE")>) {
+        writeLn(<dir>)
     }
 }
 
-fn main() {
+fn handle_movement() {
+    if(<dir> == "up") {
+        y is <y> - 1
+    }
+    if(<dir> == "down") {
+        y is <y> + 1
+    }
+    if(<dir> == "left") {
+        x is <x> - 1
+    }
+    if(<dir> == "right") {
+        x is <x> + 1
+    }
+}
+
+fn draw_segments() {
     
 }
 
-while(!<WINDOW_SHOULD_CLOSE() && <alive>>) {
-    <main()>
+fn PointInRect(x: number, y: number, w: number, h: number, point_x: number, point_y: number) {
+  if(<point_x> >= <x> && <point_x> <= <x> + <w> && <point_y> >= <y> && <point_y> <= <y> + <h>) {
+    output(true)
+  } else {
+    output(false)
+  }
 }
 
+
+while(!<WINDOW_SHOULD_CLOSE#()>) {
+    <BEGIN_DRAWING#()>
+    <CLEAR_BACKGROUND#(0,0,0)>
+    <RECTANGLE#(<x>, <y>, <W>, <H>, 255, 255, 255, 255)>
+    <handle_input()>
+    <handle_movement()>
+
+    <STOP_DRAWING#()>
+} 
 
 <CLOSE_WINDOW#()>

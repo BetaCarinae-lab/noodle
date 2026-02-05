@@ -4,7 +4,7 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "debug": "sudo ./build.sh",
+    "debug": "tsc && node ./js/noodle.js",
     "build": "pkg . --out-dir dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
     "bundle": "tsc"
   },
