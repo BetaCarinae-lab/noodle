@@ -5,7 +5,7 @@ import promptSync from 'prompt-sync';
 import * as fs from 'fs'
 // don't delete!, this is used for debugging!
 import { inspect } from "node:util";
-import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE } from "./graphics.js";
+import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON } from "./graphics.js";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
@@ -92,6 +92,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         this.args.env.new('RECTANGLE#', new Func(true, this.args.env, drawRectangle))
         this.args.env.new('CLOSE_WINDOW#', new Func(true, this.args.env, closeWindow))
         this.args.env.new('RAND#', new Func(true, this.args.env, (_params: any[]) => {return Math.random()}))
+        this.args.env.new('RIGHT_MOUSE#', new Func(true, this.args.new, RIGHT_MOUSE_BUTTON))
+        this.args.env.new('LEFT_MOUSE#', new Func(true, this.args.new, LEFT_MOUSE_BUTTON))
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)
