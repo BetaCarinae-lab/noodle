@@ -51,6 +51,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                     return params[1] >>> params[2]
                 case 'rshift':
                     return params[1] >> params[2]
+                case 'trunc':
+                    return Math.trunc(params[1])
                 default:
                     console.error(`Math error, ${params[0]} is an invalid operation type`)
                     break;
