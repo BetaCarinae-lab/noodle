@@ -94,8 +94,8 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         this.args.env.new('RAND#', new Func(true, this.args.env, (_params: any[]) => {return Math.random()}))
         this.args.env.new('RIGHT_MOUSE#', new Func(true, this.args.new, RIGHT_MOUSE_BUTTON))
         this.args.env.new('LEFT_MOUSE#', new Func(true, this.args.new, LEFT_MOUSE_BUTTON))
-        this.args.env.new('WAIT#', new Func(true, this.args.env, (params: any[]) => {
-            setTimeout(() => {}, params[0])
+        this.args.env.new('debug_inspect#', new Func(true, this.args.env, (params: any[]) => {
+            console.log(inspect(this.args.env.get(params[0])))
         }))
         this.args.env.new('args', new Variable('args', false, false, process.argv, false))
         try {
