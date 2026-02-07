@@ -5,7 +5,7 @@ import promptSync from 'prompt-sync';
 import * as fs from 'fs'
 // don't delete!, this is used for debugging!
 import { inspect } from "node:util";
-import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON } from "./graphics.js";
+import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON, delta } from "./graphics.js";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
@@ -94,6 +94,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         this.args.env.new('RAND#', new Func(true, this.args.env, (_params: any[]) => {return Math.random()}))
         this.args.env.new('RIGHT_MOUSE#', new Func(true, this.args.new, RIGHT_MOUSE_BUTTON))
         this.args.env.new('LEFT_MOUSE#', new Func(true, this.args.new, LEFT_MOUSE_BUTTON))
+        this.args.env.new('DELTA#', new Func(true, this.args.env, delta))
         this.args.env.new('debug_inspect#', new Func(true, this.args.env, (params: any[]) => {
             console.log(inspect(this.args.env.get(params[0])))
         }))
@@ -215,6 +216,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         } else {
             throw new Error(`Mismatched Types, Expected ${type.sourceString}, Got ${typeof value.eval(this.args.env)}`)
         }
+    },
+
+    float(digit, _, digits) {
+        return new Number(digit.sourceString + _.sourceString + digits.sourceString)
     },
 
     VarAssign(name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
