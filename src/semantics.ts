@@ -77,7 +77,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }))
         this.args.env.new('GRID#', new Func(true, this.args.env, function(params) {
             return Array.from({ length: params[0] }, () =>
-                Array.from({ length: params[1] }, () => null)
+                Array.from({ length: params[1] }, () => params[2] ?? null)
             );
             }
         ))
@@ -94,6 +94,9 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         this.args.env.new('RAND#', new Func(true, this.args.env, (_params: any[]) => {return Math.random()}))
         this.args.env.new('RIGHT_MOUSE#', new Func(true, this.args.new, RIGHT_MOUSE_BUTTON))
         this.args.env.new('LEFT_MOUSE#', new Func(true, this.args.new, LEFT_MOUSE_BUTTON))
+        this.args.env.new('WAIT#', new Func(true, this.args.env, (params: any[]) => {
+            setTimeout(() => {}, params[0])
+        }))
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)
@@ -129,6 +132,19 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         } else {
             console.log('OUT: ' + value);
         }
+    },
+
+    Push(_push, _op, id, _, expr, _cp) {
+        let originalarray = this.args.env.get(id.eval(this.args.env))
+        originalarray.value.unshift(expr.eval(this.args.env))
+        this.args.env.set(id.eval(this.args.env), originalarray)
+    },
+
+    Pop(_pop, _op, id, _cp) {
+        let originalarray = this.args.env.get(id.eval(this.args.env))
+        let value = originalarray.value.pop()
+        this.args.env.set(id.eval(this.args.env), originalarray)
+        return value
     },
 
     Loop(_loop: ohm.Node, expr: ohm.Node, body: ohm.Node) {
