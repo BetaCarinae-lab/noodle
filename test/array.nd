@@ -18,4 +18,8 @@ arr at 2 is 69
 
 writeLn(<arr at 2>)
 
+push(arr, 19)
+
+writeLn(<arr>)
+
 writeLn("ARRAY END")

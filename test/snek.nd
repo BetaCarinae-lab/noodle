@@ -1,0 +1,127 @@
+#(
+    Simple Function that takes a 2d grid of any size and renders it using RECTANGLE#
+)
+<INIT_WINDOW#(400, 400, "snake")>
+
+template segment {
+    prop x is number,
+    prop y is number,
+}
+
+mut array snake is [segment {
+    x: 0,
+    y: 0,
+}]
+number TILE_SIZE is 20
+
+mut number player_x is 0
+mut string dir is "down"
+mut number player_y is 0
+
+mut boolean alive is true
+mut boolean not_eaten is true
+
+mut number apple_x is 5000
+mut number apple_y is 5000
+mut number cur_sec is <DATE#("seconds")>
+
+fn spawn_apple() {
+    apple_x is <MATH#("round", <MATH#("trunc", <TILE_SIZE> * <RAND#()>)>)>
+    apple_y is <MATH#("round", <MATH#("trunc", <TILE_SIZE> * <RAND#()>)>)>
+}
+
+<spawn_apple()>
+while(!<WINDOW_SHOULD_CLOSE#()>) {
+    if(<alive>) {
+        <BEGIN_DRAWING#()>
+        <CLEAR_BACKGROUND#(0, 0, 0)>
+        not_eaten is true
+        mut number new_x is <player_x>
+        mut number new_y is <player_y>
+        if(<IS_KEY_DOWN#("LEFT")>) {
+            dir is "left"
+        }
+        if(<IS_KEY_DOWN#("RIGHT")>) {
+            dir is "right"
+        }
+        if(<IS_KEY_DOWN#("UP")>) {
+            dir is "up"
+        }
+        if(<IS_KEY_DOWN#("DOWN")>) {
+            dir is "down"
+        }
+        if(<IS_KEY_DOWN#("SPACE")>) {
+            alive is false
+        }
+        
+        if(<dir> == "left") {
+            new_x is <new_x> - 1
+        }
+        if(<dir> == "right") {
+            new_x is <new_x> + 1
+        }
+        if(<dir> == "up") {
+            new_y is <new_y> - 1
+        }    
+        if(<dir> == "down") {
+            new_y is <new_y> + 1
+        }
+
+        if(<new_y> > (400 / <TILE_SIZE>)) {
+            new_y is 0
+        }
+        if(<new_x> > (400 / <TILE_SIZE>)) {
+            new_x is 0
+        }
+        if(<new_y> < 0) {
+            new_y is 20
+        }
+        if(<new_x> < 0) {
+            new_x is 20
+        }
+
+        <RECTANGLE#(<apple_x> * <TILE_SIZE>, <apple_y> * <TILE_SIZE>, <TILE_SIZE>, <TILE_SIZE>, 255, 0, 0, 255)>
+
+        foreach (<snake>, i) {
+            object snake_segment is <snake at <i>>
+            #( fix issue with ArrayAccess later )
+
+            if(<snake_segment.x> == <new_x> && <snake_segment.y> == <new_y>) {
+                alive is false
+            }
+            
+            <RECTANGLE#(<snake_segment.x> * <TILE_SIZE>, <snake_segment.y> * <TILE_SIZE>, <TILE_SIZE>, <TILE_SIZE>, 0, 255, 0, 255)>
+        }
+
+        if(<new_x> == <apple_x> && <new_y> == <apple_y>) {
+            not_eaten is false
+            <spawn_apple()>
+        }
+
+        push(snake, segment {
+            x: <player_x>,
+            y: <player_y>,
+        })
+        
+        if(<snake.length> >= 5 && <not_eaten>) {
+            pop(snake)
+        }
+
+        <TEXT#("X: " + <player_x>, 0, 0, 20, 255, 255, 255, 255)>
+        <TEXT#("Y: " + <player_y>, 0, 20, 20, 255, 255, 255, 255)>
+        <TEXT#("LEN: " + <snake.length>, 0, 40, 20, 255, 255, 255, 255)>
+
+        player_x is <new_x>
+        player_y is <new_y>
+
+        <STOP_DRAWING#()>
+    } else {
+        <BEGIN_DRAWING#()>
+        <TEXT#("GAME OVER", 80, 180, 40, 255, 255, 255, 255)>
+        <TEXT#(":(", 80, 220, 20, 255, 255, 255, 255)>
+        <STOP_DRAWING#()>
+    }
+    
+}
+
+<CLOSE_WINDOW#()>

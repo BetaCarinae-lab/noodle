@@ -9,6 +9,7 @@ NOODLE {
           | ForEach
           | While
           | Loop
+          | Push
           | Plop
           | Delete
           | RefCreate
@@ -88,12 +89,16 @@ NOODLE {
     | FnCall
     | MethodCall
     | RefResolve
-    | Array
+    | Array 
+    | Pop
     | TemplateConstruction
     | True
     | False
     | Reference
 
+  Push = "push" "(" (string | ident) "," Expr ")"
+
+  Pop = "pop" "(" (string | ident) ")"
 
   Fn = "persistant"? "fn" ident ParameterList FuncBody
   
@@ -118,10 +123,10 @@ NOODLE {
   True = "true" | "yes" | "yeah"
   False = "false" | "no" | "nah"
 
-  ArrayAccess = "<"(Expr | ident) "at" Statement">"
+  ArrayAccess = "<" ident "at" Expr ">"
  	
   ArrayAssign = ident "at" Statement "is" Expr
-  
+
   StatementParameterList = "(" ListOf<Statement, ","> ")"
 
   FnCall = "<" ident StatementParameterList ">"
