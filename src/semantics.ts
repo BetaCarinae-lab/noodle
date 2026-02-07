@@ -97,6 +97,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         this.args.env.new('WAIT#', new Func(true, this.args.env, (params: any[]) => {
             setTimeout(() => {}, params[0])
         }))
+        this.args.env.new('args', new Variable('args', false, false, process.argv, false))
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)

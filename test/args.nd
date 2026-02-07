@@ -1,0 +1,1 @@
+writeLn("ARG3: " + <args at 3>)
