@@ -67,6 +67,14 @@ export function GET_MOUSE(_params: any[]) {
     }
 }
 
+export function RIGHT_MOUSE_BUTTON() {
+  return rl.IsMouseButtonDown(rl.MOUSE_BUTTON_RIGHT)
+}
+
+export function LEFT_MOUSE_BUTTON() {
+  return rl.IsMouseButtonDown(rl.MOUSE_BUTTON_LEFT)
+}
+
 export function windowShouldClose(_params: any[]) {
   return rl.WindowShouldClose();
 }
