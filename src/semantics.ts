@@ -4,7 +4,7 @@ import { Variable } from "./etc.js";
 import promptSync from 'prompt-sync';
 import * as fs from 'fs'
 // don't delete!, this is used for debugging!
-import { inspect } from "node:util";
+import { inspect } from "node:util";;
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
@@ -125,6 +125,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         } else {
             throw new Error(`Mismatched Types, Expected ${type.sourceString}, Got ${typeof value.eval(this.args.env)}`)
         }
+    },
+
+    float(digit, _, digits) {
+        return new Number(digit.sourceString + _.sourceString + digits.sourceString)
     },
 
     VarAssign(name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {

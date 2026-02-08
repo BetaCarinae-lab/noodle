@@ -78,6 +78,7 @@ NOODLE {
   Primary
     = "(" Expr ")"               --parens
     | number
+    | float
     | string
     | VarGet
    	| Conversions
@@ -183,6 +184,7 @@ NOODLE {
   TryCatch = "try" FuncBody "catch" "(" ident? ")" FuncBody
   
   number = digit+ | "inf"
+  float = digit "." digit+
   
   Return = "output" "(" Statement ")"
   
