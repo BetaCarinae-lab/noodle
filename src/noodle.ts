@@ -7,6 +7,7 @@ import readline from"readline";
 import { VERSION } from './info.js';
 import { exit } from 'process';
 import { Enviroment } from './etc.js';
+import { setup } from './projectSetup.js';
 
 let env = new Enviroment()
 
@@ -61,13 +62,22 @@ if(!process.argv[2]) {
         noodle --info or noodle ./file.nd --info -> prints run info
         noodle --help | -h | -help | --h -> prints this
         noodle -v | -version | --v | --version -> Prints Noodle Version
+        noodle init name -> Inits a new noodle project
         noodle ./file.nd or noodle ./file.bowl -> runs a nd or bowl file
     `)
     exit(0)
 } else if(process.argv[2] == '-v' || process.argv[2] == '--v' || process.argv[2] == '-version' || process.argv[2] == '--version') {
     console.log(`${VERSION}`)
     exit(0)
-} else {
+} else if (process.argv[2] == 'init') {
+    if(setup(process.argv[3]) == 0) {
+        console.log('Done!')
+    } else {
+        console.log('Failed :(')
+    }
+    exit(0)
+}
+else {
 
 
 
