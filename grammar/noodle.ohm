@@ -1,6 +1,7 @@
 NOODLE {
   Program     = Statement+
   Statement   = Print 
+          | PrintNoHeader
           | VarCreate
           | VarAssign
           | Template
@@ -21,6 +22,7 @@ NOODLE {
           | Expr
 
   Print = "writeLn" "(" Expr ")"
+  PrintNoHeader = "writeNH" "(" Expr ")"
 
   Expr = LogicalOr
 

@@ -39,9 +39,18 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     Print(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
         const value = expr.eval(this.args.env);
         if(typeof value == 'object') {
-            console.log('OUT: ' + JSON.stringify(value));
+            console.log('OUT: ' + inspect(value));
         } else {
             console.log('OUT: ' + value);
+        }
+    },
+
+    PrintNoHeader(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
+        const value = expr.eval(this.args.env);
+        if(typeof value == 'object') {
+            console.log(inspect(value));
+        } else {
+            console.log(value);
         }
     },
 
