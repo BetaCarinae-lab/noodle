@@ -10,6 +10,9 @@ template MyStruct {
     method bumpProperty is () {
         self.property is 200
     }
+    method echoSelf is () {
+        <inspect#(<self>)>
+    }
 }
 
 object a is MyStruct {
@@ -23,6 +26,7 @@ writeLn(<a.property> + <a.property2>)
 
 <a.echoProperty()>
 <a.bumpProperty()>
+<a.echoSelf()>
 
 writeLn("PROP: " + <a.property>)
 
