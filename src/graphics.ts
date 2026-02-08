@@ -67,7 +67,11 @@ export function GET_MOUSE(_params: any[]) {
     }
 }
 
+<<<<<<< HEAD
 export function delta(_p: any[]) {
+=======
+export function delta() {
+>>>>>>> a43a37c52d8b4b877a0e210bc6e1c66ed3e6dc97
   return rl.GetFrameTime()
 }
 
