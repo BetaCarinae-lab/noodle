@@ -32,7 +32,7 @@ export class Enviroment {
         if(this.pointers[pointername] && this.env[this.pointers[pointername]]) {
             return this.env[this.pointers[pointername]]
         } else {
-            console.error(`Failed to get value from address: ${pointername}`)
+            console.error(`Failed to get value from address: ${inspect(pointername)}`)
             console.error(inspect(this.pointers))
         }
     }
@@ -46,7 +46,7 @@ export class Enviroment {
         this.pointers[name] = references
     }
 
-    exists(name: string) {
+    exists(name: string): boolean {
         return this.pointers[name] && this.env[this.pointers[name]]
     }
 
