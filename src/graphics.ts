@@ -67,6 +67,10 @@ export function GET_MOUSE(_params: any[]) {
     }
 }
 
+export function delta(_p: any[]) {
+  return rl.GetFrameTime()
+}
+
 export function RIGHT_MOUSE_BUTTON() {
   return rl.IsMouseButtonDown(rl.MOUSE_BUTTON_RIGHT)
 }

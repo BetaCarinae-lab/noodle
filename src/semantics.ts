@@ -5,99 +5,9 @@ import promptSync from 'prompt-sync';
 import * as fs from 'fs'
 // don't delete!, this is used for debugging!
 import { inspect } from "node:util";
-import { beginDrawing, clearBackground, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON } from "./graphics.js";
 
 export const actionDictionary: ohm.ActionDict<unknown> = {
     Program(statements: ohm.Node) {
-        this.args.env.new("DATE#", new Func(true, this.args.env, function(params) {
-            let date = new Date()
-            if(params[0] == "year") {
-                return date.getFullYear()
-            } else if(params[0] == "month") {
-                return date.getMonth()
-            } else if(params[0] == "day") {
-                return date.getDay()
-            } else if(params[0] == "hour") {
-                return date.getHours()
-            } else if(params[0] == "minutes") {
-                return date.getMinutes()
-            } else if(params[0] == "seconds") {
-                return date.getSeconds()
-            }
-        }))
-        this.args.env.new("MATH#", new Func(true, this.args.env, function(params) {
-            switch(params[0]) {
-                case 'trunc':
-                    return Math.trunc(params[1])
-                case 'sin':
-                    return Math.sin(params[1])
-                case 'cos':
-                    return Math.cos(params[1])
-                case 'tan':
-                    return Math.tan(params[1])
-                case 'imul':
-                    return Math.imul(params[1], params[2])
-                case 'pi':
-                    return Math.PI
-                case 'e':
-                    return Math.E
-                case 'round':
-                    return Math.round(params[1])
-                case 'floor':
-                    return Math.floor(params[1])
-                case 'ceil':
-                    return Math.ceil(params[1])
-                case 'u-rshift':
-                    return params[1] >>> params[2]
-                case 'rshift':
-                    return params[1] >> params[2]
-                case 'trunc':
-                    return Math.trunc(params[1])
-                default:
-                    console.error(`Math error, ${params[0]} is an invalid operation type`)
-                    break;
-            }
-        }))
-        this.args.env.new('CNV#', new Func(true, this.args.env, function(params) {
-            if(typeof params[0] == "string") {
-                return new Number(params[0]).valueOf()
-            } else if (typeof params[0] == "number") {
-                return new String(params[0]).valueOf()
-            }
-        }))
-        this.args.env.new('ASSERT#', new Func(true, this.args.env, function(params) {
-            if(params[0] == params[1]) {
-                return true
-            } else {
-                throw new Error(`ASSERT FAIL: ${params[0]} != ${params[1]}`)
-            }
-        }))
-        this.args.env.new('FS_READ#', new Func(true, this.args.env, function(params) {
-            return fs.readFileSync(params[0], params[1])
-        }))
-        this.args.env.new('GRID#', new Func(true, this.args.env, function(params) {
-            return Array.from({ length: params[0] }, () =>
-                Array.from({ length: params[1] }, () => params[2] ?? null)
-            );
-            }
-        ))
-        this.args.env.new('GET_MOUSE#', new Func(true, this.args.env, GET_MOUSE))
-        this.args.env.new('INIT_WINDOW#', new Func(true, this.args.env, initWindow))
-        this.args.env.new('WINDOW_SHOULD_CLOSE#', new Func(true, this.args.env, windowShouldClose))
-        this.args.env.new('BEGIN_DRAWING#', new Func(true, this.args.env, beginDrawing))
-        this.args.env.new('STOP_DRAWING#', new Func(true, this.args.env, endDrawing))
-        this.args.env.new('IS_KEY_DOWN#', new Func(true, this.args.env, IS_KEY_DOWN))
-        this.args.env.new('CLEAR_BACKGROUND#', new Func(true, this.args.env, clearBackground))
-        this.args.env.new('TEXT#', new Func(true, this.args.env, drawText))
-        this.args.env.new('RECTANGLE#', new Func(true, this.args.env, drawRectangle))
-        this.args.env.new('CLOSE_WINDOW#', new Func(true, this.args.env, closeWindow))
-        this.args.env.new('RAND#', new Func(true, this.args.env, (_params: any[]) => {return Math.random()}))
-        this.args.env.new('RIGHT_MOUSE#', new Func(true, this.args.new, RIGHT_MOUSE_BUTTON))
-        this.args.env.new('LEFT_MOUSE#', new Func(true, this.args.new, LEFT_MOUSE_BUTTON))
-        this.args.env.new('debug_inspect#', new Func(true, this.args.env, (params: any[]) => {
-            console.log(inspect(this.args.env.get(params[0])))
-        }))
-        this.args.env.new('args', new Variable('args', false, false, process.argv, false))
         try {
             statements.children.map(s => {
                 s.eval(this.args.env)

@@ -20,7 +20,8 @@
       "js/etc.js",
       "js/noodle.js",
       "js/ohm.js",
-      "js/graphics.js"
+      "js/graphics.js",
+      "js/projectSetup.js"
     ],
     "assets": [
       "./grammar/noodle.ohm",
