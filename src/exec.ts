@@ -1,4 +1,4 @@
-import {readFileSync, existsSync } from "fs"
+import {readFileSync, existsSync, writeFileSync } from "fs"
 import { Func, Variable } from "./etc.js";
 import { beginDrawing, clearBackground, delta, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON } from "./graphics.js";
 import { actionDictionary } from './semantics.js';
@@ -148,6 +148,9 @@ export function runND(inputCode: string, env_: Enviroment) {
         env.new('FS_READ#', new Func(true, {}, function(params) {
             return readFileSync(params[0], params[1])
         }))
+        env.new('FS_WRITE#', new Func(true, {}, function(params) {
+            return writeFileSync(params[0], params[1])
+        }))
     }
     if(modules.includes('utils')) {
         env.new('GRID#', new Func(true, {}, function(params) {
@@ -163,6 +166,7 @@ export function runND(inputCode: string, env_: Enviroment) {
                 return new String(params[0]).valueOf()
             }
         }))
+        
         env.new('ASSERT#', new Func(true, {}, function(params) {
             if(params[0] == params[1]) {
                 return true
@@ -170,6 +174,15 @@ export function runND(inputCode: string, env_: Enviroment) {
                 throw new Error(`ASSERT FAIL: ${params[0]} != ${params[1]}`)
             }
         }))
+
+        env.new('inspect#', new Func(true, {}, function(params) {
+            console.log(`Inspecting: ` + inspect(params[0]))
+        }))
+
+        env.new('env_inspect#', new Func(true, {}, function(params) {
+            console.log('Inspecting ' + params[0] + ': ' + env.exists(params[0]) ? inspect(env.get(params[0])) : 'No value found :(')
+        }))
+
         env.new('RAND#', new Func(true, {}, (_params: any[]) => {return Math.random()}))
     }
     if(modules.includes('graphics')) {
