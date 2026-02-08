@@ -1,7 +1,0 @@
-{
-  "meta": {
-    "name": "test",
-    "ver": "0.0.0"
-  },
-  "needs": ["graphics", "date", "math", "fs", "utils"]
-}
