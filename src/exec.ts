@@ -136,8 +136,6 @@ export function runND(inputCode: string, env_: Enviroment) {
                     return params[1] >>> params[2]
                 case 'rshift':
                     return params[1] >> params[2]
-                case 'trunc':
-                    return Math.trunc(params[1])
                 default:
                     console.error(`Math error, ${params[0]} is an invalid operation type`)
                     break;
@@ -198,9 +196,6 @@ export function runND(inputCode: string, env_: Enviroment) {
         env.new('CLOSE_WINDOW#', new Func(true, {}, closeWindow))
         env.new('RIGHT_MOUSE#', new Func(true, {}, RIGHT_MOUSE_BUTTON))
         env.new('LEFT_MOUSE#', new Func(true, {}, LEFT_MOUSE_BUTTON))
-        env.new('debug_inspect#', new Func(true, {}, (params: any[]) => {
-            console.log(inspect(env.get(params[0])))
-        }))
         env.new('DELTA#', new Func(true, {}, delta))
     }
 
