@@ -294,14 +294,14 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     ArrayAccess(_ot: ohm.Node, id: ohm.Node, _at: ohm.Node, index: ohm.Node, _ct: ohm.Node) {
-        if(this.args.env.exists(id.sourceString)) {
+        if(this.args.env.exists(id.sourceString) || typeof id.eval(this.args.env) !== 'string') {
             //console.log(id.eval(this.args.env))
             let evaled = id.eval(this.args.env)
             if(typeof evaled == 'string') {
                 //console.log('string')
                 return this.args.env.get(evaled).value[index.eval(this.args.env)]
             } else {
-                return id.eval(this.args.env).value[index.eval(this.args.env)]
+                return id.eval(this.args.env)[index.eval(this.args.env)]
             }
         } else {
             throw new Error(`No Value Found with name: ${id.sourceString}`)

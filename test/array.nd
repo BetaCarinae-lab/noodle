@@ -22,4 +22,6 @@ push(arr, 19)
 
 writeLn(<arr>)
 
+writeLn(<<grid at 2> at 2>)
+
 writeLn("ARRAY END")

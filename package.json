@@ -1,6 +1,6 @@
 {
   "name": "noodle",
-  "version": "1.12.21",
+  "version": "1.12.22",
   "main": "main.js",
   "type": "module",
   "scripts": {
