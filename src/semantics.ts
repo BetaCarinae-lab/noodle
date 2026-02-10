@@ -431,7 +431,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     FnCall(_os: ohm.Node, name: ohm.Node, parameterList: ohm.Node, _cs: ohm.Node) {
         if(this.args.env.exists(name.sourceString)) {
-            return this.args.env.get(name.sourceString).body(parameterList.eval(this.args.env))
+            return this.args.env.get(name.sourceString).call(parameterList.eval(this.args.env))
         } else {
             throw new Error(`Cannot find function with name: ${name.sourceString}`)
         }

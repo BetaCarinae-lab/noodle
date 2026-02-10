@@ -119,17 +119,17 @@ export function getType(value: any) {
 export class Func {
     persistant: boolean
     env: {[key: string]: any}
-    body: (parameters: any[]) => any
+    value: {body: (parameters: any[]) => any}
 
 
     constructor(persistant: boolean, env: {[key: string]: any}, body: (parameters: any[]) => any) {
         this.persistant = persistant
         this.env = env
-        this.body = body
+        this.value = {body: body}
     }
 
     call(params: any[]) {
-        return this.body(params)
+        return this.value.body(params)
     }
 
     set() {

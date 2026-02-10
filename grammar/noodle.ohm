@@ -85,6 +85,7 @@ NOODLE {
     | VarGet
    	| Conversions
     | Query
+    | AnonFunc
     | ArrayAccess
     | ArrayAssign
     | ObjectPropertyAccess
@@ -128,9 +129,11 @@ NOODLE {
 
   ArrayAccess = "<" (Expr | ident) "at" Expr ">"
  	
-  ArrayAssign = ident "at" Statement "is" Expr
+  ArrayAssign = ident "at" Expr "is" Expr
 
-  StatementParameterList = "(" ListOf<Statement, ","> ")"
+  StatementParameterList = "(" ListOf<Expr, ","> ")"
+  
+  AnonFunc = ParameterList "=>" FuncBody
 
   FnCall = "<" ident StatementParameterList ">"
 
