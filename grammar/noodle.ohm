@@ -172,7 +172,7 @@ NOODLE {
   
   Reference = "&" ident
 
-  Type = "any" | "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean"
+  Type = "any" | "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean" | "function"
 
   Plop = "plop" ObjectProperty "(" "persistant"? "mut"? "strict"? ")"
 

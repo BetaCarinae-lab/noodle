@@ -431,10 +431,38 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     FnCall(_os: ohm.Node, name: ohm.Node, parameterList: ohm.Node, _cs: ohm.Node) {
         if(this.args.env.exists(name.sourceString)) {
-            return this.args.env.get(name.sourceString).call(parameterList.eval(this.args.env))
+            return this.args.env.get(name.sourceString).value.body(parameterList.eval(this.args.env))
         } else {
             throw new Error(`Cannot find function with name: ${name.sourceString}`)
         }
+    },
+
+    AnonFunc(params_, _arrow, body) {
+        let params = params_.eval(this.args.env)
+        let functionEnv = this.args.env.createChild()
+        return {body: (parameters: any[]) => {
+            parameters.forEach((param, index) => {
+                //console.log(ParameterList[index])
+                functionEnv.new(params[index].name, new Variable(
+                    params[index].name,
+                    params[index].mutable,
+                    false,
+                    param,
+                    false,
+                ))
+            })
+
+            try {
+                //console.log('POINTERS: \n', functionEnv.pointers)
+                body.eval(functionEnv)
+            } catch(error: any) {
+                if(error instanceof ReturnSignal) {
+                    return error.value
+                } else {
+                    console.error(error.stack)
+                }
+            }
+        }}
     },
 
     Return(_out: ohm.Node, _op: ohm.Node, value: ohm.Node, _cp: ohm.Node) {

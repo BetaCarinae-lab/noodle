@@ -4,4 +4,10 @@ fn add(mut a: number, b: number) {
 
 writeLn(<add(20, 10)>)
 
+object anon is (mut a: number, b: number) => {
+    output(<a> * <b>)
+}
+
+writeLn(<anon(10, 10)>)
+
 writeLn("FNTEST END")
