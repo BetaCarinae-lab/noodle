@@ -102,9 +102,9 @@ export function runND(inputCode: string, env_: Enviroment) {
                 return date.getDay()
             } else if(params[0] == "hour") {
                 return date.getHours()
-            } else if(params[0] == "minutes") {
+            } else if(params[0] == "minute") {
                 return date.getMinutes()
-            } else if(params[0] == "seconds") {
+            } else if(params[0] == "second") {
                 return date.getSeconds()
             }
         }))
