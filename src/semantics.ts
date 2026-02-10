@@ -462,8 +462,28 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     ObjectProperty(Mid: ohm.Node, _d: ohm.Node, ids: ohm.Node) {
-        if(this.args.env.get(Mid.sourceString).get() && typeof this.args.env.get(Mid.sourceString).get() == 'object') {
-            let value = this.args.env.get(Mid.sourceString).get()
+        if(typeof Mid.eval(this.args.env) == 'string') {
+            if(this.args.env.get(Mid.sourceString).get() && typeof this.args.env.get(Mid.sourceString).get() == 'object') {
+                let value = this.args.env.get(Mid.sourceString).get()
+                let final;
+                ids.asIteration().children.forEach((id, index) => {
+                    value = value[id.sourceString]
+                    if(typeof ids.asIteration().children[index + 1] == 'undefined') {
+                        final = id.sourceString
+                    }
+                })
+                return {
+                    og: this.args.env.get(Mid.sourceString),
+                    val: value,
+                    final: final,
+                    Mid: Mid.sourceString,
+                    ids: ids,
+                }
+            } else {
+                throw new Error(`Either can\'t find value ${Mid.sourceString}, or value is not an object`)
+            }
+        } else {
+            let value = Mid.eval(this.args.env)
             let final;
             ids.asIteration().children.forEach((id, index) => {
                 value = value[id.sourceString]
@@ -472,14 +492,12 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
                 }
             })
             return {
-                og: this.args.env.get(Mid.sourceString),
+                og: Mid.eval(this.args.env),
                 val: value,
                 final: final,
                 Mid: Mid.sourceString,
                 ids: ids,
             }
-        } else {
-            throw new Error(`Either can\'t find value ${Mid.sourceString}, or value is not an object`)
         }
     },
 

@@ -30,4 +30,6 @@ writeLn(<a.property> + <a.property2>)
 
 writeLn("PROP: " + <a.property>)
 
+writeLn("PROP_2: " + <<a>.property2>)
+
 writeLn("OBJ END")

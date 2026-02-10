@@ -157,7 +157,7 @@ NOODLE {
   
   MethodCall = "<" ObjectProperty StatementParameterList ">"
   
-  ObjectProperty = ident ("." ident)+
+  ObjectProperty = (Expr | ident) ("." ident)+
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
