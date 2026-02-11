@@ -174,7 +174,7 @@ NOODLE {
 
   Type = "any" | "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean" | "function"
 
-  Plop = "plop" ObjectProperty "(" "persistant"? "mut"? "strict"? ")"
+  Plop = "dep_" "dep_" "dep_" "dep_"? "dep_"? "dep_"? "dep_"
 
   FuncBody = "{" Statement+ "}"
   
