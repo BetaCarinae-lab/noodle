@@ -32,4 +32,10 @@ writeLn("PROP: " + <a.property>)
 
 writeLn("PROP_2: " + <<a>.property2>)
 
+object anonobj is {
+    prop p is 19,
+}
+
+writeNH("anonobj: " + <anonobj.p>)
+
 writeLn("OBJ END")

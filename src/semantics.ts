@@ -437,6 +437,30 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
+    Object(_ob, propList_, _cb) {
+        let propList = propList_.asIteration().children.map(c => c.eval(this.args.env))
+        let obj: {[key: string]: any} = {};
+        for(let i = 0; i <= propList.length; i++) {
+            let prop = propList[i]
+            if(!prop) {
+                break
+            }
+            console.log('TEST: ' + inspect(prop))
+            obj[prop.id] = prop.val
+        }
+
+        console.log('OBJ: ' + inspect(obj))
+
+        return obj
+    },
+
+    ObjectPropertyDecl(_prop, id, _is, val, _) {
+        return {
+            id: id.eval(this.args.env),
+            val: val.eval(this.args.env)
+        }
+    },
+
     AnonFunc(params_, _arrow, body) {
         let params = params_.eval(this.args.env)
         let functionEnv = this.args.env.createChild()

@@ -85,6 +85,7 @@ NOODLE {
     | VarGet
    	| Conversions
     | Query
+    | Object
     | AnonFunc
     | ArrayAccess
     | ArrayAssign
@@ -134,6 +135,10 @@ NOODLE {
   StatementParameterList = "(" ListOf<Expr, ","> ")"
   
   AnonFunc = ParameterList "=>" FuncBody
+
+  ObjectPropertyDecl = "prop" ident "is" Expr ","
+
+  Object = "{" ObjectPropertyDecl+ "}"
 
   FnCall = "<" ident StatementParameterList ">"
 
