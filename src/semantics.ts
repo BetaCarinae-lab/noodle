@@ -68,11 +68,13 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Loop(_loop: ohm.Node, expr: ohm.Node, body: ohm.Node) {
-        let i = 0
-        //console.log(expr.eval(this.args.env))
-        while(i != expr.eval(this.args.env)) {
-            body.eval(this.args.env)
-            i++
+        let loopamount = expr.eval(this.args.env)
+        for(let i = 0; i <= loopamount; i++) {
+            let result = body.eval(this.args.env)
+
+            if(result?.type == 'break') {
+                break;
+            }
         }
     },
 
@@ -118,7 +120,13 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
 
     While(_while, _op, expr, _cp, body) {
         while(expr.eval(this.args.env)) {
-            body.eval(this.args.env)
+            let result = body.eval(this.args.env)
+            if(result?.type == 'break') {
+                break;
+            }
+            if(result?.type == 'continue') {
+                continue;
+            }
         }
     },
 
@@ -384,18 +392,36 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return !s.eval(this.args.env)
     },
 
-    If(_if: ohm.Node, _op: ohm.Node, condition: ohm.Node, _cp: ohm.Node, body: ohm.Node, _else: ohm.Node, elseBody: ohm.Node) {
-        if(_else.sourceString) {
-            if(condition.eval(this.args.env)) {
-                body.eval(this.args.env)
-            } else {
-                elseBody.eval(this.args.env)
-            }
-        } else {
-            if(condition.eval(this.args.env)) {
-                body.eval(this.args.env)
-            }
+    Break(_) {
+        return {type: "break"}
+    },
+
+    Continue(_) {
+        return {type: "continue"}
+    },
+
+    If(_if: ohm.Node, _op: ohm.Node, condition: ohm.Node, _cp: ohm.Node, body: ohm.Node, elsepart: ohm.Node) {
+        const condval = condition.eval(this.args.env)
+        
+        if(condval) {
+            return body.eval(this.args.env)
         }
+
+        // only evaluate if it exists
+        if(elsepart.children.length > 0) {
+            return elsepart.eval(this.args.env)
+        }
+
+
+        return null;
+    },
+
+    ElsePart_elseIf(_e, nestedif) {
+        return nestedif.eval(this.args.env)
+    },
+
+    ElsePart_else(_else, body) {
+        return body.eval(this.args.env)
     },
 
     Unary_negate(_m: ohm.Node, value: ohm.Node) {

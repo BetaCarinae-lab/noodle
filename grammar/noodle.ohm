@@ -12,6 +12,8 @@ NOODLE {
           | Loop
           | Push
           | Plop
+          | Break
+          | Continue
           | Delete
           | RefCreate
           | Comment
@@ -106,6 +108,10 @@ NOODLE {
   Pop = "pop" "(" (string | ident) ")"
 
   Fn = "persistant"? "fn" ident ParameterList FuncBody
+
+  Break = "break"
+  
+  Continue = "continue"
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
@@ -117,7 +123,7 @@ NOODLE {
 
   Exit = "exit" ExitValues
   
-  Array = "[" listOf<Statement, ","> "]"
+  Array = "[" listOf<Expr, ","> "]"
 
   End = "end"
 
@@ -159,7 +165,7 @@ NOODLE {
    
   TemplateConstruction = ident ObjectBody
   
-  ObjectBody = "{" (ident ":" Statement ",")* "}"
+  ObjectBody = "{" (ident ":" Expr ",")* "}"
   
   Method = "method" ident "is" ParameterList FuncBody
   
@@ -169,7 +175,13 @@ NOODLE {
   
   ObjectPropertyAccess = "<" ObjectProperty ">"
   
-  If = "if" "(" Expr ")" FuncBody "else"? FuncBody?
+  If
+    = "if" "(" Expr ")" FuncBody ElsePart?
+
+  ElsePart
+    = "else" If        --elseIf
+    | "else" FuncBody  --else
+
 
   Query = "query" "(" Expr ")"
 
@@ -196,7 +208,7 @@ NOODLE {
   number = digit+ | "inf"
   float = digit "." digit+
   
-  Return = "output" "(" Statement ")"
+  Return = "output" "(" Expr ")"
   
   Loop = "loop" Expr FuncBody
 

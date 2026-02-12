@@ -1,13 +1,47 @@
-if(10 == 10) {
-    writeLn("Correct!")
+#(Basic else-if chain test)
+
+number x is 7
+
+if (<x> > 10) {
+    writeLn("x is greater than 10")
+} else if (<x> > 5) {
+    writeLn("x is greater than 5 but not greater than 10")
+} else if (<x> == 5) {
+    writeLn("x is exactly 5")
 } else {
-    writeLn("what?")
+    writeLn("x is 5 or less")
 }
 
-if(10 == 20) {
-    writeLn("what?")
+
+#(Nested else-if test)
+
+number y is 3
+
+if (<y> > 0) {
+    writeLn("y is positive")
+
+    if (<y> > 5) {
+        writeLn("y is large")
+    }
+    else if (<y> > 2) {
+        writeLn("y is medium")
+    }
+    else {
+        writeLn("y is small")
+    }
 } else {
-    writeLn("Correct!")
+    writeLn("y is not positive")
 }
 
-writeLn("IF_ELSE END")
+
+#(Logical operator test)
+
+number z is 15
+
+if (<z> > 10 && <z> < 20) {
+    writeLn("z is between 10 and 20")
+} else if (<z> == 20 || <z> == 25) {
+    writeLn("z is 20 or 25")
+} else {
+    writeLn("z is something else")
+}
