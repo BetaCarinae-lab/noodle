@@ -273,7 +273,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
             functionEnv,
             (parameters: any[]) => {
                 parameters.forEach((param, index) => {
-                    //console.log(ParameterList[index])
+                    console.log(ParameterList[index].default)
                     functionEnv.new(ParameterList[index].name, new Variable(
                         ParameterList[index].name,
                         ParameterList[index].mutable,
@@ -320,11 +320,12 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return
     },
 
-    Parameter(mut: ohm.Node, ident: ohm.Node, _thing, type) {
+    Parameter(mut: ohm.Node, ident: ohm.Node, _thing, type, _w, _b, defaultValue) {
         return {
             mutable: mut.sourceString ? true : false,
             type: type.sourceString,
             name: ident.sourceString, 
+            default: defaultValue.sourceString ? defaultValue.eval(this.args.env) : null
         }
     },
 

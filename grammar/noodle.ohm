@@ -115,7 +115,7 @@ NOODLE {
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
-  Parameter = "mut"? ident ":" Type
+  Parameter = "mut"? ident ":" Type "would"? "be"? Expr?
 
   Delete = "delete" ident
 

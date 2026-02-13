@@ -8,6 +8,12 @@ object anon is (mut a: number, b: number) => {
     output(<a> * <b>)
 }
 
-writeLn(<anon(10, 10)>)
+writeNH("ANON (should be 100): " + <anon(10, 10)>)
+
+fn mul(a: number, b: number would be 10) {
+    output(<a> * <b>)
+}
+
+writeNH("MUL (should be 100): " + <mul(10, 10)>)
 
 writeLn("FNTEST END")

@@ -104,7 +104,7 @@ export function getType(value: any) {
     } else if(typeof value == "number") {
         return "number"
     } else if(typeof value == "object") {
-        if(value.references) {
+        if(value?.references) {
             return "reference"
         } else if(Array.isArray(value)) {
             return "array"
