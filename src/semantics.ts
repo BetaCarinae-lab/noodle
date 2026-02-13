@@ -265,6 +265,15 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
+    Pipe(p1, _, p2) {
+        let left = p1.eval(this.args.env)
+        let right = p2.eval(this.args.env)
+
+        if(typeof right == 'string') {
+            this.args.env.get(right).value.body(left)
+        }
+    },
+
     Fn(persistant: ohm.Node, _fn: ohm.Node, name: ohm.Node, ParameterList: ohm.Node, body: ohm.Node) {
         ParameterList = ParameterList.eval(this.args.env);
         var functionEnv = this.args.env.createChild()
