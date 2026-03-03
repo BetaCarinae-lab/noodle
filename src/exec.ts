@@ -1,4 +1,4 @@
-import {readFileSync, existsSync, writeFileSync } from "fs"
+import {readFileSync, existsSync, writeFileSync, appendFileSync, read } from "fs"
 import { Func, Variable } from "./etc.js";
 import { beginDrawing, clearBackground, delta, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON } from "./graphics.js";
 import { actionDictionary } from './semantics.js';
@@ -148,6 +148,12 @@ export function runND(inputCode: string, env_: Enviroment) {
         }))
         env.new('FS_WRITE#', new Func(true, {}, function(params) {
             return writeFileSync(params[0], params[1])
+        }))
+        env.new('FS_APPEND#', new Func(true, {}, function(params) {
+            return appendFileSync(params[0], params[1])
+        }))
+        env.new('FS_WRITE#', new Func(true, {}, function(params) {
+            return read(params[0], params[1])
         }))
     }
     if(modules.includes('utils')) {

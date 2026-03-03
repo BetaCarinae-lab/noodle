@@ -115,7 +115,7 @@ NOODLE {
   
   Continue = "continue"
 
-  Pipe = Expr "-" Expr
+  Pipe = Expr "->" Expr
   
   ParameterList = "(" ListOf<Parameter, ","> ")"
   
