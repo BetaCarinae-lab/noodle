@@ -71,6 +71,26 @@ export function delta() {
   return rl.GetFrameTime()
 }
 
+export function loadShader(params: any[]) {
+  return rl.LoadShader(params[0], params[1])
+}
+
+export function loadTexture(params: any[]) {
+  return rl.LoadTexture(params[0])
+}
+
+export function begin_shader_mode(params: any[]) {
+  rl.BeginShaderMode(params[0])
+}
+
+export function stop_shader_mode() {
+  rl.EndShaderMode()
+}
+
+export function unload_Shader(params: any[]) {
+  rl.UnloadShader(params[0])
+}
+
 export function RIGHT_MOUSE_BUTTON() {
   return rl.IsMouseButtonDown(rl.MOUSE_BUTTON_RIGHT)
 }

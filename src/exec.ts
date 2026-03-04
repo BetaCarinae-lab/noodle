@@ -1,6 +1,6 @@
 import {readFileSync, existsSync, writeFileSync, appendFileSync, read } from "fs"
 import { Func, Variable } from "./etc.js";
-import { beginDrawing, clearBackground, delta, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON } from "./graphics.js";
+import { beginDrawing, clearBackground, delta, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON, loadShader, unload_Shader, loadTexture, begin_shader_mode, stop_shader_mode } from "./graphics.js";
 import { actionDictionary } from './semantics.js';
 import { inspect } from "util";
 import { Enviroment } from "./etc.js";
@@ -203,6 +203,11 @@ export function runND(inputCode: string, env_: Enviroment) {
         env.new('RIGHT_MOUSE#', new Func(true, {}, RIGHT_MOUSE_BUTTON))
         env.new('LEFT_MOUSE#', new Func(true, {}, LEFT_MOUSE_BUTTON))
         env.new('DELTA#', new Func(true, {}, delta))
+        env.new('LOAD_SHADER#', new Func(true, {}, loadShader))
+        env.new('UNLOAD_SHADER#', new Func(true, {}, unload_Shader))
+        env.new('LOAD_TEXTURE#', new Func(true, {}, loadTexture))
+        env.new('BEGIN_SHADER_MODE#', new Func(true, {}, begin_shader_mode))
+        env.new('STOP_SHADER_MODE#', new Func(true, {}, stop_shader_mode))
     }
 
     env.new('args', new Variable('args', false, false, process.argv, false))

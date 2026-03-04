@@ -1,0 +1,7 @@
+<INIT_WINDOW#(400, 400, "shader_test_noodle")>
+
+mut any shader is <LOAD_SHADER#("vertex.glsl", "fragment.glsl")>
+
+while(!<WINDOW_SHOULD_CLOSE#()>) {
+    
+}
