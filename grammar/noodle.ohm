@@ -104,7 +104,6 @@ NOODLE {
     | False
     | Reference
     | Pipe
-    | ident
 
   Push = "push" "(" (string | ident) "," Expr ")"
 
