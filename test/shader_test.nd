@@ -1,7 +1,17 @@
-<INIT_WINDOW#(400, 400, "shader_test_noodle")>
+number window_w is 400
+number window_h is 400
 
-mut any shader is <LOAD_SHADER#("vertex.glsl", "fragment.glsl")>
+<INIT_WINDOW#(400, 400, "window")>
+
+mut number W is 100
+mut number H is 100
+mut any shader is <LOAD_SHADER#("vertex.glsl", "fragment.glsl")
 
 while(!<WINDOW_SHOULD_CLOSE#()>) {
-    
-}
+    <BEGIN_DRAWING#()>
+    <CLEAR_BACKGROUND#(0,0,0)>
+    <RECTANGLE#(0, 0, <W>, <H>, 255, 255, 255, 255)>
+    <STOP_DRAWING#()>
+} 
+
+<CLOSE_WINDOW#()>
