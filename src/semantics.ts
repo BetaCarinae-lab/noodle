@@ -549,6 +549,12 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return objectProperty.eval(this.args.env).val
     },
 
+    JSPassthrough(js, ob, code, cb) {
+        let newfun = new Function("return function(env) { \n" + code.sourceString + "\n }")
+        let a = newfun()
+        a(this.args.env)
+    },
+
     ObjectProperty(Mid: ohm.Node, _d: ohm.Node, ids: ohm.Node) {
         if(typeof Mid.eval(this.args.env) == 'string') {
             if(this.args.env.get(Mid.sourceString).get() && typeof this.args.env.get(Mid.sourceString).get() == 'object') {

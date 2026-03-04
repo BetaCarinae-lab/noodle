@@ -8,6 +8,7 @@ NOODLE {
           | Fn
           | If
           | ForEach
+          | JSPassthrough
           | While
           | Loop
           | Push
@@ -215,6 +216,8 @@ NOODLE {
   Return = "output" "(" Expr ")"
   
   Loop = "loop" Expr FuncBody
+
+  JSPassthrough = "js" "{" (~"}" any)* "}"
 
   string = "\"" (~"\"" any)* "\""
 
