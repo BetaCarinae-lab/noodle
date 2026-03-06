@@ -12,7 +12,6 @@ NOODLE {
           | While
           | Loop
           | Push
-          | Plop
           | Break
           | Continue
           | Delete
@@ -194,8 +193,6 @@ NOODLE {
   Reference = "&" ident
 
   Type = "any" | "number" | "string" | "fn" | "array" | "object" | "reference" | "boolean" | "function"
-
-  Plop = "dep_" "dep_" "dep_" "dep_"? "dep_"? "dep_"? "dep_"
 
   FuncBody = "{" Statement+ "}"
   

@@ -12,6 +12,6 @@ while(!<WINDOW_SHOULD_CLOSE#()>) {
     <CLEAR_BACKGROUND#(0,0,0)>
     <RECTANGLE#(0, <y_pos>, <W>, <H>, 255, 255, 255, 255)>
     <STOP_DRAWING#()>
-} 
+}
 
 <CLOSE_WINDOW#()>

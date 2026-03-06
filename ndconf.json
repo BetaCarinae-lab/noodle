@@ -1,7 +1,9 @@
 {
   "meta": {
     "name": "test",
-    "ver": "0.0.0"
+    "ver": "0.0.0",
+    "main": "main.nd",
+    "dependencies": []
   },
   "needs": ["graphics", "date", "math", "fs", "utils"]
 }

@@ -8,6 +8,7 @@ import { VERSION } from './info.js';
 import { exit } from 'process';
 import { Enviroment } from './etc.js';
 import { setup } from './projectSetup.js';
+import { installPackage } from './etc.js';
 
 let env = new Enviroment()
 
@@ -64,6 +65,7 @@ if(!process.argv[2]) {
         noodle -v | -version | --v | --version -> Prints Noodle Version
         noodle init name -> Inits a new noodle project
         noodle ./file.nd or noodle ./file.bowl -> runs a nd or bowl file
+        noodle install https://github.com/yournoodlepackage
     `)
     exit(0)
 } else if(process.argv[2] == '-v' || process.argv[2] == '--v' || process.argv[2] == '-version' || process.argv[2] == '--version') {
@@ -76,8 +78,9 @@ if(!process.argv[2]) {
         console.log('Failed :(')
     }
     exit(0)
-}
-else {
+} else if(process.argv[2] == 'install') {
+    installPackage(process.argv[3])
+} else {
 
 
 

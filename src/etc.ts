@@ -1,4 +1,8 @@
 import { inspect } from "node:util";
+import * as os from 'os'
+import * as fs from 'fs'
+import { execSync } from "node:child_process";
+import * as path from 'path'
 
 export type env = {
     pointers: {
@@ -92,6 +96,26 @@ export class Enviroment {
             }
         })
     }
+}
+
+export function installPackage(repo: string) {
+    fs.mkdirSync('./noodle_pkg')
+    const noodleDir = "./noodle_pkg"
+
+    if (!fs.existsSync(noodleDir)) {
+        fs.mkdirSync(noodleDir)
+    }
+
+    const pkgName = repo.split("/")[1]
+    const installPath = path.join(noodleDir, pkgName)
+
+    const repoURL = repo
+
+    console.log(`Installing ${repo}...`)
+
+    execSync(`git clone ${repoURL} ${installPath}`, { stdio: "inherit" })
+
+    console.log(`Installed to ${installPath}`)
 }
 
 export function getType(value: any) {
