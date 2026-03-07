@@ -1,5 +1,7 @@
 NoodleBowl {
-	Main = (Entry | Comment | Register | Log | If)+
+	Main = Statement+
+    Statement = Entry | Comment | Register | Log | If | From
+    From = "relative" "from" any*
     Entry = "run" (~".nd" ~".bowl" any)* (".nd" | ".bowl")
     Register = "register" (~"as" ~".nd" any)* (".nd" | ".nd.js") "as" Type "("? "override"? ")"? 
     Type = "module" | "js-module"

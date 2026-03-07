@@ -31,6 +31,9 @@ export function runBowl(code: string) {
             if(fileExt.sourceString == '.nd') {
                 //console.log(`go from: ${MWD} to: ${path_module.resolve(path.sourceString + fileExt.sourceString)}`)
                 //console.log(path_module.resolve(path.sourceString + fileExt.sourceString))
+                let relPath = path.sourceString + fileExt.sourceString
+                console.log(path_module.dirname(path.sourceString + fileExt.sourceString))
+                console.log(path_module.resolve(relPath))
                 let result = runND(readFileSync(path_module.resolve(path.sourceString + fileExt.sourceString), 'utf-8'), env)
 
                 env = result.env
