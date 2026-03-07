@@ -98,17 +98,90 @@ export class Enviroment {
     }
 }
 
-export function installPackage(repo: string) {
-    fs.mkdirSync('./noodle_pkg')
+export function githubToRaw(
+  githubUrl: string,
+  options?: { branch?: string; filePath?: string }
+): string {
+  const url = new URL(githubUrl);
+
+  // Already raw
+  if (url.hostname === "raw.githubusercontent.com") {
+    return githubUrl;
+  }
+
+  if (url.hostname !== "github.com") {
+    throw new Error("Not a GitHub URL");
+  }
+
+  const parts = url.pathname.replace(/^\/|\.git$/g, "").split("/");
+
+  const owner = parts[0];
+  const repo = parts[1];
+
+  if (!owner || !repo) {
+    throw new Error("Invalid GitHub repository URL");
+  }
+
+  // Handle blob URLs
+  if (parts[2] === "blob") {
+    const branch = parts[3];
+    const path = parts.slice(4).join("/");
+    return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${path}`;
+  }
+
+  // Repo URL case
+  const branch = options?.branch ?? "main";
+  const filePath = options?.filePath ?? "";
+
+  if (!filePath) {
+    throw new Error(
+      "File path required when converting a repository URL"
+    );
+  }
+
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+}
+
+async function getGithubFile(
+  githubUrl: string,
+  filePath: string,
+  branch = "main"
+) {
+  const rawUrl = githubToRaw(githubUrl, { branch, filePath });
+
+console.log(rawUrl)
+
+  const res = await fetch(rawUrl);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${rawUrl}`);
+  }
+
+  return await res.text();
+}
+
+export async function installPackage(repo: string) {
+    try {
+        console.log('Retrieving')
+        const config = await getGithubFile(repo, 'ndconf.json')
+
+        console.log(config)
+    } catch(err: any) {
+        console.error(err.stack)
+    }
+
+
+    /*
     const noodleDir = "./noodle_pkg"
 
     if (!fs.existsSync(noodleDir)) {
         fs.mkdirSync(noodleDir)
     }
 
+    const conf = await fetch('https://raw.githubusercontent.com/user/repo/main/')
+
     const pkgName = repo.split("/")[1]
     const installPath = path.join(noodleDir, pkgName)
-
     const repoURL = repo
 
     console.log(`Installing ${repo}...`)
@@ -116,6 +189,7 @@ export function installPackage(repo: string) {
     execSync(`git clone ${repoURL} ${installPath}`, { stdio: "inherit" })
 
     console.log(`Installed to ${installPath}`)
+    */
 }
 
 export function getType(value: any) {

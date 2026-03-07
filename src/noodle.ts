@@ -80,6 +80,7 @@ if(!process.argv[2]) {
     exit(0)
 } else if(process.argv[2] == 'install') {
     installPackage(process.argv[3])
+    exit(0)
 } else {
 
 
