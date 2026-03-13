@@ -1,7 +1,7 @@
 import {readFileSync, existsSync, writeFileSync, appendFileSync, read } from "fs"
 import { Func, Variable } from "./etc.js";
 import { beginDrawing, clearBackground, delta, closeWindow, drawRectangle, drawText, endDrawing, initWindow, IS_KEY_DOWN, windowShouldClose, GET_MOUSE, RIGHT_MOUSE_BUTTON, LEFT_MOUSE_BUTTON, loadShader, unload_Shader, loadTexture, begin_shader_mode, stop_shader_mode } from "./graphics.js";
-import { actionDictionary } from './semantics.js';
+import { actionDictionary, astActionDictionary } from './semantics.js';
 import { inspect } from "util";
 import { Enviroment } from "./etc.js";
 import * as ohm from "ohm-js"
@@ -45,9 +45,7 @@ export function runBowl(code: string) {
                 runBowl(readFileSync(path.sourceString + fileExt.sourceString, 'utf-8'))
 
             } else {
-
                 throw new Error(`Unknown file extension: ${fileExt.sourceString}`)
-
             }
         },
 
@@ -88,6 +86,22 @@ export function runBowl(code: string) {
         semantics(matchResult).eval()
     } else {
         console.error('Bowl error: ' + matchResult.message)
+    }
+}
+
+export function getAst(input: string) {
+    const semantics = grammars.noodle.createSemantics().addOperation('eval()', astActionDictionary as ohm.ActionDict<unknown>);
+
+    /**
+    * @type {import('ohm-js').MatchResult}
+    */
+    let matchResult = grammars.noodle.match(input);
+
+    if(!matchResult.failed()) {
+        //console.log("Match Succeeded, Applying Semantics");
+        return semantics(matchResult).eval();
+    } else {
+        console.log('noodle error: ' + matchResult.message);
     }
 }
 

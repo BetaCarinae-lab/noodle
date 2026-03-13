@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import path from 'path';
-import { runBowl, runND } from './exec.js';
+import { getAst, runBowl, runND } from './exec.js';
 import readline from"readline";
 import { VERSION } from './info.js';
-import { exit } from 'process';
+import { argv, exit } from 'process';
 import { Enviroment } from './etc.js';
 import { setup } from './projectSetup.js';
 import { installPackage } from './etc.js';
@@ -65,8 +65,9 @@ if(!process.argv[2]) {
         noodle -v | -version | --v | --version -> Prints Noodle Version
         noodle init name -> Inits a new noodle project
         noodle ./file.nd or noodle ./file.bowl -> runs a nd or bowl file
-        noodle install https://github.com/yournoodlepackage
-    `)
+        noodle install https://github.com/yournoodlepackage -> Installs a noodle package (WARNING: WIP)
+        noodle ./file.nd --ast filename -> produces an ast of the inputted code and writes it to a ./filename.json
+    `) 
     exit(0)
 } else if(process.argv[2] == '-v' || process.argv[2] == '--v' || process.argv[2] == '-version' || process.argv[2] == '--version') {
     console.log(`${VERSION}`)
@@ -80,6 +81,15 @@ if(!process.argv[2]) {
     exit(0)
 } else if(process.argv[2] == 'install') {
     installPackage(process.argv[3])
+    exit(0)
+} else if (process.argv[3] == '--ast') {
+    const ast = getAst(readFileSync(file_path, 'utf-8'))
+    if(!ast) {
+        exit(0)
+    }
+    writeFileSync(argv[4] + '.json', JSON.stringify(ast, null, 2), 'utf-8')
+    console.log('DONE!')
+    console.log('Written to ' + argv[4] + '.json')
     exit(0)
 } else {
 

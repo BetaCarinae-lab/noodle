@@ -1,0 +1,99 @@
+[
+  null,
+  {
+    "type": "var",
+    "mut": false,
+    "pers": [],
+    "strict": [],
+    "vartype": "number",
+    "id": "cur",
+    "val": {
+      "type": "call",
+      "id": "DATE#",
+      "plist": [
+        "year"
+      ]
+    }
+  },
+  {
+    "type": "var",
+    "mut": false,
+    "pers": [],
+    "strict": [],
+    "vartype": "string",
+    "id": "target_",
+    "val": {
+      "type": "query",
+      "text": "Enter year: "
+    }
+  },
+  {
+    "type": "var",
+    "mut": false,
+    "pers": [],
+    "strict": [],
+    "vartype": "number",
+    "id": "target",
+    "val": {
+      "type": "call",
+      "id": "CNV#",
+      "plist": [
+        {
+          "type": "get",
+          "id": "target_"
+        }
+      ]
+    }
+  },
+  {
+    "type": "if",
+    "condition": {
+      "type": "greatereq",
+      "left": {
+        "type": "get",
+        "id": "target"
+      },
+      "right": {
+        "type": "get",
+        "id": "cur"
+      }
+    },
+    "body": [
+      {
+        "type": "print",
+        "expr": {
+          "type": "sub",
+          "left": {
+            "type": "get",
+            "id": "target"
+          },
+          "right": {
+            "type": "get",
+            "id": "cur"
+          }
+        }
+      }
+    ],
+    "else": [
+      {
+        "type": "else",
+        "body": [
+          {
+            "type": "print",
+            "expr": {
+              "type": "sub",
+              "left": {
+                "type": "get",
+                "id": "cur"
+              },
+              "right": {
+                "type": "get",
+                "id": "target"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

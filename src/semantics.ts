@@ -31,11 +31,6 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return this.sourceString
     },
 
-    Plop(_plop, ctxtopush: ohm.Node, _op, pers, mut, strict, _cp) {
-        let v = ctxtopush.eval(this.args.env)
-        this.args.env.new(v.final, new Variable(v.final, mut.sourceString ? true : false, pers.sourceString ? true : false, v.value, strict.sourceString ? true : false))
-    },
-
     Print(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
         const value = expr.eval(this.args.env);
         if(typeof value == 'object') {
@@ -718,4 +713,602 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
         return returned
     },                                    
+}
+
+export const astActionDictionary: ohm.ActionDict<unknown> = {
+    Program(statements: ohm.Node) {
+        return statements.children.map((c: any) => c.eval())
+    },
+
+    Statement(stmt: ohm.Node) {
+        return stmt.eval();
+    },
+
+    _terminal(this: ohm.TerminalNode) {
+        return this.sourceString
+    },
+
+    Print(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
+        return {
+            type: "print",
+            expr: expr.eval()
+        }
+    },
+
+    PrintNoHeader(_print: ohm.Node, _lp: ohm.Node, expr: ohm.Node, _rp: ohm.Node) {
+        return {
+            type: "printnh",
+            expr: expr.eval()
+        }
+    },
+
+    Push(_push, _op, id, _, expr, _cp) {
+        return {
+            type: "push",
+            array: id.eval(),
+            expr: expr.eval()
+        }
+    },
+
+    Pop(_pop, _op, id, _cp) {
+        return {
+            type: "push",
+            id: id.eval()
+        }
+    },
+
+    Loop(_loop: ohm.Node, expr: ohm.Node, body: ohm.Node) {
+        return {
+            type: "loop",
+            expr: expr.eval(),
+            body: body.eval(),
+        }
+    },
+
+    Primary_parens(_op: ohm.Node, expr: ohm.Node, _cp: ohm.Node) {
+        return {
+            type: "parens",
+            expr: expr.eval()
+        }
+    },
+
+    Additive_add(expr1: ohm.Node, _plus: ohm.Node, expr2: ohm.Node) {
+        return {
+            type: "add",
+            left: expr1.eval(),
+            right: expr2.eval(),
+        }
+    },
+
+    Additive_minus(expr1: ohm.Node, _minus: ohm.Node, expr2: ohm.Node) {
+        return {
+            type: "sub",
+            left: expr1.eval(),
+            right: expr2.eval(),
+        }
+    },
+
+    Multiplicative_times(expr1: ohm.Node, _times: ohm.Node, expr2: ohm.Node) {
+        return {
+            type: "mul",
+            left: expr1.eval(),
+            right: expr2.eval(),
+        }
+    },
+
+    Multiplicative_divide(expr1: ohm.Node, _divide: ohm.Node, expr2: ohm.Node) {
+        return {
+            type: "div",
+            left: expr1.eval(),
+            right: expr2.eval(),
+        }
+    },
+
+    Multiplicative_powerof(expr1: ohm.Node, _carrot, expr2: ohm.Node) {
+        return {
+            type: "pow",
+            left: expr1.eval(),
+            right: expr2.eval(),
+        }
+    },
+
+    Multiplicative_mod(expr1: ohm.Node, _percent, expr2: ohm.Node) {
+        return {
+            type: "mod",
+            left: expr1.eval(),
+            right: expr2.eval(),
+        }
+    },
+
+    Binary_urightshift(expr1: ohm.Node, _leftleftleft, expr2: ohm.Node) {
+        return {
+            type: "urshft",
+            left: expr1.eval(),
+            right: expr2.eval(),
+        }
+    },
+
+    Binary_rightshift(expr1: ohm.Node, _leftleftleft, expr2: ohm.Node) {
+        return {
+            type: "rshft",
+            left: expr1.eval(),
+            right: expr2.eval(),
+        }
+    },
+
+    Mut(mut) {
+        return mut.sourceString ? true : false
+    },
+
+    While(_while, _op, expr, _cp, body) {
+        return {
+            type: "while",
+            condition: expr.eval(),
+            body: body.eval(),
+        }
+    },
+
+    ArrayAssign(ident, _at, index, _is, expr) {
+        return {
+            type: "arrayassign",
+            id: ident.eval(),
+            index: index.eval(),
+            expr: expr.eval(),
+        }
+    },
+
+    VarCreate(mut: ohm.Node, pers: ohm.Node, strict: ohm.Node, type: ohm.Node, name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
+        return {
+            type: "var",
+            mut: mut.eval(),
+            pers: pers.sourceString ? true : false,
+            strict: strict.sourceString ? true : false,
+            vartype: type.eval(),
+            id: name.eval(),
+            val: value.eval()
+        }
+    },
+
+    float(digit, _, digits) {
+        return new Number(digit.sourceString + _.sourceString + digits.sourceString)
+    },
+
+    VarAssign(name: ohm.Node, _eq: ohm.Node, value: ohm.Node) {
+        return {
+            type: "assign",
+            id: name.eval(),
+            val: value.eval(),
+        }
+    },
+
+    TryCatch(_try: ohm.Node, trybody: ohm.Node, _catch: ohm.Node, _op: ohm.Node, errorname: ohm.Node, _cp: ohm.Node, catchbody: ohm.Node) {
+        return {
+            type: "trycatch",
+            try: trybody.eval(),
+            errorname: errorname.eval(),
+            catch: catchbody.eval(),
+        }
+    },
+
+    Reference(_a: ohm.Node, id: ohm.Node) {
+        return null
+    },
+
+    RefCreate(id: ohm.Node, _coolthing_, id2: ohm.Node) {
+        return {
+            type: "reference",
+            left: id.eval(),
+            right: id2.eval(),
+        }
+    },
+
+    RefResolve(_pipe: ohm.Node, id: ohm.Node, _pipe2: ohm.Node) {
+        return null
+    },
+
+    VarGet(_ot: ohm.Node, name: ohm.Node, _ct: ohm.Node) {
+        return {
+            type: "get",
+            id: name.eval(),
+        }
+    },
+
+    ident(first: ohm.Node, rest: ohm.Node) {
+        return first.sourceString + rest.sourceString
+    },
+
+    Expr(e: ohm.Node) {
+        return e.eval();
+    },
+
+    number(digits: ohm.Node) {
+        if(digits.sourceString == 'inf') {
+            return Infinity
+        } else {
+            return Number(digits.sourceString);
+        }
+    },
+
+    ExitValues(value: ohm.Node) {
+        return {
+            type: "exit", val: value.sourceString
+        }
+    },
+
+    string(_open: ohm.Node, chars: ohm.Node, _close: ohm.Node) {
+        return chars.sourceString;
+    },
+
+    ForEach(_foreach, _op, array_, _, indexname, _cp, body) {
+        return {
+            type: "foreach",
+            array: array_.eval(),
+            index: indexname.eval(),
+            body: body.eval(),
+        }
+    },
+
+    Pipe(p1, _, p2) {
+        return {
+            type: "pipe",
+            left: p1.eval(),
+            right: p2.eval(),
+        }
+    },
+
+    Fn(persistant: ohm.Node, _fn: ohm.Node, name: ohm.Node, ParameterList: ohm.Node, body: ohm.Node) {
+        return {
+            type: "func",
+            pers: persistant.sourceString ? true : false,
+            id: name.eval(),
+            plist: ParameterList.eval(),
+            body: body.eval(),
+        }
+    },
+
+    Array(_ob: ohm.Node, values: ohm.Node, _cb: ohm.Node) {
+        return {
+            type: "array",
+            values: values.children.map(c => c.eval())
+        }
+    },
+
+    ArrayAccess(_ot: ohm.Node, id: ohm.Node, _at: ohm.Node, index: ohm.Node, _ct: ohm.Node) {
+        return {
+            type: "arrayaccess",
+            id: id.eval(),
+            index: index.eval(),
+        }
+    },
+
+    Comment(_: ohm.Node, _op: ohm.Node, _txt: ohm.Node, _cp: ohm.Node) {
+        return
+    },
+
+    Parameter(mut: ohm.Node, ident: ohm.Node, _thing, type, _w, _b, defaultValue) {
+        return {
+            type: "parameter",
+            mutable: mut.sourceString ? true : false,
+            valtype: type.sourceString,
+            name: ident.sourceString, 
+            default: defaultValue.sourceString ? defaultValue.eval() : null
+        }
+    },
+
+    Delete(_delete: ohm.Node, id: ohm.Node) {
+        return {
+            isDEP: true
+        }
+    },
+
+    Exit(_ex: ohm.Node, uhoh: ohm.Node) {
+        return {
+            type: "exit",
+            code: uhoh.eval()
+        }
+    },
+
+    Exists(id: ohm.Node, _exists: ohm.Node) {
+        return {
+            type: "exists",
+            id: id.eval()
+        }
+    },
+
+    True(_val: ohm.Node) {
+        return true
+    },
+
+    False(_val: ohm.Node) {
+        return false
+    },
+
+    Equality_eq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "eq",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+
+    Equality_deepEq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "deepeq",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+
+    LogicalAnd_and(s1: ohm.Node, _and: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "and",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+
+    LogicalOr_or(s1: ohm.Node, _or: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "or",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+    
+    LogicalXor_xor(s1: ohm.Node, _cc: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "xor",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+
+    Comparison_greater(s1: ohm.Node, _arrow: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "greater",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+
+    Comparison_less(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "less",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+
+    Comparison_greatereq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "greatereq",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+
+    Comparison_lesseq(s1: ohm.Node, _eq: ohm.Node, s2: ohm.Node) {
+        return {
+            type: "lesseq",
+            left: s1.eval(),
+            right: s2.eval(),
+        }
+    },
+
+    Unary_not(_: ohm.Node, s: ohm.Node) {
+        return {
+            type: "not",
+            left: s.eval(),
+        }
+    },
+
+    Break(_) {
+        return {type: "break"}
+    },
+
+    Continue(_) {
+        return {type: "continue"}
+    },
+
+    If(_if: ohm.Node, _op: ohm.Node, condition: ohm.Node, _cp: ohm.Node, body: ohm.Node, elsepart: ohm.Node) {
+        return {
+            type: "if",
+            condition: condition.eval(),
+            body: body.eval(),
+            else: elsepart.eval(),
+        }
+    },
+
+    ElsePart_elseIf(_e, nestedif) {
+        return nestedif.eval()
+    },
+
+    ElsePart_else(_else, body) {
+        return {
+            type: "else", 
+            body: body.eval()
+        }
+    },
+
+    Unary_negate(_m: ohm.Node, value: ohm.Node) {
+        return {
+            type: "negate",
+            val: value.eval()
+        }
+    },
+
+    //                                           hehe
+    Postfix_increment(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
+        return {
+            type: "inc",
+            id: ident_untrimmed.eval()
+        }
+    },
+
+    Query(_quer, _op, text, _cp) {
+        return {
+            type: "query",
+            text: text.eval()
+        }
+    },
+
+    Postfix_decrement(ident_untrimmed: ohm.Node, _pp: ohm.Node) {
+        return {
+            type: "dec",
+            id: ident_untrimmed.eval()
+        }
+    },
+
+    FnCall(_os: ohm.Node, name: ohm.Node, parameterList: ohm.Node, _cs: ohm.Node) {
+        return {
+            type: "call",
+            id: name.eval(),
+            plist: parameterList.eval(),
+        }
+    },
+
+    Object(_ob, propList_, _cb) {
+        return {
+            type: "object",
+            proplist: propList_.eval()
+        }
+    },
+
+    ObjectPropertyDecl(_prop, id, _is, val, _) {
+        return {
+            type: "objectproperty",
+            id: id.eval(),
+            val: val.eval()
+        }
+    },
+
+    AnonFunc(params_, _arrow, body) {
+        return {
+            type: "anonfunc",
+            params: params_.eval(),
+            body: body.eval()
+        }
+    },
+
+    Return(_out: ohm.Node, _op: ohm.Node, value: ohm.Node, _cp: ohm.Node) {
+        return {
+            type: "return",
+            val: value.eval(),
+        }
+    },
+
+    FuncBody(_ob: ohm.Node, body: ohm.Node, _cb: ohm.Node) {
+        return body.eval()
+    },
+
+    ParameterList(_op: ohm.Node, listOfParams: ohm.Node, _cp: ohm.Node) {
+        return listOfParams.asIteration().children.map(c => c.eval())
+    },
+
+    StatementParameterList(_op: ohm.Node, listOfParams: ohm.Node, _cp: ohm.Node) {
+        return listOfParams.asIteration().children.map(c => c.eval())
+    },
+
+    _iter(...children) {
+        return children.map((c: any) => c.eval())
+    },
+
+    ObjectPropertyAccess(_ob: ohm.Node, objectProperty: ohm.Node,_cb: ohm.Node) {
+        return {
+            type: "objectpropaccess",
+            objectProperty: objectProperty.eval(),
+        }
+    },
+
+    JSPassthrough(_js, _ob, code, _cb) {
+        return {
+            type: "passthrough",
+            code: code.sourceString
+        }
+    },
+
+    ObjectProperty(Mid: ohm.Node, _d: ohm.Node, ids: ohm.Node) {
+        return {
+            type: "objectproperty",
+            mid: Mid.eval(),
+            ids: ids.eval(),
+        }
+    },
+
+    MethodCall(_1: ohm.Node, objProp: ohm.Node, ParamList: ohm.Node, _2: ohm.Node) {
+        return {
+            type: "methodcall",
+            objProp: objProp.eval(),
+            plist: ParamList.eval(),
+        }
+    },
+    
+    Template(persistant: ohm.Node, _temp: ohm.Node, name: ohm.Node, body: ohm.Node) {
+        return {
+            type: "template",
+            pers: persistant.sourceString ? true : false,
+            id: name.eval(),
+            body: body.eval(),
+        }
+    },
+
+    Conversions_asfloat(_asfloat, _op, expr, _cp) {
+        return parseFloat(expr.eval())
+    },
+
+    Conversions_asstring(_asstring, _op, expr, _cp) {
+        return expr.eval().toString()
+    },
+
+    TemplateConstruction(id: ohm.Node, objectBody: ohm.Node) {
+        return {
+            type: "templateconstruct",
+            id: id.eval(),
+            objectBody: objectBody.eval(),
+        }
+    },
+
+    ObjectBody(_ob: ohm.Node, name: ohm.Node, _dingdong: ohm.Node, statement: ohm.Node, _: ohm.Node, _cb: ohm.Node) {
+        return {
+            type: "objectbody",
+            values: statement.eval(),
+            refers: name.asIteration().children.map(c => c.sourceString)
+        }
+    },
+
+    TemplateBody(_ob: ohm.Node, properties: ohm.Node, _cb: ohm.Node) {
+        const returnedObject: { [key: string]: any } = {}
+        properties.children.forEach((property, index) => {
+            property = property.eval()
+            if(property.property) {
+                returnedObject[property.name] = property
+            } else {
+                returnedObject[property.name] = property
+            }
+        })
+
+        return {
+            type: "templatebody",
+            obj: returnedObject
+        }
+    },
+
+    Property(mut: ohm.Node, _prop: ohm.Node, id: ohm.Node, _is: ohm.Node, type: ohm.Node, _: ohm.Node) {
+        return {
+            type: "property",
+            property: true,
+            name: id.sourceString,
+            mutable: mut.sourceString ? true : false,
+            valtype: type.sourceString
+        }
+    },
+
+    Method(_method: ohm.Node, id: ohm.Node, _is: ohm.Node, paramList: ohm.Node, funcBody: ohm.Node) {
+        return {
+            type: "method",
+            id: id.eval(),
+            plist: paramList.eval(),
+            body: funcBody.eval(),
+        }    
+    }                            
 }
