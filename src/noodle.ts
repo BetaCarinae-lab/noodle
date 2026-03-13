@@ -66,7 +66,7 @@ if(!process.argv[2]) {
         noodle init name -> Inits a new noodle project
         noodle ./file.nd or noodle ./file.bowl -> runs a nd or bowl file
         noodle install https://github.com/yournoodlepackage -> Installs a noodle package (WARNING: WIP)
-        noodle ./file.nd --ast filename -> produces an ast of the inputted code and writes it to a ./filename.json
+        noodle ./file.nd --ast --writeto filename -> produces an ast of the inputted code and writes it to a ./filename.json (only if --writeto)
     `) 
     exit(0)
 } else if(process.argv[2] == '-v' || process.argv[2] == '--v' || process.argv[2] == '-version' || process.argv[2] == '--version') {
@@ -87,9 +87,13 @@ if(!process.argv[2]) {
     if(!ast) {
         exit(0)
     }
-    writeFileSync(argv[4] + '.json', JSON.stringify(ast, null, 2), 'utf-8')
-    console.log('DONE!')
-    console.log('Written to ' + argv[4] + '.json')
+    if(argv[4] == '--writeto') {
+        writeFileSync(argv[5] + '.json', JSON.stringify(ast, null, 2), 'utf-8')
+        console.log('DONE!')
+        console.log('Written to ' + argv[5] + '.json')
+    } else {
+        console.log(JSON.stringify(ast, null, 2))
+    }
     exit(0)
 } else {
 
