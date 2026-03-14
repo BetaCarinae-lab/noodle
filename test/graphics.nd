@@ -1,17 +1,17 @@
 number window_w is 400
 number window_h is 400
 
-<INIT_WINDOW#(400, 400, "window")>
+<INIT_WINDOW!(400, 400, "window")>
 
 mut number y_pos is 0
 mut number W is 10
 mut number H is 10
 
-while(!<WINDOW_SHOULD_CLOSE#()>) {
-    <BEGIN_DRAWING#()>
-    <CLEAR_BACKGROUND#(0,0,0)>
-    <RECTANGLE#(0, <y_pos>, <W>, <H>, 255, 255, 255, 255)>
-    <STOP_DRAWING#()>
+while(!<WINDOW_SHOULD_CLOSE!()>) {
+    <BEGIN_DRAWING!()>
+    <CLEAR_BACKGROUND!(0,0,0)>
+    <RECTANGLE!(0, <y_pos>, <W>, <H>, 255, 255, 255, 255)>
+    <STOP_DRAWING!()>
 }
 
-<CLOSE_WINDOW#()>
+<CLOSE_WINDOW!()>

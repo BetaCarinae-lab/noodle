@@ -109,7 +109,7 @@ export function runND(inputCode: string, env_: Enviroment) {
     const modules = existsSync('./ndconf.json') ? JSON.parse(readFileSync('ndconf.json', 'utf-8')).needs : []
     let env = env_.createChild()
     if(modules.includes('date')) {
-        env.new("DATE#", new Func(true, {}, function(params) {
+        env.new("DATE!", new Func(true, {}, function(params) {
             let date = new Date()
             if(params[0] == "year") {
                 return date.getFullYear()
@@ -127,7 +127,7 @@ export function runND(inputCode: string, env_: Enviroment) {
         }))
     }
     if(modules.includes('math')) {
-        env.new("MATH#", new Func(true, {}, function(params) {
+        env.new("MATH!", new Func(true, {}, function(params) {
             switch(params[0]) {
                 case 'trunc':
                     return Math.trunc(params[1])
@@ -160,27 +160,27 @@ export function runND(inputCode: string, env_: Enviroment) {
         }))
     }
     if(modules.includes('fs')) {
-        env.new('FS_READ#', new Func(true, {}, function(params) {
+        env.new('FS_READ!', new Func(true, {}, function(params) {
             return readFileSync(params[0], params[1])
         }))
-        env.new('FS_WRITE#', new Func(true, {}, function(params) {
+        env.new('FS_WRITE!', new Func(true, {}, function(params) {
             return writeFileSync(params[0], params[1])
         }))
-        env.new('FS_APPEND#', new Func(true, {}, function(params) {
+        env.new('FS_APPEND!', new Func(true, {}, function(params) {
             return appendFileSync(params[0], params[1])
         }))
-        env.new('FS_WRITE#', new Func(true, {}, function(params) {
+        env.new('FS_WRITE!', new Func(true, {}, function(params) {
             return read(params[0], params[1])
         }))
     }
     if(modules.includes('utils')) {
-        env.new('GRID#', new Func(true, {}, function(params) {
+        env.new('GRID!', new Func(true, {}, function(params) {
             return Array.from({ length: params[0] }, () =>
                 Array.from({ length: params[1] }, () => params[2] ?? null)
             );
             }
         ))
-        env.new('CNV#', new Func(true, {}, function(params) {
+        env.new('CNV!', new Func(true, {}, function(params) {
             if(typeof params[0] == "string") {
                 return new Number(params[0]).valueOf()
             } else if (typeof params[0] == "number") {
@@ -188,7 +188,7 @@ export function runND(inputCode: string, env_: Enviroment) {
             }
         }))
         
-        env.new('ASSERT#', new Func(true, {}, function(params) {
+        env.new('ASSERT!', new Func(true, {}, function(params) {
             if(params[0] == params[1]) {
                 return true
             } else {
@@ -196,35 +196,35 @@ export function runND(inputCode: string, env_: Enviroment) {
             }
         }))
 
-        env.new('inspect#', new Func(true, {}, function(params) {
+        env.new('inspect!', new Func(true, {}, function(params) {
             console.log(`Inspecting: ` + inspect(params[0]))
         }))
 
-        env.new('env_inspect#', new Func(true, {}, function(params) {
+        env.new('env_inspect!', new Func(true, {}, function(params) {
             console.log('Inspecting ' + params[0] + ': ' + env.exists(params[0]) ? inspect(env.get(params[0])) : 'No value found :(')
         }))
 
-        env.new('RAND#', new Func(true, {}, (_params: any[]) => {return Math.random()}))
+        env.new('RAND!', new Func(true, {}, (_params: any[]) => {return Math.random()}))
     }
     if(modules.includes('graphics')) {
-        env.new('GET_MOUSE#', new Func(true, {}, GET_MOUSE))
-        env.new('INIT_WINDOW#', new Func(true, {}, initWindow))
-        env.new('WINDOW_SHOULD_CLOSE#', new Func(true, {}, windowShouldClose))
-        env.new('BEGIN_DRAWING#', new Func(true, {}, beginDrawing))
-        env.new('STOP_DRAWING#', new Func(true, {}, endDrawing))
-        env.new('IS_KEY_DOWN#', new Func(true, {}, IS_KEY_DOWN))
-        env.new('CLEAR_BACKGROUND#', new Func(true, {}, clearBackground))
-        env.new('TEXT#', new Func(true, {}, drawText))
-        env.new('RECTANGLE#', new Func(true, {}, drawRectangle))
-        env.new('CLOSE_WINDOW#', new Func(true, {}, closeWindow))
-        env.new('RIGHT_MOUSE#', new Func(true, {}, RIGHT_MOUSE_BUTTON))
-        env.new('LEFT_MOUSE#', new Func(true, {}, LEFT_MOUSE_BUTTON))
-        env.new('DELTA#', new Func(true, {}, delta))
-        env.new('LOAD_SHADER#', new Func(true, {}, loadShader))
-        env.new('UNLOAD_SHADER#', new Func(true, {}, unload_Shader))
-        env.new('LOAD_TEXTURE#', new Func(true, {}, loadTexture))
-        env.new('BEGIN_SHADER_MODE#', new Func(true, {}, begin_shader_mode))
-        env.new('STOP_SHADER_MODE#', new Func(true, {}, stop_shader_mode))
+        env.new('GET_MOUSE!', new Func(true, {}, GET_MOUSE))
+        env.new('INIT_WINDOW!', new Func(true, {}, initWindow))
+        env.new('WINDOW_SHOULD_CLOSE!', new Func(true, {}, windowShouldClose))
+        env.new('BEGIN_DRAWING!', new Func(true, {}, beginDrawing))
+        env.new('STOP_DRAWING!', new Func(true, {}, endDrawing))
+        env.new('IS_KEY_DOWN!', new Func(true, {}, IS_KEY_DOWN))
+        env.new('CLEAR_BACKGROUND!', new Func(true, {}, clearBackground))
+        env.new('TEXT!', new Func(true, {}, drawText))
+        env.new('RECTANGLE!', new Func(true, {}, drawRectangle))
+        env.new('CLOSE_WINDOW!', new Func(true, {}, closeWindow))
+        env.new('RIGHT_MOUSE!', new Func(true, {}, RIGHT_MOUSE_BUTTON))
+        env.new('LEFT_MOUSE!', new Func(true, {}, LEFT_MOUSE_BUTTON))
+        env.new('DELTA!', new Func(true, {}, delta))
+        env.new('LOAD_SHADER!', new Func(true, {}, loadShader))
+        env.new('UNLOAD_SHADER!', new Func(true, {}, unload_Shader))
+        env.new('LOAD_TEXTURE!', new Func(true, {}, loadTexture))
+        env.new('BEGIN_SHADER_MODE!', new Func(true, {}, begin_shader_mode))
+        env.new('STOP_SHADER_MODE!', new Func(true, {}, stop_shader_mode))
     }
 
     env.new('args', new Variable('args', false, false, process.argv, false))

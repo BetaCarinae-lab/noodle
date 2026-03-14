@@ -43,6 +43,7 @@
   "dependencies": {
     "@types/prompt-sync": "^4.2.3",
     "canvas": "^3.2.1",
+    "esbuild": "^0.27.4",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.3.3",
     "nan": "^2.25.0",

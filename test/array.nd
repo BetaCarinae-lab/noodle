@@ -6,7 +6,7 @@ string str is "Hello!"
 
 writeLn(<str at 3>)
 
-array grid is <GRID#(5, 5)>
+array grid is <GRID!(5, 5)>
 
 writeLn(<grid>)
 

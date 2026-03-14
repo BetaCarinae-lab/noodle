@@ -1,1 +1,1 @@
-writeLn(<DATE("year")>)
+writeLn(<DATE!("year")>)

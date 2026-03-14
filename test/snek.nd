@@ -1,7 +1,7 @@
 #(
     Simple Function that takes a 2d grid of any size and renders it using RECTANGLE#
 )
-<INIT_WINDOW#(400, 400, "snake")>
+<INIT_WINDOW!(400, 400, "snake")>
 
 template segment {
     prop x is number,
@@ -29,33 +29,33 @@ mut number sec_per_frame is 1 / 2
 
 
 fn spawn_apple() {
-    apple_x is <MATH#("round", <MATH#("trunc", <TILE_SIZE> * <RAND#()>)>)>
-    apple_y is <MATH#("round", <MATH#("trunc", <TILE_SIZE> * <RAND#()>)>)>
+    apple_x is <MATH!("round", <MATH!("trunc", <TILE_SIZE> * <RAND!()>)>)>
+    apple_y is <MATH!("round", <MATH!("trunc", <TILE_SIZE> * <RAND!()>)>)>
 }
 
 <spawn_apple()>
-while(!<WINDOW_SHOULD_CLOSE#()>) {
-    <BEGIN_DRAWING#()>
+while(!<WINDOW_SHOULD_CLOSE!()>) {
+    <BEGIN_DRAWING!()>
 
-    if(<IS_KEY_DOWN#("LEFT")> && !(<dir> == "right")) {
+    if(<IS_KEY_DOWN!("LEFT")> && !(<dir> == "right")) {
         next_dir is "left"
     }
-    if(<IS_KEY_DOWN#("RIGHT")> && !(<dir> == "left")) {
+    if(<IS_KEY_DOWN!("RIGHT")> && !(<dir> == "left")) {
         next_dir is "right"
     }
-    if(<IS_KEY_DOWN#("UP")> && !(<dir> == "down")) {
+    if(<IS_KEY_DOWN!("UP")> && !(<dir> == "down")) {
         next_dir is "up"
     }
-    if(<IS_KEY_DOWN#("DOWN")> && !(<dir> == "up")) {
+    if(<IS_KEY_DOWN!("DOWN")> && !(<dir> == "up")) {
         next_dir is "down"
     }
 
-    move_timer is <move_timer> + <DELTA#()>
+    move_timer is <move_timer> + <DELTA!()>
 
     mut number new_x is <player_x>
     mut number new_y is <player_y>
 
-    #( TODO: fix)
+    !( TODO: fix)
 
 
     if(<alive> && <move_timer> >= <sec_per_frame>) {
@@ -115,30 +115,30 @@ while(!<WINDOW_SHOULD_CLOSE#()>) {
         player_y is <new_y>
         move_timer is 0
     } 
-    <CLEAR_BACKGROUND#(0, 0, 0)>
-    <RECTANGLE#(<apple_x> * <TILE_SIZE>, <apple_y> * <TILE_SIZE>, <TILE_SIZE>, <TILE_SIZE>, 255, 0, 0, 255)>
+    <CLEAR_BACKGROUND!(0, 0, 0)>
+    <RECTANGLE!(<apple_x> * <TILE_SIZE>, <apple_y> * <TILE_SIZE>, <TILE_SIZE>, <TILE_SIZE>, 255, 0, 0, 255)>
 
     foreach (<snake>, i) {
         object snake_segment is <snake at <i>>
-        #( fix issue with ArrayAccess later )
+        !( fix issue with ArrayAccess later )
 
         if(<snake_segment.x> == <new_x> && <snake_segment.y> == <new_y>) {
             alive is false
         }
         
-        <RECTANGLE#(<snake_segment.x> * <TILE_SIZE>, <snake_segment.y> * <TILE_SIZE>, <TILE_SIZE>, <TILE_SIZE>, 0, 255, 0, 255)>
+        <RECTANGLE!(<snake_segment.x> * <TILE_SIZE>, <snake_segment.y> * <TILE_SIZE>, <TILE_SIZE>, <TILE_SIZE>, 0, 255, 0, 255)>
     }
 
-    <TEXT#("X: " + <player_x>, 0, 0, 20, 255, 255, 255, 255)>
-    <TEXT#("Y: " + <player_y>, 0, 20, 20, 255, 255, 255, 255)>
-    <TEXT#("LEN: " + <snake.length>, 0, 40, 20, 255, 255, 255, 255)>
+    <TEXT!("X: " + <player_x>, 0, 0, 20, 255, 255, 255, 255)>
+    <TEXT!("Y: " + <player_y>, 0, 20, 20, 255, 255, 255, 255)>
+    <TEXT!("LEN: " + <snake.length>, 0, 40, 20, 255, 255, 255, 255)>
 
     if(!<alive>) {
         dir is "dead lmao"
-        <TEXT#("GAME OVER", 80, 180, 40, 255, 255, 255, 255)>
-        <TEXT#(":(", 80, 220, 20, 255, 255, 255, 255)>
+        <TEXT!("GAME OVER", 80, 180, 40, 255, 255, 255, 255)>
+        <TEXT!(":(", 80, 220, 20, 255, 255, 255, 255)>
     }
-    <STOP_DRAWING#()>
+    <STOP_DRAWING!()>
 }
 
-<CLOSE_WINDOW#()>
+<CLOSE_WINDOW!()>

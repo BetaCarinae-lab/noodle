@@ -6,9 +6,9 @@
 
 
 string string_i1 is query("Enter N1: ")
-number i1 is <CNV#(<string_i1>)>
+number i1 is <CNV!(<string_i1>)>
 
 string string_i2 is query("Enter N2: ")
-number i2 is <CNV#(<string_i2>)>
+number i2 is <CNV!(<string_i2>)>
 
 writeLn(<i1> + <i2>)

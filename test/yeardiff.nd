@@ -3,10 +3,10 @@
     difference from that year and the current year
 )
 
-number cur is <DATE#("year")>
+number cur is <DATE!("year")>
 
 string target_ is query("Enter year: ")
-number target is <CNV#(<target_>)>
+number target is <CNV!(<target_>)>
 
 if(<target> >= <cur>) {
     writeLn(<target> - <cur>)

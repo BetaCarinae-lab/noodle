@@ -1,1 +1,1 @@
-writeLn(<FS_READ#("./test/graphics.nd", "utf8")>)
+writeLn(<FS_READ!("./test/graphics.nd", "utf8")>)

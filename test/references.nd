@@ -1,10 +1,10 @@
 number a is 10
 b <-> a
 writeLn(<b>)
-<ASSERT#(<b>, 10)>
+<ASSERT!(<b>, 10)>
 
 b is <b> + 1
 
 writeLn(<b>)
 
-<ASSERT#(<b>, 11)>
+<ASSERT!(<b>, 11)>
