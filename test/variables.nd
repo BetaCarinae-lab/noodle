@@ -12,4 +12,8 @@ try {
     writeLn("strict works")
 }
 
+object nullvalue is null
+
+writeLn(<nullvalue>)
+
 writeLn("VARS END")
