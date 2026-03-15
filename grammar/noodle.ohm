@@ -87,6 +87,7 @@ NOODLE {
     | VarGet
    	| Conversions
     | Query
+    | Ternary
     | Object
     | AnonFunc
     | ArrayAccess
@@ -103,6 +104,8 @@ NOODLE {
     | False
     | Reference
     | Pipe
+  
+  Ternary = Expr "?" Expr ":" Expr
 
   Push = "push" "(" (string | ident) "," Expr ")"
 
