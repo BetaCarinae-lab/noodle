@@ -49,4 +49,4 @@ if (<z> > 10 && <z> < 20) {
 
 boolean condition is true
 
-writeLn(<condition> ? "Is true" : "Is false")
+writeLn("Is true" if <condition> else "Is false")
