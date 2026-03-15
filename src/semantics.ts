@@ -198,7 +198,20 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
     },
 
     Ternary(iftrue, _if, condition, _else, iffalse) {
+        //console.log(condition.eval(this.args.env) ? iftrue.eval(this.args.env) : iffalse.eval(this.args.env))
         return condition.eval(this.args.env) ? iftrue.eval(this.args.env) : iffalse.eval(this.args.env)
+    },
+
+    null(_) {
+        return null
+    },
+
+    nan(_) {
+        return NaN
+    },
+
+    undefined(_) {
+        return undefined
     },
 
     Reference(_a: ohm.Node, id: ohm.Node) {

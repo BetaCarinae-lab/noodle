@@ -88,6 +88,9 @@ NOODLE {
     | float
     | string
     | VarGet
+    | null
+    | nan
+    | undefined
    	| Conversions
     | Query
     | Object
@@ -108,6 +111,12 @@ NOODLE {
     | Pipe
   
   Ternary = Expr "if" Expr "else" Expr
+
+  null = "null"
+
+  nan = "nan"
+
+  undefined = "undefined"
 
   Push = "push" "(" (string | ident) "," Expr ")"
 
