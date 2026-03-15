@@ -777,6 +777,13 @@ export const astActionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
+    Len(_len, _op, id, _cp) {
+        return {
+            type: "len",
+            id: id.eval()
+        }
+    },
+
     Loop(_loop: ohm.Node, expr: ohm.Node, body: ohm.Node) {
         return {
             type: "loop",
