@@ -26,7 +26,10 @@ NOODLE {
   Print = "writeLn" "(" Expr ")"
   PrintNoHeader = "writeNH" "(" Expr ")"
 
-  Expr = LogicalOr
+  Expr = Conditional
+  
+  Conditional = Ternary
+  					  | LogicalOr
 
   LogicalOr
     = LogicalOr "||" LogicalAnd  --or
@@ -87,7 +90,6 @@ NOODLE {
     | VarGet
    	| Conversions
     | Query
-    | Ternary
     | Object
     | AnonFunc
     | ArrayAccess
@@ -105,7 +107,7 @@ NOODLE {
     | Reference
     | Pipe
   
-  Ternary = Expr "?" Expr ":" Expr
+  Ternary = Expr "if" Expr "else" Expr
 
   Push = "push" "(" (string | ident) "," Expr ")"
 

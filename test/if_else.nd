@@ -45,3 +45,8 @@ if (<z> > 10 && <z> < 20) {
 } else {
     writeLn("z is something else")
 }
+
+
+boolean condition is true
+
+writeLn(<condition> ? "Is true" : "Is false")

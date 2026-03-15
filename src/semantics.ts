@@ -197,6 +197,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
+    Ternary(condition, _, iftrue, _2, iffalse) {
+        return condition.eval(this.args.env) ? iftrue.eval(this.args.env) : iffalse.eval(this.args.env)
+    },
+
     Reference(_a: ohm.Node, id: ohm.Node) {
         
     },
@@ -878,6 +882,15 @@ export const astActionDictionary: ohm.ActionDict<unknown> = {
             type: "assign",
             id: name.eval(),
             val: value.eval(),
+        }
+    },
+
+    Ternary(condition, _, iftrue, _2, iffalse) {
+        return {
+            type: "ternary",
+            condition: condition.eval(),
+            iftrue: iftrue.eval(),
+            iffalse: iffalse.eval(),
         }
     },
 
