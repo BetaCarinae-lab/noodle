@@ -1,27 +1,27 @@
 mut array arr is [10, 10 + 10, 30]
 
-writeLn(<arr at 2>)
+writeLn(<arr[2]>)
 
 string str is "Hello!"
 
-writeLn(<str at 3>)
+writeLn(<str[3]>)
 
 array grid is <GRID!(5, 5)>
 
 writeLn(<grid>)
 
-array row is <grid at 4>
+array row is <grid[4]>
 
-writeLn(<row at 4>)
+writeLn(<row[4]>)
 
 arr at 2 is 69
 
-writeLn(<arr at 2>)
+writeLn(<arr[2]>)
 
 push(arr, 19)
 
 writeLn(<arr>)
 
-writeLn(<<grid at 2> at 2>)
+writeLn(<<grid[2]>[2]>)
 
 writeLn("ARRAY END")

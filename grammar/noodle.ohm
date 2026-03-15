@@ -151,7 +151,7 @@ NOODLE {
   True = "true" | "yes" | "yeah"
   False = "false" | "no" | "nah"
 
-  ArrayAccess = "<" (Expr | ident) "at" Expr ">"
+  ArrayAccess = "<" (Expr | ident) "[" Expr "]" ">"
  	
   ArrayAssign = ident "at" Expr "is" Expr
 

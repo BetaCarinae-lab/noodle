@@ -2,7 +2,6 @@ import { Enviroment, Func, ReturnSignal, Template } from "./etc.js";
 import * as ohm from "ohm-js"
 import { Variable } from "./etc.js";    
 import promptSync from 'prompt-sync';
-import * as fs from 'fs'
 // don't delete!, this is used for debugging!
 import { inspect } from "node:util";;
 
@@ -322,7 +321,7 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return values.asIteration().children.map(c => c.eval(this.args.env))
     },
 
-    ArrayAccess(_ot: ohm.Node, id: ohm.Node, _at: ohm.Node, index: ohm.Node, _ct: ohm.Node) {
+    ArrayAccess(_ot: ohm.Node, id: ohm.Node, _ob: ohm.Node, index: ohm.Node, _cb, _ct: ohm.Node) {
         if(this.args.env.exists(id.sourceString) || typeof id.eval(this.args.env) !== 'string') {
             //console.log(id.eval(this.args.env))
             let evaled = id.eval(this.args.env)
@@ -999,7 +998,7 @@ export const astActionDictionary: ohm.ActionDict<unknown> = {
         }
     },
 
-    ArrayAccess(_ot: ohm.Node, id: ohm.Node, _at: ohm.Node, index: ohm.Node, _ct: ohm.Node) {
+    ArrayAccess(_ot: ohm.Node, id: ohm.Node, _ob: ohm.Node, index: ohm.Node, _cb, _ct: ohm.Node) {
         return {
             type: "arrayaccess",
             id: id.eval(),
