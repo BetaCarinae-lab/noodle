@@ -61,6 +61,10 @@ export const actionDictionary: ohm.ActionDict<unknown> = {
         return value
     },
 
+    Len(_len, _op, id, _cp) {
+        return this.args.env.get(id.eval(this.args.env)).value.length
+    },
+
     Loop(_loop: ohm.Node, expr: ohm.Node, body: ohm.Node) {
         let loopamount = expr.eval(this.args.env)
         for(let i = 0; i <= loopamount; i++) {

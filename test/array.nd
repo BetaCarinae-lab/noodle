@@ -24,4 +24,8 @@ writeLn(<arr>)
 
 writeLn(<<grid[2]>[2]>)
 
+array ex is [1, 2, 3, 4, 5]
+
+writeLn(len(ex))
+
 writeLn("ARRAY END")

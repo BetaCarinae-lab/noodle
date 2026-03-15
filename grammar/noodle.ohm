@@ -104,6 +104,7 @@ NOODLE {
     | RefResolve
     | Array 
     | Pop
+    | Len
     | TemplateConstruction
     | True
     | False
@@ -118,9 +119,11 @@ NOODLE {
 
   undefined = "undefined"
 
-  Push = "push" "(" (string | ident) "," Expr ")"
+  Push = "push" "(" (Expr | ident) "," Expr ")"
 
-  Pop = "pop" "(" (string | ident) ")"
+  Pop = "pop" "(" (Expr | ident) ")"
+
+  Len = "len" "(" (Expr | ident) ")"
 
   Fn = "persistant"? "fn" ident ParameterList FuncBody
 
