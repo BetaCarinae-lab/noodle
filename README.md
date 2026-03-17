@@ -1,5 +1,5 @@
 # NOODLE
-![Version](https://img.shields.io/badge/release-v1.4.7-blue)
+![Version](https://img.shields.io/badge/release-v1.17.30-blue)
 
 Noodle is a high level programming language built using TS, PKG, and OhmJS.
 
