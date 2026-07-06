@@ -2,12 +2,15 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",          // Output CJS
-    "moduleResolution": "Node",    // CJS resolution
-    "outDir": "js",
+    "moduleResolution": "bundler",    // CJS resolution
+    "ignoreDeprecations": "6.0",
+    "outDir": "./js",
     "esModuleInterop": true,       // Allows `import x from "x"` syntax with CJS modules
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "types": ["node"],
     "skipLibCheck": true
   },
-  "include": ["src/**/*"]
+  
+  "include": ["src/**/*"],
 }

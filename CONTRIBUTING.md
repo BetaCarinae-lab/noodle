@@ -1,6 +1,7 @@
 ### Contribution
 Ok, To be honest here, I have no idea how to contribute to anything.  
-your best bet is to look online for some tutorials, but!  
+your best bet is to look online for some general public contribution tutorials, but!
+  
 #### Here is what you need to know:  
 When you fork the repo use
 `npm install` to install the dependencies
