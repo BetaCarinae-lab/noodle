@@ -4,6 +4,7 @@
     "module": "CommonJS",          // Output CJS
     "moduleResolution": "bundler",    // CJS resolution
     "ignoreDeprecations": "6.0",
+    "rootDir": "./src",
     "outDir": "./js",
     "esModuleInterop": true,       // Allows `import x from "x"` syntax with CJS modules
     "allowSyntheticDefaultImports": true,

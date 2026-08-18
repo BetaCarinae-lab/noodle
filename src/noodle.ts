@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+
+// Imports
+//#region 
 import { readFileSync, writeFileSync } from 'fs'
 import path from 'path';
 import { getAst, runBowl, runND } from './exec.js';
@@ -9,16 +12,15 @@ import { argv, exit } from 'process';
 import { Enviroment } from './etc.js';
 import { setup } from './projectSetup.js';
 import { installPackage } from './etc.js';
+//#endregion
 
 let env = new Enviroment()
-
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
 const file_path = path.isAbsolute(process.argv[2] ? process.argv[2] : 't') ? process.argv[2] : path.resolve(process.cwd(), process.argv[2] ? process.argv[2] : 't');
-
 const usingBowl = path.extname(file_path) == ".bowl" ? true : false
 
 if(!process.argv[2]) {
@@ -54,11 +56,11 @@ if(!process.argv[2]) {
     ------------------------------------------
     `)
     exit(0)
-} else if(process.argv[2] == '--help' || process.argv[2] == '-h' || process.argv[2] == '-help' || process.argv[2] == '--h') {
+} else if(process.argv[2] == '-h' || process.argv[2] == '-help') {
     console.log(`
         Usage: noodle [file | options] [options],
         
-        Examples:
+        Main Options: 
         noodle -> Opens Noodle REPL
         noodle --info or noodle ./file.nd --info -> prints run info
         noodle --help | -h | -help | --h -> prints this
@@ -66,7 +68,10 @@ if(!process.argv[2]) {
         noodle init name -> Inits a new noodle project
         noodle ./file.nd or noodle ./file.bowl -> runs a nd or bowl file
         noodle install https://github.com/yournoodlepackage -> Installs a noodle package (WARNING: WIP)
-        noodle ./file.nd --ast --writeto filename -> produces an ast of the inputted code and writes it to a ./filename.json (only if --writeto)
+        noodle ./file.nd --ast --writeto filename -> produces an ast of the inputted code and writes it to a ./filename.json (only if --writeto, else prints to console)
+
+        File Options: 
+        noodle ./file.nd --env filename -> Writes the Enviroment for the file/bowl to ./filename.ndenv
     `) 
     exit(0)
 } else if(process.argv[2] == '-v' || process.argv[2] == '--v' || process.argv[2] == '-version' || process.argv[2] == '--version') {
@@ -84,17 +89,34 @@ if(!process.argv[2]) {
     exit(0)
 } else if (process.argv[3] == '--ast') {
     const ast = getAst(readFileSync(file_path, 'utf-8'))
+
     if(!ast) {
         exit(0)
     }
+
     if(argv[4] == '--writeto') {
+
         writeFileSync(argv[5] + '.json', JSON.stringify(ast, null, 2), 'utf-8')
         console.log('DONE!')
         console.log('Written to ' + argv[5] + '.json')
+
     } else {
+
         console.log(JSON.stringify(ast, null, 2))
+
     }
+
     exit(0)
+} else if(process.argv[3] == "--env") {
+
+    const inputCode = readFileSync(file_path, 'utf-8');
+    let env = new Enviroment()
+
+    if(usingBowl) {
+        env = runBowl(inputCode)
+    } else {
+        env = runND(inputCode, env).env
+    }
 } else {
 
 

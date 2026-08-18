@@ -19,7 +19,7 @@ export const grammars = {
     bowl: loadGrammar('../grammar/bowls.ohm'),
 }
 
-export function runBowl(code: string) {
+export function runBowl(code: string): Enviroment {
     let env = new Enviroment()
     const bowlDict: ohm.ActionDict<unknown> = {
         Main(entries: ohm.Node) {
@@ -84,8 +84,10 @@ export function runBowl(code: string) {
     if(!matchResult.failed()) {
         console.log('Match Succeded, Running Bowl List')
         semantics(matchResult).eval()
+        return env
     } else {
         console.error('Bowl error: ' + matchResult.message)
+        return env
     }
 }
 
